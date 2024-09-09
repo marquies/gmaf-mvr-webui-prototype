@@ -14,6 +14,7 @@ class Model
 
         //this.gmaf= new GMAFAdapter(gmafToken);
         this.gmaf = new GMAFAdapter("stw476");
+        //Console.Test
 
     }
 
