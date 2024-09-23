@@ -4,6 +4,7 @@ import Presentation from './components/presentation';
 import Query from './components/query';
 import GMAFAdapter from "./js/GMAFAdapter";
 import Model from './js/Model';
+import QueryNew from './components/query';
 import "font-awesome/css/font-awesome.min.css";
 import "./css/styles.css";
 
@@ -55,22 +56,24 @@ class App extends Component {
   
         document.getElementById("loading-spinner").style.display="block";
         try{
-
+          /*
           var gmaf= new GMAFAdapter();
           var token = await gmaf.getToken("stw476");
           gmaf.apiToken= token;
-          //var presentationModel= new Model(this.gmafToken);
+         
         
           var result= await gmaf.query(queryObject);
 
 
           console.log("result", result);
           return;
-          /*
+          */
+         
           //return;
           //Add all values to queey results
+          var presentationModel= new Model(this.gmafToken);
           //var queryresults= await presentationModel.getQuery("Cars");
-
+          var queryresults= await presentationModel.getCollection();
 
 
           this.queryresults= queryresults;
@@ -79,7 +82,7 @@ class App extends Component {
           this.filterChanged(this.filter);
 
           document.getElementById("loading-spinner").style.display="none";
-          */
+        
         } catch (error) {
             document.getElementById("loading-spinner").style.display="none";
             console.error("Error:", error);
@@ -221,7 +224,8 @@ queryEmpty(){
         return <React.Fragment>
                 <Navbar showCollection={this.showCollection}/>
                 <div className='d-flex'>
-                  <Query queryChanged={this.queryChanged} filterChanged={this.filterChanged}  modeChanged={this.modeChanged}/>
+                 {/*} <Query queryChanged={this.queryChanged} filterChanged={this.filterChanged}  modeChanged={this.modeChanged}/>*/}
+                  <QueryNew queryChanged={this.queryChanged} filterChanged={this.filterChanged}  modeChanged={this.modeChanged}/>
                   <div id="loading-spinner" style={{"display": "none"}} className="spinner-grow" role="status">
                     <span className="sr-only">Loading...</span>
                   </div>
