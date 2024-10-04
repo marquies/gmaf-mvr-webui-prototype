@@ -94,18 +94,40 @@ function Query(props) {
                 Query Modul
                 <div className="card" style={{width: "30rem"}}>
                     <div className="card-body">
-                       
-                        <div className="visual-input mb-2 border-1 border rounded-3">
-                        {image ? 
-                            <img id="query-chosen-image" src={image} alt=""/>
-                            : <i id= "query-placeholder-image" className="query-placeholder-image fa fa-image fa-3x"></i>
-                        }
+                        <div className='border-1 border rounded-3'>
+                            <div className="visual-input mb-2 border-1 border rounded-3">
+                            {image ? 
+                                <img id="query-chosen-image" src={image} alt=""/>
+                                : <i id= "query-placeholder-image" className="query-placeholder-image fa fa-image fa-3x"></i>
+                            }
+                            </div>
+                            <div>
+                                <audio id="audio-playback" className='m-2' controls src="">
+                                    <source src={audio} type="audio/ogg"/>
+                                </audio>    
+                            </div>
+                            <div>
+                                <div className='query-menu mt-1'>
+                            { /*<button type="button" className='btn border border-secondary rounded-1 m-1' data-bs-toggle="modal" data-bs-target="#sketchinputModal"><span className="fa fa-paint-brush"></span></button>*/}
+                                <button onClick={imageInput} type="button" className='btn border border-secondary rounded-1 m-1'><span className="fa fa-image"></span></button>
+                                <button onClick={audioInput} type="button" className='btn border border-secondary rounded-1 m-1'><span className="fa fa-file-audio-o"></span></button>
+                                <input type="file" onChange={imageUploaded} hidden id="image-input" accept=".png,.jpg"></input>  
+                                <input type="file" onChange={audioUploaded} hidden id="audio-input" accept=".mp3,.wav"></input>  
+                                <div className="dropdown m-1">
+                                    <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Clear
+                                    </button>
+                                    <ul className="dropdown-menu">
+                                        <li><button onClick={clearImage} className="dropdown-item" >Image/Video</button></li>
+                                        <li><button onClick={clearText} className="dropdown-item" >Text</button></li>
+                                        <li><button onClick={clearAudio} className="dropdown-item" >Audio</button></li>     
+                                        <li><button onClick={clearAll} className="dropdown-item" >All</button></li>
+                                    </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <audio id="audio-playback" className='m-2' controls src="">
-                                <source src={audio} type="audio/ogg"/>
-                            </audio>    
-                        </div>
+                        <textarea className="form-control textarea" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
                         <Filter></Filter>
                     </div>
                 </div>
