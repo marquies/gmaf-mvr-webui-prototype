@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import JumpToButton from './jumptobutton';
-import Model from '../js/Model';
-import GMAFAdapter from '../js/GMAFAdapter';
+import Model from '../../js/Model';
+import GMAFAdapter from '../../js/GMAFAdapter';
 
 class VideoCard extends Component {
     state = {  } 
