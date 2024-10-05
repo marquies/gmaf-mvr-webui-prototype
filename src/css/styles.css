@@ -51,7 +51,7 @@
   }
   
   #query-textarea{
-    height: 100px;
+    height: 60px;
   }
   #query-chosen-image{
 
@@ -120,3 +120,17 @@
     max-width: 1600px;
 
   }
+/*
+  .datepicker{
+    width: 60%;
+  }
+
+  */
+
+.filter-prepend{
+
+  width: 8rem;
+}
+.filter-input{
+  width: 100%;
+}

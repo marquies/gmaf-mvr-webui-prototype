@@ -5,6 +5,7 @@ import Plugin1 from './Plugins/plugin1';
 import Config from './Plugins/config';
 import config from './Plugins/config';
 import PluginConfig from './Plugins/config';
+import Wsd from './wsd';
 
 
 
@@ -16,8 +17,7 @@ function Query(props) {
     const [wsd, setWsd] = useState(false);
     const [wsdUnfolded, setWsdUnfolded] = useState(false);
     const [filterUnfolded, setFilterUnfolded] = useState(false);
-
-
+   
 
     const [pluginSelected, setPluginSelected] = useState(0);
 
@@ -85,6 +85,7 @@ function Query(props) {
     function changePlugIn(plugin) {
         setPluginSelected(plugin);
     }
+
     
     return (
      
@@ -128,11 +129,13 @@ function Query(props) {
                             </div>
                         </div>
                         <textarea className="form-control textarea" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
-                        <Filter></Filter>
+                        <div><i class="fa fa-chevron-down"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>
+                        {wsdUnfolded ? <Wsd></Wsd>: ""}
+                        <div><i class="fa fa-chevron-down"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
+                        {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
                     </div>
                 </div>
             </div>     
-
 
 
         {/*
