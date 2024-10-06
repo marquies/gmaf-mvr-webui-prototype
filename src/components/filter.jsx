@@ -7,9 +7,9 @@ import "react-datepicker/dist/react-datepicker.css";
 function Filter(props){
 
     const [name, setName] = useState("");
-    const [type, setType] = useState(false);
-    const [fromDate, setFromDate] = useState(new Date());
-    const [toDate, setToDate] = useState(new Date());
+    const [type, setType] = useState("");
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
 
 function typeChanged(type) {
 
@@ -46,14 +46,14 @@ return (
         <div className='query-menu mt-1'>
             <div className="dropdown">
                 <button id="filter-button" className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {type===false ? "No type Filter" : type}
+                    {type==="" ? "No type filter" : type}
                 </button>
                 <ul className="dropdown-menu">
                     <li><button onClick={(type)=> setType("Image")} className="dropdown-item">Image</button></li>
                     <li><button onClick={(type)=> setType("Video")} className="dropdown-item">Video</button></li>
                     <li><button onClick={(type)=> setType("Video2D")} className="dropdown-item">Video 2D</button></li>
                     <li><button onClick={(type)=> setType("Video3D")} className="dropdown-item">Video 3D</button></li>     
-                    <li><button onClick={(type)=> setType(false)} className="dropdown-item">No type Filter</button></li>
+                    <li><button onClick={(type)=> setType(false)} className="dropdown-item">No type filter</button></li>
                 </ul>
             </div>
         </div>

@@ -1,10 +1,6 @@
 import React, { Component, useState} from 'react';
 import Sketch from './old/sketch';
 import Filter from './filter';
-import Plugin1 from './Plugins/plugin1';
-import Config from './Plugins/config';
-import config from './Plugins/config';
-import PluginConfig from './Plugins/config';
 import Wsd from './wsd';
 
 
@@ -79,7 +75,7 @@ function Query(props) {
 
         //props.plugins[pluginSelected]
         //Check if listed in Config
-        return PluginConfig[plugInName];
+       // return PluginConfig[plugInName];
     }
 
     function changePlugIn(plugin) {
@@ -128,9 +124,9 @@ function Query(props) {
                                 </div>
                             </div>
                         </div>
-                        <textarea className="form-control textarea" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
+                        <textarea className="form-control textarea mt-1" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
                         <div><i class="fa fa-chevron-down"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>
-                        {wsdUnfolded ? <Wsd></Wsd>: ""}
+                        {wsdUnfolded ? <Wsd ></Wsd>: ""}
                         <div><i class="fa fa-chevron-down"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
                         {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
                     </div>

@@ -1,23 +1,20 @@
-import React, { Component, useState} from 'react';
-import Sketch from '../old/sketch';
-import Filter from '../filter';
+import React, { useState} from 'react';
 
 
-
-function Plugin1() {
+function PluginOne() {
     
     const [text, setText] = useState(""); 
 
     function canRender(){
-
+        return false;
     }
 
     return (
         <div id="plugin" className=''>Plugin 1 Here!
         </div>
        
-);
+    );
 
 }
 
-export default Plugin1;
+export default PluginOne;
