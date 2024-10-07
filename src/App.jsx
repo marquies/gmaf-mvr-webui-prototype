@@ -20,8 +20,8 @@ function App() {
   }
 
   return (
-    <div>
-      <div className="dropdown">
+    <div className='app-container m-2'>
+      <div className="dropdown m-1">
           <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
              {view}
           </button>
@@ -30,7 +30,9 @@ function App() {
               <li><button onClick={()=>changeView("Collection")} className="dropdown-item" >Collection</button></li>
           </ul>
       </div>
+      <div>
       { view === "Query" ? <QueryView /> : <CollectionView /> }
+      </div>
     </div>
   );
 }

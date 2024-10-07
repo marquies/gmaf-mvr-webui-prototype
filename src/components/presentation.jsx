@@ -4,7 +4,7 @@ function Presentation(props) {
     
     
     return (
-        <div> Presentation </div>  
+        <div className='presentation'> Presentation </div>  
     );
 
 }

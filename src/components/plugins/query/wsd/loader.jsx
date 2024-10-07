@@ -4,8 +4,8 @@ import ThreeDGolf from './components/threedgolf';
 
 
 const WsdQueryPluginLoader = {
-    0:PluginOne,
-    1:ThreeDGolf
+   0:PluginOne,
+   1:ThreeDGolf
 };
 
 

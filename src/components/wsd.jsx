@@ -1,5 +1,6 @@
 import React, { useState} from 'react';
 import WsdQueryPluginLoader from './plugins/query/wsd/loader';
+import NoPlugin from './plugins/noplugin';
 
 function Wsd(props){
 
@@ -19,10 +20,12 @@ function nextPlugin() {
 }
 
 return (
-    <div>
-        <i class="fa fa-chevron-right" onClick={nextPlugin}></i>
-        { typeof(pluginComponents[pluginSelectedIndex]) === 'function'  ? React.createElement(pluginComponents[pluginSelectedIndex]):
-        <p>This Plugin Could Not Be Loaded</p> }
+    <div className='query-wsd-container d-flex border-1 border rounded-3'>
+        <div className='query-wsd-inner-container'>
+            { typeof(pluginComponents[pluginSelectedIndex]) === 'function'  ? React.createElement(pluginComponents[pluginSelectedIndex]):
+            <NoPlugin/> }
+        </div>
+        { typeof(pluginComponents[pluginSelectedIndex]) === 'function'  ?   <i class="fa fa-chevron-right m-1" onClick={nextPlugin}></i>:""}
     </div>
 );
 

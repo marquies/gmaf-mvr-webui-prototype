@@ -85,11 +85,8 @@ function Query(props) {
     
     return (
      
-
-        <div>
-            <div>
-                Query Modul
-                <div className="card" style={{width: "30rem"}}>
+        <div className='query'>
+                <div className="card" style={{width: "100%"}}>
                     <div className="card-body">
                         <div className='border-1 border rounded-3'>
                             <div className="visual-input mb-2 border-1 border rounded-3">
@@ -124,13 +121,12 @@ function Query(props) {
                                 </div>
                             </div>
                         </div>
-                        <textarea className="form-control textarea mt-1" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
-                        <div><i class="fa fa-chevron-down"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>
-                        {wsdUnfolded ? <Wsd ></Wsd>: ""}
+                        <textarea className="form-control textarea mt-1" placeholder="Enter your text query..." id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
+                            <div><i class="fa fa-chevron-down"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
+                            {wsdUnfolded ? <Wsd ></Wsd>: ""}
                         <div><i class="fa fa-chevron-down"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
                         {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
                     </div>
-                </div>
             </div>     
 
 
