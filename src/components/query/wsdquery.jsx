@@ -1,8 +1,8 @@
 import React, { useState} from 'react';
-import WsdQueryPluginLoader from './plugins/query/wsd/loader';
-import NoPlugin from './plugins/noplugin';
+import WsdQueryPluginLoader from '../plugins/query/wsd/loader';
+import NoPlugin from '../plugins/noplugin';
 
-function Wsd(props){
+function WsdQuery(props){
 
 function typeChanged(type) {
 
@@ -31,4 +31,4 @@ return (
 
 }
 
-export default Wsd;
+export default WsdQuery;

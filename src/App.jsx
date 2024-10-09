@@ -1,12 +1,6 @@
 import React, { Component , useState} from 'react';
-import QueryView from './components/queryview';
-import CollectionView from './components/collectionview';
-
-import Presentation from './components/old/presentation';
-import Query from './components/query';
-import GMAFAdapter from "./js/GMAFAdapter";
-import Model from './js/Model';
-import QueryNew from './components/query';
+import QueryView from './components/query/queryview';
+import CollectionView from './components/collection/collectionview';
 import "font-awesome/css/font-awesome.min.css";
 import "./css/styles.css";
 

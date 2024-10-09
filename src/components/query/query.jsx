@@ -1,7 +1,8 @@
 import React, { Component, useState} from 'react';
-import Sketch from './old/sketch';
+import Sketch from '../old/sketch';
 import Filter from './filter';
-import Wsd from './wsd';
+import Wsd from './wsdquery';
+import WsdQuery from './wsdquery';
 
 
 
@@ -123,9 +124,9 @@ function Query(props) {
                         </div>
                         <textarea className="form-control textarea mt-1" placeholder="Enter your text query..." id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
                             <div><i class="fa fa-chevron-down"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
-                            {wsdUnfolded ? <Wsd ></Wsd>: ""}
-                        <div><i class="fa fa-chevron-down"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
-                        {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
+                            {wsdUnfolded ? <WsdQuery ></WsdQuery>: ""}
+                            <div><i class="fa fa-chevron-down"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
+                            {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
                     </div>
             </div>     
 

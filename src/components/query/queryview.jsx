@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Query from './query';
-import Presentation from './presentation';
+import Presentation from '../presentation/presentation';
 
 function QueryView() {
 
