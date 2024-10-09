@@ -1,12 +1,9 @@
 import React, { useState} from 'react';
 import WsdQueryPluginLoader from '../plugins/query/wsd/loader';
-import NoPlugin from '../plugins/noplugin';
+import NoPlugin from '../plugins/error/noplugin';
 
 function WsdQuery(props){
 
-function typeChanged(type) {
-
-}
 
 //Load the React Components
 const pluginComponents= WsdQueryPluginLoader;

@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import PluginError from '../../../pluginerror';
+import PluginError from '../../../error/pluginerror';
 
 
 function PluginOne() {

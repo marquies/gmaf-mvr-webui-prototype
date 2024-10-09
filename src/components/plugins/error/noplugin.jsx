@@ -14,7 +14,7 @@ function NoPlugin() {
                     <div className='h-100 d-flex align-items-center justify-content-center'>
                         <i className="fa fa-3x fa-folder-open"></i>
                     </div>
-                        <p>No plugins installed...</p>
+                        <p>No plugins installed or no Plugin Data given...</p>
                 </div>
             </div>
         </div>

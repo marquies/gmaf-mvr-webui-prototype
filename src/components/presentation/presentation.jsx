@@ -11,25 +11,35 @@ function Presentation(props) {
         srd: {},
         pd: {}, 
         mmco: {audio:[], image:  filedataimg, video: [], playbacktype:'image'}, 
-        md: {name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }
 
     const showresult2 = {
         srd: {},
-        pd: {}, 
+        pd: [{id:'threedgolf', name: '3D Golf', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023'}], 
         mmco: {audio:[], image:  [], video: filedatavideo, playbacktype:'video'}, 
-        md: {name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }
         
     const showresults= [showresult1, showresult2];
+
+    function canRender(index){
+        if(showresults[index] == undefined || showresults[index].md == undefined || showresults[index].md.id=== undefined){
+
+            console.error("Presentation Data incomplete for Showresults index :", index);
+            return false;
+        }
+
+        return true;
+    }
     
     return (
         <div className='presentation'> Presentation 
             <div>
-                {showresults.map((showresult) => (
-                    <Playback cmmco={showresult} />
+                {showresults.map((showresult, index) => (
+                   canRender(index)? <Playback cmmco={showresult} id={showresult.md.id} />: ""
                 ))}
             </div>
         </div>  

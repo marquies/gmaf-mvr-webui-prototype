@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import MultimediaPlaybackPluginLoader from '../plugins/playback/multimedia/loader';
-import NoPlugin from '../plugins/noplugin';
+import NoPlugin from '../plugins/error/noplugin';
 
 function Multimedia(props){
 
@@ -14,15 +14,16 @@ function canRender(){
         console.error("playbacktype MMCO Mismatch, Playbacktype: ", props.mmco.playbacktype);
         return false;
     }
+
     return true;
 }
 
 return (
-    <div className='query-wsd-container d-flex border-1 border rounded-3'>
-        <div className='query-wsd-inner-container'>
-            { canRender() && typeof(multimediaPlaybackComponents[props.mmco.playbacktype]) === 'function'  ? React.createElement(multimediaPlaybackComponents[props.mmco.playbacktype], { data: props.mmco[props.mmco.playbacktype]}):
+    <div className='playback-multimedia-container border-1 border rounded-3'>
+     
+            { canRender() && typeof(multimediaPlaybackComponents[props.mmco.playbacktype]) === 'function'  ? React.createElement(multimediaPlaybackComponents[props.mmco.playbacktype], { data: props.mmco[props.mmco.playbacktype], setTimeCode: props.setTimeCode}):
             <NoPlugin/> }
-        </div>
+       
     </div>
 );
 

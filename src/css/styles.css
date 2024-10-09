@@ -163,3 +163,9 @@
 .query-wsd-inner-container{
   width: 97%;
 }
+
+.playback-multimedia-container {
+  width: 100%;
+  height: 15rem;
+  overflow: hidden;
+}

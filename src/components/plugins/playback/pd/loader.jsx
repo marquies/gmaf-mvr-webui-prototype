@@ -1,12 +1,13 @@
-import React from "react";
+
+import ThreeDGolf from "./components/threedgolf";
+import PluginOne from "../../query/wsd/components/pluginone";
 
 
 
-const WsdPlaybackPluginLoader = {
-
-   Plugin1: Plugin1,
-   ThreeDGolf:ThreeDGolf
+const PdPlaybackPluginLoader = {
+   Plugin1: PluginOne,
+   threedgolf:ThreeDGolf
 };
 
 
-export default WsdPlaybackPluginLoader
+export default PdPlaybackPluginLoader
