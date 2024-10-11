@@ -22,7 +22,7 @@ useEffect(() => {
 return (
     <div className='details-container d-flex'>
         {canRender(selectedIndex-1)?<i class="fa fa-chevron-left m-1" onClick={() => setSelectedIndex(selectedIndex -1)}></i>:""}
-        {canRender(selectedIndex) ? <Playback cmmco={props.showresults[selectedIndex]} id={props.showresults[selectedIndex].md.id} playbackStyle={"playback-big"} /> : <></>}
+        {canRender(selectedIndex) ? <Playback cmmco={props.showresults[selectedIndex]} id={props.showresults[selectedIndex].md.id} size={"small"} /> : <></>}
         {canRender(selectedIndex+1)?<i class="fa fa-chevron-right m-1" onClick={() => setSelectedIndex(selectedIndex + 1)}></i>:""}
     </div>
 
