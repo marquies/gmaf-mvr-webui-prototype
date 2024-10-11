@@ -20,10 +20,14 @@ useEffect(() => {
 }, [selectedIndex]);
 
 return (
-    <div className='details-container d-flex'>
-        {canRender(selectedIndex-1)?<i class="fa fa-chevron-left m-1" onClick={() => setSelectedIndex(selectedIndex -1)}></i>:""}
-        {canRender(selectedIndex) ? <Playback cmmco={props.showresults[selectedIndex]} id={props.showresults[selectedIndex].md.id} size={"small"} /> : <></>}
-        {canRender(selectedIndex+1)?<i class="fa fa-chevron-right m-1" onClick={() => setSelectedIndex(selectedIndex + 1)}></i>:""}
+    <div className='details-container ms-5 d-flex'>
+        <div className='chevron-container'>
+        {canRender(selectedIndex-1)?<i class="fa fa-chevron-left fa-3x  m-1" onClick={() => setSelectedIndex(selectedIndex -1)}></i>:""}
+        </div>
+        {canRender(selectedIndex) ? <Playback cmmco={props.showresults[selectedIndex]} id={props.showresults[selectedIndex].md.id} view={"details"} /> : <></>}
+        <div>
+        {canRender(selectedIndex+1)?<i class="fa fa-chevron-right fa-3x  m-1" onClick={() => setSelectedIndex(selectedIndex + 1)}></i>:""}
+        </div>
     </div>
 
 );

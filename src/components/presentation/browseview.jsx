@@ -19,7 +19,7 @@ return (
     
     <div className='d-flex flex-wrap flex-start gap'>
         {props.showresults.map((showresult, index) => (
-            canRender(index)? <Playback cmmco={showresult} id={showresult.md.id} playbackStyle={"playback-small"} />: ""
+            canRender(index)? <Playback cmmco={showresult} id={showresult.md.id} view={"browse"} />: ""
         ))}
     </div>
 

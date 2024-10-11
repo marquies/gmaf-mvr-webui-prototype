@@ -62,7 +62,7 @@ function Presentation(props) {
     }
     
     return (
-        <div className='presentation'>
+        <div className= {props.presentationView==="Browse View"? "presentation overflow-auto": "presentation"}>
             { canRender()?  
                 props.presentationView==="Browse View"? 
                     <BrowseView showresults={showresults} />
