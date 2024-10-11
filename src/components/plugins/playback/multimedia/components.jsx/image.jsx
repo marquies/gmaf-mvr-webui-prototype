@@ -14,8 +14,10 @@ function Image(props) {
     }
 
     return (
-        <div id="" className=''>
-            {canRender()?<img src={props.data.url} className="card-img-top presentation-img" alt="" ></img>:"Imcomplete Image Data"}
+        <div id="" className='center-container'>
+            <div className='center-inner-container'>
+            {canRender()?<img src={props.data.url} className="centerelement" alt="" ></img>:"Imcomplete Image Data"}
+            </div>
         </div>       
     );
 

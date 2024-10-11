@@ -17,7 +17,7 @@ useEffect(() => {
 
 return (
     
-        <div className='query'>
+        <div className='playback-small'>
             <div className="card" style={{width: "100%"}}>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>

@@ -36,12 +36,11 @@ function Presentation(props) {
     }
     
     return (
-        <div className='presentation'> Presentation 
-            <div>
+        <div className='presentation d-flex'>
                 {showresults.map((showresult, index) => (
                    canRender(index)? <Playback cmmco={showresult} id={showresult.md.id} />: ""
                 ))}
-            </div>
+           
         </div>  
     );
 

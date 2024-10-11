@@ -24,9 +24,7 @@ function App() {
               <li><button onClick={()=>changeView("Collection")} className="dropdown-item" >Collection</button></li>
           </ul>
       </div>
-      <div>
       { view === "Query" ? <QueryView /> : <CollectionView /> }
-      </div>
     </div>
   );
 }
