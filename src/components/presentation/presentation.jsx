@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import Multimedia from './multimedia';
-import Playback from './playback';
+import React, { useState } from 'react';
+import BrowseView from './browseview';
+import DetailsView from './detailsview';
 
 function Presentation(props) {
     
     const filedataimg = {url:'https://www.gstatic.com/webp/gallery/1.jpg'};
+    const filedataimg2 = {url:'https://picsum.photos/id/237/200/300'};
     const filedatavideo= {url:'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'};
     //Test showresult
     const showresult1 = {
@@ -22,27 +23,54 @@ function Presentation(props) {
         md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }
+    const showresult3 = {
+        srd: {},
+        pd: [{id:'threedgolf', name: '3D Golf', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023'}], 
+        mmco: {audio:[], image:  [], video: filedatavideo, playbacktype:'video'}, 
+        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
+    }
         
-    const showresults= [showresult1, showresult2];
+    const showresult4 = {
+        srd: {},
+        pd: [{id:'threedgolf', name: '3D Golf', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023'}], 
+        mmco: {audio:[], image:  [], video: filedatavideo, playbacktype:'video'}, 
+        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
+    }
+
+    const showresult5 = {
+        srd: {},
+        pd: {}, 
+        mmco: {audio:[], image:  filedataimg2, video: [], playbacktype:'image'}, 
+        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
+    }
+    const showresult6 = {
+        srd: {},
+        pd: {}, 
+        mmco: {audio:[], image:  filedataimg2, video: [], playbacktype:'image'}, 
+        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
+    }    
+        
+    const showresults= [showresult1, showresult2,showresult5, showresult3, showresult4, showresult6,showresult1, showresult2,showresult5, showresult3, showresult4, showresult6,showresult1, showresult2,showresult5, showresult3, showresult4, showresult6,showresult1, showresult2,showresult5, showresult3, showresult4, showresult6];
 
     function canRender(index){
-        if(showresults[index] == undefined || showresults[index].md == undefined || showresults[index].md.id=== undefined){
-
-            console.error("Presentation Data incomplete for Showresults index :", index);
-            return false;
-        }
-
+      
         return true;
     }
     
     return (
-        <div className='presentation d-flex'>
-                {showresults.map((showresult, index) => (
-                   canRender(index)? <Playback cmmco={showresult} id={showresult.md.id} />: ""
-                ))}
-           
+        <div className='presentation'>
+            { canRender()?  
+                props.presentationView==="Browse View"? 
+                    <BrowseView showresults={showresults} />
+                    :<DetailsView showresults={showresults} />
+            : "Could not Render"}
         </div>  
     );
+          
 
 }
 

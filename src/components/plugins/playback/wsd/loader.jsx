@@ -1,8 +1,10 @@
 import React from "react";
+import PluginOne from  './components/pluginone';
+import ThreeDGolf from './components/threedgolf';
 
 
 const WsdPlaybackPluginLoader = {
-    Plugin1: Plugin1,
+    pluginone: PluginOne,
     ThreeDGolf:ThreeDGolf
 };
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react';
 import Multimedia from './multimedia';
 import WsdQuery from '../query/wsdquery';
 import PdPlayback from './pdplayback';
-import Controls from './controls';
+import WsdPlayback from './wsdplayback';
 
 
 function Playback(props){
@@ -17,14 +17,14 @@ useEffect(() => {
 
 return (
     
-        <div className='playback-small'>
+        <div className={props.playbackStyle}>
             <div className="card" style={{width: "100%"}}>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
                         <Multimedia mmco={props.cmmco.mmco} setTimeCode={setTimeCode}/>
                         {/*<Controls setTimeCode={setTimeCode} />*/}
                         <div><i class="fa fa-chevron-down"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
-                            {wsdUnfolded ? <WsdQuery ></WsdQuery>: ""}
+                            {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
                         <div><i class="fa fa-chevron-down"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
                             {pdUnfolded ? <PdPlayback data={props.cmmco.pd} timecode={timeCode}></PdPlayback> :""}     
                    </div>    
