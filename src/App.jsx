@@ -1,4 +1,4 @@
-import React, { Component , useState} from 'react';
+import React, { useState} from 'react';
 import QueryView from './components/query/queryview';
 import CollectionView from './components/collection/collectionview';
 import "font-awesome/css/font-awesome.min.css";
@@ -29,6 +29,8 @@ function App() {
                 <li><button onClick={()=>changeView("Collection")} className="dropdown-item" >Collection</button></li>
             </ul>
         </div>
+
+       { view === "Query" ?
         <div className="dropdown m-1">
           <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               {presentationView}
@@ -37,7 +39,9 @@ function App() {
               <li><button onClick={()=>changePresentationView("Browse View")} className="dropdown-item" >Browse View</button></li>
               <li><button onClick={()=>changePresentationView("Details View")} className="dropdown-item" >Details View</button></li>
           </ul>
-        </div>
+        </div>:
+        ""
+        }
       </div>
       { view === "Query" ? <QueryView presentationView={presentationView}/> : <CollectionView /> }
     </div>

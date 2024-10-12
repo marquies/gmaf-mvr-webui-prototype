@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { } from 'react';
 import BrowseView from './browseview';
 import DetailsView from './detailsview';
 
@@ -12,7 +12,7 @@ function Presentation(props) {
         srd: {},
         pd: {}, 
         mmco: {audio:[], image:  filedataimg, video: [], playbacktype:'image'}, 
-        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023',creationDate:'10.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }
 
@@ -20,14 +20,14 @@ function Presentation(props) {
         srd: {},
         pd: [{id:'threedgolf', name: '3D Golf', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023'}], 
         mmco: {audio:[], image:  [], video: filedatavideo, playbacktype:'video'}, 
-        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023',creationDate:'10.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }
     const showresult3 = {
         srd: {},
         pd: [{id:'threedgolf', name: '3D Golf', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023'}], 
         mmco: {audio:[], image:  [], video: filedatavideo, playbacktype:'video'}, 
-        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023',creationDate:'10.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }
         
@@ -35,7 +35,7 @@ function Presentation(props) {
         srd: {},
         pd: [{id:'threedgolf', name: '3D Golf', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023'}], 
         mmco: {audio:[], image:  [], video: filedatavideo, playbacktype:'video'}, 
-        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        md: {id: "asdasd-wewes-tztzt", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023',creationDate:'10.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }
 
@@ -43,14 +43,14 @@ function Presentation(props) {
         srd: {},
         pd: {}, 
         mmco: {audio:[], image:  filedataimg2, video: [], playbacktype:'image'}, 
-        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023',creationDate:'10.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }
     const showresult6 = {
         srd: {},
         pd: {}, 
         mmco: {audio:[], image:  filedataimg2, video: [], playbacktype:'image'}, 
-        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023' }, 
+        md: {id: "asdas-wewe-asdsad", name: 'test.mp4', description:'golf shot and blue sky', fDate:'10.10.2023', 'tDate':'17.10.2023', creationDate:'10.10.2023' }, 
         wsd: { id:'3D-adventure-Golf', data: {course: '18', coordinates:['23.2', '17.2'] } }
     }    
         

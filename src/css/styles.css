@@ -237,3 +237,27 @@
 
   width: 3%;
 }
+.custom-tooltip{
+
+  position: absolute;
+  z-index: 10;
+  top:2rem;
+  left:2rem;
+  width: 13rem;
+  height: 13rem;
+  background-color: rgb(245, 245, 245);
+  opacity: 0.97;
+
+}
+.tooltip-container{
+
+  position: relative;
+}
+
+.text-overflow-cut{
+  white-space: nowrap;
+  width: 100%;                   /* IE6 needs any width */
+  overflow: hidden;              /* "overflow" value must be different from  visible"*/ 
+  -o-text-overflow: ellipsis;    /* Opera < 11*/
+  text-overflow:    ellipsis; 
+}
