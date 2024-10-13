@@ -17,9 +17,15 @@ function QueryView(props) {
 
   async function query(cmmcoQuery){
 
+    cmmcoQuery=await cmmcoQuery;
     console.log("query: ", cmmcoQuery);
-    //var gmaf= await GMAFAdapter.getInstance();
-
+    var gmaf= await GMAFAdapter.getInstance();
+    console.log(gmaf);
+    if(gmaf===false){
+      return;
+    }
+    var results= await gmaf.query(cmmcoQuery);
+    console.log("results: ", results);
 
 
   }

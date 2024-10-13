@@ -1,7 +1,5 @@
-import React, { Component, useState} from 'react';
-import Sketch from '../old/sketch';
+import React, { useEffect, useState} from 'react';
 import Filter from './filter';
-import Wsd from './wsdquery';
 import WsdQuery from './wsdquery';
 
 
@@ -10,7 +8,9 @@ function Query(props) {
     
     const [text, setText] = useState(""); 
     const [image, setImage] = useState(false);  
+    const [imageurl, setImageurl] = useState("");
     const [audio, setAudio] = useState(false);
+    const [audiourl, setAudiourl] = useState("");
     const [wsd, setWsd] = useState(false);
     const [wsdUnfolded, setWsdUnfolded] = useState(false);
     const [filterUnfolded, setFilterUnfolded] = useState(false);
@@ -26,28 +26,41 @@ function Query(props) {
         //for styled buttons trigger hiddenfield here
         document.getElementById('image-input').click();
     }
+
     function audioInput() {
         //for styled buttons trigger hiddenfield here
         document.getElementById('audio-input').click();
     }
 
     function imageUploaded(event) {
-
         const file = event.target.files[0];
         if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setImage(imageUrl);
+            setImage(file);
+            console.log("File set: ", file);
         }
     }
+
+    //Update Preview
+    useEffect(() => {
+    var url= image? URL.createObjectURL(image):"";
+    setImageurl(url);
+    }, [image]);
+
 
     function audioUploaded(event) {
-        
         const file = event.target.files[0];
         if (file) {
-            const audioUrl = URL.createObjectURL(file);
-            setAudio(audioUrl);
+            setAudio(file);
+            console.log("Audio set");
         }
     }
+
+    //Update Preview
+    useEffect(() => {
+        var url= audio? URL.createObjectURL(audio):"";
+        setAudiourl(url);
+    }, [audio]);
+
 
     function clearImage() {
         setImage(false);
@@ -67,11 +80,11 @@ function Query(props) {
         setAudio(false);
     }
     
-    function createMmcoQuery() {
+   async function createMmcoQuery() {
 
         const mmco={
-            image: image,
-            audio: audio
+            image: await fileInputToMmmcoObject(image),
+            audio: await fileInputToMmmcoObject(audio),
         }
         const cmmcoQuery = {
             SRD:{},
@@ -82,6 +95,53 @@ function Query(props) {
         }
         return cmmcoQuery;
     }
+
+    function fileInputToMmmcoObject(file){
+
+        return new Promise((resolve) => {
+            // Read the file as an ArrayBuffer
+            const reader = new FileReader();
+            reader.onload = (e) => {
+
+                const arrayBuffer = e.target.result; 
+                const uint8 = new Uint8Array(arrayBuffer);
+                
+                var mmcoObj={
+                    name: file.name,
+                    fileSize: file.size,
+                    fileType: file.type,
+                    lastModiied:file.lastModifiedDate,
+                    file: uint8
+                }
+
+                resolve(mmcoObj);
+            };
+            
+            reader.readAsArrayBuffer(file); // Read file as ArrayBuffer
+
+        });
+    }
+
+    
+
+    async function blobUrlToByteArray(blobUrl) {
+        try {
+        const response = await fetch(blobUrl);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch Blob from URL.');
+        }
+    
+        const blob = await response.blob(); 
+        const arrayBuffer = await blob.arrayBuffer();
+        const byteArray = new Uint8Array(arrayBuffer);
+        return byteArray;
+
+        } catch (error) {
+          console.error('Error converting Blob URL to byte array:', error);
+          return false;
+        }
+      }
     
     return (
      
@@ -91,13 +151,13 @@ function Query(props) {
                         <div className='border-1 border rounded-3'>
                             <div className="visual-input mb-2 border-1 border rounded-3">
                             {image ? 
-                                <img id="query-chosen-image" src={image} alt=""/>
+                                <img id="query-chosen-image" src={imageurl} alt=""/>
                                 : <i id= "query-placeholder-image" className="query-placeholder-image fa fa-image fa-3x"></i>
                             }
                             </div>
                             <div>
-                                <audio id="audio-playback" className='m-2' controls src="">
-                                    <source src={audio} type="audio/ogg"/>
+                                <audio id="audio-playback" className='m-2' controls src={audiourl} >
+                                 
                                 </audio>    
                             </div>
                             <div>

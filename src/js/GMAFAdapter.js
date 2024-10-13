@@ -27,7 +27,7 @@ class GMAFAdapter
                
             }catch(error){
                 console.error("GMAF was not instanciated: "+error);
-                return;
+                return false;
             }
             gmaf.setToken(token);
             this.GMAFInstance= gmaf;
@@ -59,9 +59,17 @@ class GMAFAdapter
         return await this.post("gmaf/getMetadataForItem/"+this.apiToken+"/"+itemid,"json");
     }
 
+    getQueryIds(query={}){
+
+        return this.post("gmaf/getQueryIds/"+this.apiToken,"json", query);
+    }
+
     async query(query={})
-    {   
-        return await this.post("gmaf/queryMultimedia/"+this.apiToken,"json", query);
+    {       
+        //First get QueryIds
+        var queryIds= await this.getQueryIds(query);
+
+        //return await this.post("gmaf/queryMultimedia/"+this.apiToken,"json", query);
     }
 
     async getCollection()
@@ -118,7 +126,8 @@ class GMAFAdapter
             return await response.text();
         }catch (error) {
             if(error.message==="Failed to fetch"){
-                alert("GMAF Service not reachable")
+               // alert("GMAF Service not reachable")
+               console.error("GMAF Service not reachable");
             }
             console.error(error);       
         }
@@ -149,7 +158,8 @@ class GMAFAdapter
         }catch (error) {
             console.log(error);
             if(error.message==="Failed to fetch"){
-                alert("GMAF Service not reachable")
+                // alert("GMAF Service not reachable")
+                console.error("GMAF Service not reachable");
             }
             console.error(error);       
         }
