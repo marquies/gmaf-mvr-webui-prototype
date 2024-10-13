@@ -1,13 +1,42 @@
+import config from "../components/config/config";
+
 class GMAFAdapter
 {
     basePath= "http://localhost:8242/gmaf/gmafApi/";
     getCollectionPath = "gmaf/getCollection/";
     queryPath1= "gmaf/"
     apiToken="";
+    static GMAFInstance= false; 
 
     constructor(apiToken=""){
-
         this.apiToken= apiToken;
+    }
+
+
+    static async getInstance()
+    {
+        if(!this.GMAFInstance){
+            try{
+                var gmaf= new GMAFAdapter();
+                var token= await gmaf.getToken(config.appKey);
+             
+                if(typeof(token) !== "string" || token===""){
+                  
+                    throw new Error("The Token received was not a string or empty, Token: "+token);
+                }
+               
+            }catch(error){
+                console.error("GMAF was not instanciated: "+error);
+                return;
+            }
+            gmaf.setToken(token);
+            this.GMAFInstance= gmaf;
+        }
+
+        return this.GMAFInstance;
+    }
+    setToken(token=""){
+        this.apiToken= token;
     }
 
     async getToken(password="")

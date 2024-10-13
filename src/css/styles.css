@@ -241,12 +241,12 @@
 
   position: absolute;
   z-index: 10;
-  top:2rem;
-  left:2rem;
-  width: 13rem;
-  height: 13rem;
+  top:10rem;
+  left:3rem;
+  width: 16rem;
+  height: 7rem;
   background-color: rgb(245, 245, 245);
-  opacity: 0.97;
+  opacity: 0.99;
 
 }
 .tooltip-container{
