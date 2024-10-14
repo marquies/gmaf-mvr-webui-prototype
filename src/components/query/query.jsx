@@ -7,13 +7,13 @@ import WsdQuery from './wsdquery';
 function Query(props) {
     
     const [text, setText] = useState(""); 
-    const [image, setImage] = useState(false);  
+    const [image, setImage] = useState(null);  
     const [imageurl, setImageurl] = useState("");
-    const [audio, setAudio] = useState(false);
+    const [audio, setAudio] = useState(null);
     const [audiourl, setAudiourl] = useState("");
-    const [wsd, setWsd] = useState(false);
-    const [wsdUnfolded, setWsdUnfolded] = useState(false);
-    const [filterUnfolded, setFilterUnfolded] = useState(false);
+    const [wsd, setWsd] = useState(null);
+    const [wsdUnfolded, setWsdUnfolded] = useState(null);
+    const [filterUnfolded, setFilterUnfolded] = useState(null);
    
 
     const [pluginSelected, setPluginSelected] = useState(0);
@@ -36,7 +36,6 @@ function Query(props) {
         const file = event.target.files[0];
         if (file) {
             setImage(file);
-            console.log("File set: ", file);
         }
     }
 
@@ -51,7 +50,6 @@ function Query(props) {
         const file = event.target.files[0];
         if (file) {
             setAudio(file);
-            console.log("Audio set");
         }
     }
 
@@ -63,7 +61,7 @@ function Query(props) {
 
 
     function clearImage() {
-        setImage(false);
+        setImage(null);
     }
 
     function clearText() {
@@ -71,27 +69,27 @@ function Query(props) {
     }
 
     function clearAudio() {
-       setAudio(false);
+       setAudio(null);
     }
 
     function clearAll() {
         setText("");
-        setImage(false);
-        setAudio(false);
+        setImage(null);
+        setAudio(null);
     }
     
    async function createMmcoQuery() {
 
         const mmco={
-            image: await fileInputToMmmcoObject(image),
-            audio: await fileInputToMmmcoObject(audio),
+            image: image? await fileInputToMmmcoObject(image):null,
+            audio: audio? await fileInputToMmmcoObject(audio):null,
         }
         const cmmcoQuery = {
-            SRD:{},
-            PD:{},
-            MMCO:mmco,
-            MD:{description: text},
-            WSD:{}
+            srd:{},
+            pd:{},
+            mmco:mmco,
+            md:{description: text},
+            wsd:{}
         }
         return cmmcoQuery;
     }
@@ -103,45 +101,24 @@ function Query(props) {
             const reader = new FileReader();
             reader.onload = (e) => {
 
-                const arrayBuffer = e.target.result; 
-                const uint8 = new Uint8Array(arrayBuffer);
+                const base64String = e.target.result.split(',')[1];
                 
                 var mmcoObj={
-                    name: file.name,
-                    fileSize: file.size,
-                    fileType: file.type,
-                    lastModiied:file.lastModifiedDate,
-                    file: uint8
+                    filename: file.name,
+                    filesize: file.size,
+                    filetype: file.type,
+                    lastmodiied:file.lastModifiedDate,
+                    file: base64String
                 }
 
                 resolve(mmcoObj);
             };
             
-            reader.readAsArrayBuffer(file); // Read file as ArrayBuffer
+            reader.readAsDataURL(file); // Read file as ArrayBuffer
 
         });
     }
 
-    
-
-    async function blobUrlToByteArray(blobUrl) {
-        try {
-        const response = await fetch(blobUrl);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch Blob from URL.');
-        }
-    
-        const blob = await response.blob(); 
-        const arrayBuffer = await blob.arrayBuffer();
-        const byteArray = new Uint8Array(arrayBuffer);
-        return byteArray;
-
-        } catch (error) {
-          console.error('Error converting Blob URL to byte array:', error);
-          return false;
-        }
-      }
     
     return (
      
@@ -168,7 +145,7 @@ function Query(props) {
                                 <input type="file" onChange={imageUploaded} hidden id="image-input" accept=".png,.jpg"></input>  
                                 <input type="file" onChange={audioUploaded} hidden id="audio-input" accept=".mp3,.wav"></input>  
                                 <div className="dropdown m-1">
-                                    <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="null">
                                         Clear
                                     </button>
                                     <ul className="dropdown-menu">

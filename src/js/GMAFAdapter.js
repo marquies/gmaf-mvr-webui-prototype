@@ -59,7 +59,7 @@ class GMAFAdapter
         return await this.post("gmaf/getMetadataForItem/"+this.apiToken+"/"+itemid,"json");
     }
 
-    getQueryIds(query={}){
+    async getQueryIds(query={}){
 
         return this.post("gmaf/getQueryIds/"+this.apiToken,"json", query);
     }
@@ -68,7 +68,12 @@ class GMAFAdapter
     {       
         //First get QueryIds
         var queryIds= await this.getQueryIds(query);
-
+        console.log("queryIds: ", queryIds);
+        console.log(typeof(queryIds));
+        queryIds.forEach(queryId => {
+            console.log(queryId);
+        })
+        return queryIds;
         //return await this.post("gmaf/queryMultimedia/"+this.apiToken,"json", query);
     }
 
