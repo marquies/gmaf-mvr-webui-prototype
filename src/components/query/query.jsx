@@ -80,9 +80,15 @@ function Query(props) {
     
    async function createMmcoQuery() {
 
+        var imageObj=  image? await fileInputToMmmcoObject(image):null;
+        
+        var audiObj = audio? await fileInputToMmmcoObject(audio):null;
+        var images= imageObj?[imageObj]:[];
+        var audios = audiObj?[audiObj]:[];
+
         const mmco={
-            image: image? await fileInputToMmmcoObject(image):null,
-            audio: audio? await fileInputToMmmcoObject(audio):null,
+            images: images,
+            audios: audios,
         }
         const cmmcoQuery = {
             srd:{},
@@ -142,7 +148,7 @@ function Query(props) {
                             { /*<button type="button" className='btn border border-secondary rounded-1 m-1' data-bs-toggle="modal" data-bs-target="#sketchinputModal"><span className="fa fa-paint-brush"></span></button>*/}
                                 <button onClick={imageInput} type="button" className='btn border border-secondary rounded-1 m-1'><span className="fa fa-image"></span></button>
                                 <button onClick={audioInput} type="button" className='btn border border-secondary rounded-1 m-1'><span className="fa fa-file-audio-o"></span></button>
-                                <input type="file" onChange={imageUploaded} hidden id="image-input" accept=".png,.jpg"></input>  
+                                <input type="file" onChange={imageUploaded} hidden id="image-input" accept=".png,.jpg,.jpeg"></input>  
                                 <input type="file" onChange={audioUploaded} hidden id="audio-input" accept=".mp3,.wav"></input>  
                                 <div className="dropdown m-1">
                                     <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="null">

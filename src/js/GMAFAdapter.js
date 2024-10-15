@@ -70,9 +70,12 @@ class GMAFAdapter
         var queryIds= await this.getQueryIds(query);
         console.log("queryIds: ", queryIds);
         console.log(typeof(queryIds));
+
+        if(typeof(queryIds) =='object'){
         queryIds.forEach(queryId => {
             console.log(queryId);
         })
+        }
         return queryIds;
         //return await this.post("gmaf/queryMultimedia/"+this.apiToken,"json", query);
     }
