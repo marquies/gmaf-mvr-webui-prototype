@@ -34,12 +34,11 @@ useEffect(() => {
   };
 
 
-
     // Handle mouse leave (clear timer and hide tooltip)
     const handleMouseLeave = () => {
        clearTimeout(hoverTimeout.current);
        setIsTooltipVisible(false);
-      };
+    };
 
 return (
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onContextMenu={handleRightClick} className={props.view === "details" ? "playback-big" : "playback-small"}>
@@ -58,7 +57,6 @@ return (
                    </div>    
                 </div>
             </div>    
-          
         </div> 
     );
 

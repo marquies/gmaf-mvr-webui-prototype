@@ -49,7 +49,7 @@ class GMAFAdapter
         return await this.post("gmaf/getMetadata/"+this.apiToken,"json");
     }
 
-    async processItem(itemid=""){
+    async processAssetById(itemid=""){
 
         return await this.post("gmaf/processAssetById/"+this.apiToken+"/"+itemid,"json");
     }
@@ -80,6 +80,18 @@ class GMAFAdapter
         //return await this.post("gmaf/queryMultimedia/"+this.apiToken,"json", query);
     }
 
+    async processAllAssets(updateStatus)
+    {
+        var collectionIds= await this.getCollectionIds();
+        if (typeof collectionIds === 'object') {
+            for (let index = 0; index < collectionIds.length; index++) {
+              let collectionId = collectionIds[index];
+              var processResult = await this.processAssetById(collectionId);
+              console.log("processResult: ", processResult);
+              updateStatus(index, collectionIds.length - 1);
+            }
+          }
+    }
     async getCollection()
     {
         return await this.post("gmaf/getCollection/"+this.apiToken,"json");
@@ -178,6 +190,8 @@ class GMAFAdapter
     {
         return await this.get(url, "blob");
     }
+
+
 }
 
 export default GMAFAdapter;
