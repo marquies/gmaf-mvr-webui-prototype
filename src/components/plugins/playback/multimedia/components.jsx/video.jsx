@@ -37,12 +37,12 @@ function Video(props) {
     return (
 
         <div id="" className='center-container'>
-        <div className='center-inner-container'>
-        { canRender()? <video className='centerelement' ref={videoRef} width="320" height="240" controls>
+        
+        { canRender()? <video className='centerelement' ref={videoRef}  controls>
                     <source src= {props.data.url} type="video/mp4"/>
                 </video>:
                 "Imcomplete Video Data"}
-        </div>
+      
         </div>        
     );
 

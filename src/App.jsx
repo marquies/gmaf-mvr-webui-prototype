@@ -38,12 +38,11 @@ function App() {
   
   }
 
-
   return (
     <div className='app-container m-2'>
       {status !== 0 && statuslength!==status ?
-        <div class="progress">
-        <div class="progress-bar" role="progressbar"   style={{ width: `${statuslength > 0 ? (status / statuslength) * 100 : 0}%` }} aria-valuenow={status} aria-valuemin="0" aria-valuemax={statuslength}></div>
+        <div className="progress">
+        <div className="progress-bar" role="progressbar"   style={{ width: `${statuslength > 0 ? (status / statuslength) * 100 : 0}%` }} aria-valuenow={status} aria-valuemin="0" aria-valuemax={statuslength}></div>
       </div>:""
       }
 

@@ -135,7 +135,7 @@
 .query{
 
   width: 25%;
-  background-color:aquamarine;      
+  /*background-color:aquamarine;   */ 
 
 }
 .presentation{
@@ -172,7 +172,7 @@
 
 .playback-multimedia-container-big {
   width: 100%;
-  height: 21rem;
+  height: 29rem;
   overflow: hidden;
 }
 
@@ -186,33 +186,29 @@
 
 .playback-big{
 
-  width: 60%;
+  width: 100%;
  /* background-color:brown;*/
   height: 100%;
  /* overflow:hidden;*/
 }
 
-.center-container{
-
-  display: flex;
-  justify-content: center;  /* Horizontally centers the child div */
-  align-items: center;      /* Vertically centers the child div */
-  height: 100%;
-  width: 100%;        /* Set height of the parent */
+.center-container {
+  display: flex;              /* Use Flexbox for centering */
+  justify-content: center;    /* Center horizontally */
+  align-items: center;        /* Center vertically */
+  width: 100%;                /* Full width of parent */
+  max-width: 50rem;          /* Optional: Set a max width */
+  margin: 0 auto;            /* Center the container itself */
+  overflow: hidden;   
+  height: 100%;        /* Optional: Hide overflow if necessary */
 }
 
-.center-inner-container{
-
- /* width: 100%;*/
- /* height: 100%;*/
-
+.centerelement {
+  width: 100%;                /* Full width of the parent */
+  height: auto;               /* Maintain aspect ratio */
+  display: block;             /* Remove inline-block spacing */
+  object-fit: cover;
 }
-.centerelement{
-
-  width: 100%;              /* Ensure the image fits inside the div */
-  height: auto;
-}
-
 .query-view{
  /* background-color: chartreuse;*/
   width: 100%;
@@ -227,11 +223,9 @@
   gap:5px;
 }
 
-.details-container{
+.detailsview-container{
 
-  width: 100%;
-  height: 100%;
-/*  background-color: burlywood;*/
+
 }
 .chevron-container{
 
@@ -254,10 +248,31 @@
   position: relative;
 }
 
-.text-overflow-cut{
-  white-space: nowrap;
-  width: 100%;                   /* IE6 needs any width */
-  overflow: hidden;              /* "overflow" value must be different from  visible"*/ 
-  -o-text-overflow: ellipsis;    /* Opera < 11*/
-  text-overflow:    ellipsis; 
+
+.carousel-item {
+  transition: background-color 0.5s ease; /* Smooth transition for color change */
+}
+
+.custom-slide-1 {
+  background-color: #ff5733;
+  color: white;
+}
+
+.custom-slide-2 {
+  background-color: #33c1ff;
+  color: white;
+}
+
+.custom-slide-3 {
+  background-color: #33ff57;
+  color: black;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    background-color: rgba(26, 26, 26, 0.5)!important; /* Semi-transparent white background */
+    color: #532310!important; /* Bootstrap primary color for the arrow */
+    border-radius: 50%; /* Optional: round shape */
+    width: 2rem !important;
+    height: 2rem!important;
 }
