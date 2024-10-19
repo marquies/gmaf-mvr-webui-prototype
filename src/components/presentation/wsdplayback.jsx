@@ -17,8 +17,8 @@ function nextPlugin() {
 }
 
 return (
-    <div className='Playback-wsd-container d-flex border-1 border rounded-3'>
-        <div className='Playback-wsd-inner-container'>
+    <div className='playback-wsd-container d-flex border-1 border rounded-3'>
+        <div className='playback-wsd-inner-container'>
             { typeof(pluginComponents[pluginSelectedIndex]) === 'function'  ? React.createElement(pluginComponents[pluginSelectedIndex]):
             <NoPlugin/> }
         </div>

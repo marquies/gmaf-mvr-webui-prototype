@@ -26,7 +26,7 @@ console.log(props.showresults);
 return (
         <div  className="detailsview-container">
           
-            <Carousel activeIndex={index} onSelect={handleSelect}>
+            <Carousel interval={null} activeIndex={index} onSelect={handleSelect}>
             {props.showresults.map((showresult, index) => (
                 
             <Carousel.Item>
