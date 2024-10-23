@@ -64,20 +64,26 @@ class GMAFAdapter
         return this.post("gmaf/getQueryIds/"+this.apiToken,"json", query);
     }
 
-    async query(query={})
+    async query(query={}, updateStatus)
     {       
         //First get QueryIds
         var queryIds= await this.getQueryIds(query);
-        console.log("queryIds: ", queryIds);
-        console.log(typeof(queryIds));
+        var queryResults= [];
+        if (typeof queryIds === 'object') {
+            for (let index = 0; index < queryIds.length; index++) {
+              var cmmco = await this.getCMMCO(queryIds[index]);
+              queryResults.push(cmmco);
+              updateStatus(index, queryIds.length - 1);
+            }
+          }
+   
+        return queryResults;
+    }
 
-        if(typeof(queryIds) =='object'){
-        queryIds.forEach(queryId => {
-            console.log(queryId);
-        })
-        }
-        return queryIds;
-        //return await this.post("gmaf/queryMultimedia/"+this.apiToken,"json", query);
+    async getCMMCO(queryId){
+
+        return this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId,"json");
+
     }
 
     async processAllAssets(updateStatus)
@@ -167,10 +173,20 @@ class GMAFAdapter
                 body: JSON.stringify(body)
               }
             );
-    
+          
             if(jsonResponse)
             {
-                return await response.json();
+                var result= await response.json();
+                
+                if(result.data){
+                    return result.data;
+                }
+               
+                if(result.error){
+                    throw new Error(result.error);
+                }
+                
+                throw new Error("Response unexepected! : "+result);
             }
            
             return await response.text();
@@ -183,7 +199,6 @@ class GMAFAdapter
             }
             console.error(error);       
         }
-
     }
 
     async getExampleVideo(url)

@@ -12,27 +12,33 @@ function QueryView(props) {
 
   useEffect(() => {
     console.log("Filter: ", filter);
+    setShowResults(queryResults);
   }, [filter]); // Multiple dependencies
+
+  useEffect(() => {
+  
+    setShowResults(queryResults);
+  }, [queryResults]); // Multiple dependencies
 
 
   async function query(cmmcoQuery){
 
     cmmcoQuery=await cmmcoQuery;
-    console.log("query: ", cmmcoQuery);
+  
     var gmaf= await GMAFAdapter.getInstance();
-    console.log(gmaf);
+
     if(gmaf===false){
       return;
     }
-    var results= await gmaf.query(cmmcoQuery);
-    console.log("results: ", results);
 
-
+    var results= await gmaf.query(cmmcoQuery, props.updateStatus);
+    console.log("results", results);
+    setQueryResults(results);
   }
     return (
         <div className='d-flex query-view flex-start'>
             <Query query={query} setFilter={setFilter}/>
-            <Presentation presentationView={props.presentationView}/>
+            <Presentation cmmcos={queryResults} presentationView={props.presentationView}/>
         </div>
     );
   }

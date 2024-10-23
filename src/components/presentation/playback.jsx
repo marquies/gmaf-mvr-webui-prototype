@@ -11,6 +11,7 @@ const [wsdUnfolded, setWsdUnfolded] = useState(false);
 const [pdUnfolded, setPdUnfolded] = useState(false);
 const [timeCode, setTimeCode] = useState(0);
 const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+const {cmmco} = props;
 
 useEffect(() => {
     console.log("Timecode in Parent: ", timeCode);
@@ -40,6 +41,7 @@ useEffect(() => {
        setIsTooltipVisible(false);
     };
 
+
 return (
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onContextMenu={handleRightClick} className={props.view === "details" ? "playback-big" : "playback-small"}>
             <div className='tooltip-container'>
@@ -48,12 +50,12 @@ return (
             <div className="card bg-light" style={{width: "100%"}}>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
-                        <Multimedia view={props.view} mmco={props.cmmco.mmco} setTimeCode={setTimeCode} si/>
+                        <Multimedia view={props.view} mmco={cmmco.mmco} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
                         <div><i class="fa fa-chevron-down fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
                         <div><i class="fa fa-chevron-down"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
-                            {pdUnfolded ? <PdPlayback data={props.cmmco.pd} timecode={timeCode}></PdPlayback> :""}     
+                            {pdUnfolded ? <PdPlayback data={props.cmmco.pd} timecode={timeCode}></PdPlayback> :""}  
                    </div>    
                 </div>
             </div>    

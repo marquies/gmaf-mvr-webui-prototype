@@ -179,6 +179,12 @@
   overflow: hidden;
 }
 
+.text-overflow-cut {
+  overflow: hidden;          /* Hide overflowed content */
+  white-space: nowrap;       /* Prevent line breaks */
+  text-overflow: ellipsis;   /* Show ellipsis for overflowed content */
+}
+
 
 .playback-small{
   flex-basis: calc(25% - 5px);

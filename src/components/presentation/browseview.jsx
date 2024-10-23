@@ -3,26 +3,31 @@ import Playback from './playback';
 
 function BrowseView(props){
 
+const {cmmcos} = props;
 
-function canRender(index){
+function canRender(){
 
-    if(props.showresults !== undefined && props.showresults[index] !== undefined && props.showresults[index].md !== undefined && props.showresults[index].md.id !== undefined){
-
-        return true;
+    if(cmmcos === false || typeof(cmmcos) != 'object'){
+        console.log("false or not an object: ", cmmcos);
+        return false;
     }
-    
-    console.error("Presentation Data incomplete for props.Showresults index :", index);
-    return false;
+
+    return true;
 }
 
 return (
-    
+  <div>
+     {canRender()?
     <div className='d-flex flex-wrap flex-start gap'>
-        {props.showresults.map((showresult, index) => (
-            canRender(index)? <Playback cmmco={showresult} id={showresult.md.id} view={"browse"} />: ""
+       
+        {cmmcos.map((cmmco, index) => (
+            canRender(index)? <Playback key={cmmco.md.id} cmmco={cmmco} id={cmmco.md.id} view={"browse"} />: ""
         ))}
+     
     </div>
-
+       :""
+    }
+    </div>
 );
 
 }

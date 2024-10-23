@@ -29,7 +29,6 @@ function PdPlayback(props){
         if(props.data != undefined &&  props.data[pluginSelectedIndex] != undefined && props.data[pluginSelectedIndex].id!=undefined && typeof(pluginComponents[props.data[pluginSelectedIndex].id]) === 'function') {
             return true;
         }
-
         return false; 
     }
     function noPlugin(){

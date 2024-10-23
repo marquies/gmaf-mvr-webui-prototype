@@ -4,6 +4,8 @@ import DetailsView from './detailsview';
 
 function Presentation(props) {
     
+    const {cmmcos} = props;
+
     const filedataimg = {url:'https://www.gstatic.com/webp/gallery/1.jpg'};
     const filedataimg2 = {url:'https://picsum.photos/id/237/200/300'};
     const filedatavideo= {url:'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'};
@@ -62,11 +64,11 @@ function Presentation(props) {
     }
     
     return (
-        <div className= {props.presentationView==="Browse View"? "presentation overflow-auto": "presentation"}>
+        <div className= {props.presentationView==="Browse View"? "presentation ms-2 overflow-auto": "presentation"}>
             { canRender()?  
                 props.presentationView==="Browse View"? 
-                    <BrowseView showresults={showresults} />
-                    :<DetailsView showresults={showresults} />
+                    <BrowseView cmmcos={cmmcos} />
+                    :<DetailsView cmmcos={cmmcos} />
             : "Could not Render"}
         </div>  
     );

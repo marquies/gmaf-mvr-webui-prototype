@@ -1,17 +1,33 @@
 import React, { useState} from 'react';
 import MultimediaPlaybackPluginLoader from '../plugins/playback/multimedia/loader';
 import NoPlugin from '../plugins/error/noplugin';
+import BlobInfo from '../../js/BlobInfo';
 
 function Multimedia(props){
 
 //Load the React Components
 const multimediaPlaybackComponents= MultimediaPlaybackPluginLoader;
+const {mmco} = props;
+var mmcofile= false;
+var type=false;
 
 function canRender(){
-    
-    if(props.mmco.playbacktype == undefined || props.mmco[props.mmco.playbacktype] == undefined){
 
-        console.error("playbacktype MMCO Mismatch, Playbacktype: ", props.mmco.playbacktype);
+    //Take first File
+    if(typeof(mmco) =="object" && mmco.mmcofiles && mmco.mmcofiles[0] && mmco.mmcofiles[0].filetype && mmco.mmcofiles[0].file){
+        mmcofile= mmco.mmcofiles[0];
+        Object.keys(multimediaPlaybackComponents).forEach((key) => {
+            if(mmcofile.filetype.includes(key)){
+                type=key
+            };
+          });
+     
+    }else
+    {
+        return false;
+    }
+    if(type==false){
+        console.log("Type not recognized: ", type);
         return false;
     }
 
@@ -20,7 +36,7 @@ function canRender(){
 
 return (
     <div className= {props.view === "details" ? 'playback-multimedia-container-big border-1 border rounded-3': 'playback-multimedia-container-small border-1 border rounded-3'}>
-            { canRender() && typeof(multimediaPlaybackComponents[props.mmco.playbacktype]) === 'function'  ? React.createElement(multimediaPlaybackComponents[props.mmco.playbacktype], { data: props.mmco[props.mmco.playbacktype], setTimeCode: props.setTimeCode}):
+            { canRender() && typeof(multimediaPlaybackComponents[type]) === 'function'  ? React.createElement(multimediaPlaybackComponents[type], { data: mmcofile, setTimeCode: props.setTimeCode}):
             <NoPlugin/> }
        
     </div>

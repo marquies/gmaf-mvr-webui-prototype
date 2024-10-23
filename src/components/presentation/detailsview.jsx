@@ -7,35 +7,35 @@ import Carousel from 'react-bootstrap/Carousel';
 function DetailsView(props){
 
     const [index, setIndex] = useState(0);
+    const {cmmcos} = props;
 
     const handleSelect = (selectedIndex) => {
         console.log("Selected index: ", selectedIndex);
       setIndex(selectedIndex);
     };
 
-function canRender(index){
-console.log(props.showresults);
-    if(props.showresults !== undefined && props.showresults[index] !== undefined && props.showresults[index].md !== undefined && props.showresults[index].md.id !== undefined){
+function canRender(){
+    
+    if(cmmcos === false || typeof(cmmcos) != 'object'){
+        return false;
+    }
 
-        return true;
-    }  
-    //console.error("Presentation Data incomplete for props.Showresults index :", index);
-    return false;
+    return true;
 }
 
 return (
         <div  className="detailsview-container">
-          
-            <Carousel interval={null} activeIndex={index} onSelect={handleSelect}>
-            {props.showresults.map((showresult, index) => (
-                
-            <Carousel.Item>
-                <Playback cmmco={showresult} id={showresult.md.id} view={"details"} />
-            </Carousel.Item>
-        ))}
+                {canRender()?
+                <Carousel interval={null} activeIndex={index} onSelect={handleSelect}>
+                {props.showresults.map((showresult, index) => (
+                    
+                <Carousel.Item>
+                    <Playback cmmco={showresult} id={showresult.md.id} view={"details"} />
+                </Carousel.Item>
+                ))}
               
-            </Carousel>
-
+            </Carousel>:""
+            }
 
         </div>
 

@@ -75,7 +75,7 @@ function App() {
           Process all Assets
         </button>
       </div>
-      { view === "Query" ? <QueryView presentationView={presentationView}/> : <CollectionView /> }
+      { view === "Query" ? <QueryView updateStatus={updateStatus} presentationView={presentationView}/> : <CollectionView /> }
     </div>
   );
 }

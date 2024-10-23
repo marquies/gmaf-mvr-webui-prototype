@@ -3,11 +3,12 @@ import React, { Component, useState} from 'react';
 
 function Image(props) {
 
+    const{data}= props;
 
     function canRender(){
   
-        if(props.data == undefined || props.data.url == undefined){
-            console.error("Image Data incomplete :", props.data);
+        if(data == undefined || data.file == undefined){
+            console.error("Image Data incomplete :", data);
             return false;
         }
         return true;
@@ -16,7 +17,7 @@ function Image(props) {
     return (
         <div id="" className='center-container'>
             <div className='center-inner-container'>
-            {canRender()?<img src={props.data.url} className="centerelement" alt="" ></img>:"Imcomplete Image Data"}
+            {canRender()?<img src={data.file} className="centerelement" alt="" ></img>:"Imcomplete Image Data"}
             </div>
         </div>       
     );

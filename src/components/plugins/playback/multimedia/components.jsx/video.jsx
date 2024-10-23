@@ -4,10 +4,11 @@ import React, {useEffect, useRef} from 'react';
 function Video(props) {
     
     const videoRef = useRef(null);
+    const{data, setTimeCode}= props;
 
     function canRender(){
 
-        if(props.data == undefined || props.data.url == undefined || props.setTimeCode == undefined) {
+        if(data == undefined || data.file == undefined || setTimeCode == undefined) {
             console.error("Video Data incomplete or TimeCode Setter not set :", props.data);
             return false;
         }
@@ -38,7 +39,7 @@ function Video(props) {
 
         <div id="" className='center-container'>
         
-        { canRender()? <video className='centerelement' ref={videoRef} src= {props.data.url}  controls>
+        { canRender()? <video className='centerelement' ref={videoRef} src= {data.file}  controls> Your browser does not support the video tag.
                 </video>:
                 "Imcomplete Video Data"}
       
