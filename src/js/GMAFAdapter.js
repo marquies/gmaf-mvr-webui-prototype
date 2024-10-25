@@ -12,7 +12,6 @@ class GMAFAdapter
         this.apiToken= apiToken;
     }
 
-
     static async getInstance()
     {
         if(!this.GMAFInstance){
@@ -68,6 +67,7 @@ class GMAFAdapter
     {       
         //First get QueryIds
         var queryIds= await this.getQueryIds(query);
+      
         var queryResults= [];
         if (typeof queryIds === 'object') {
             for (let index = 0; index < queryIds.length; index++) {
@@ -76,7 +76,7 @@ class GMAFAdapter
               updateStatus(index, queryIds.length - 1);
             }
           }
-   
+    
         return queryResults;
     }
 
@@ -88,7 +88,8 @@ class GMAFAdapter
 
     async processAllAssets(updateStatus)
     {
-        var collectionIds= await this.getCollectionIds();
+        var collectionIds= await this.getCollectionIds(true);
+        console.log("collectionIds: ", collectionIds);
         if (typeof collectionIds === 'object') {
             for (let index = 0; index < collectionIds.length; index++) {
               let collectionId = collectionIds[index];
@@ -103,9 +104,9 @@ class GMAFAdapter
         return await this.post("gmaf/getCollection/"+this.apiToken,"json");
     }
 
-    async getCollectionIds()
+    async getCollectionIds(withtcmmcos=false)
     {
-        return await this.post("gmaf/get-collection-ids/"+this.apiToken,"json");
+        return await this.post("gmaf/get-collection-ids/"+withtcmmcos+"/"+this.apiToken,"json");
     }
     async getCollectionMetaData()
     {

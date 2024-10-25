@@ -21,7 +21,7 @@ return (
     <div className='d-flex flex-wrap flex-start gap'>
        
         {cmmcos.map((cmmco, index) => (
-            canRender(index)? <Playback key={cmmco.md.id} cmmco={cmmco} id={cmmco.md.id} view={"browse"} />: ""
+            canRender(index)? <Playback key={index} cmmco={cmmco} id={cmmco.md.id} view={"browse"} />: ""
         ))}
      
     </div>

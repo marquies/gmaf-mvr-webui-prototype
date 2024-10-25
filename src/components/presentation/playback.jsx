@@ -9,7 +9,7 @@ function Playback(props){
 
 const [wsdUnfolded, setWsdUnfolded] = useState(false);
 const [pdUnfolded, setPdUnfolded] = useState(false);
-const [timeCode, setTimeCode] = useState(0);
+const [timeCode, setTimeCode] = useState(props.cmmco.start);
 const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 const {cmmco} = props;
 
@@ -50,7 +50,7 @@ return (
             <div className="card bg-light" style={{width: "100%"}}>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
-                        <Multimedia view={props.view} mmco={cmmco.mmco} setTimeCode={setTimeCode} />
+                        <Multimedia view={props.view} mmco={cmmco.mmco} start={props.cmmco.start} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
                         <div><i class="fa fa-chevron-down fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}

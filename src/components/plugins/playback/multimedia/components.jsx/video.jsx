@@ -7,8 +7,10 @@ function Video(props) {
     const{data, setTimeCode}= props;
 
     function canRender(){
+        
+        console.log("IN VIDEO",props.start);
 
-        if(data == undefined || data.file == undefined || setTimeCode == undefined) {
+        if(data === undefined || data.file === undefined || setTimeCode === undefined) {
             console.error("Video Data incomplete or TimeCode Setter not set :", props.data);
             return false;
         }
@@ -22,10 +24,25 @@ function Video(props) {
 
     };
 
+    function parseTimecode(timecode) {
+        const parts = timecode.split(':').map(parseFloat); // Split by ":" and convert each part to a number
+        if (parts.length === 3) {
+          const [hours, minutes, seconds] = parts;
+          return hours * 3600 + minutes * 60 + seconds; // Convert to total seconds
+        }
+        return 0; // Default to 0 if parsing fails
+      }
+
+
+
     // UseEffect to set up the event listener
     useEffect(() => {
-        
+
+        //Set Video StartTime
         const video = videoRef.current;
+        var seconds= parseTimecode(props.start);
+        console.log("Secondes before fail", seconds);
+        video.currentTime = seconds;
 
         video.addEventListener('timeupdate', handleTimeUpdate);
 
