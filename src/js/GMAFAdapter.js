@@ -1,4 +1,4 @@
-import config from "../components/config/config";
+import config from "../config/config";
 
 class GMAFAdapter
 {

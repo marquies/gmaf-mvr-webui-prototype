@@ -1,12 +1,11 @@
 import React, { useState} from 'react';
-import WsdQueryPluginLoader from '../plugins/query/wsd/loader';
-import NoPlugin from '../plugins/error/noplugin';
+import WsdPlaybackPluginLoader from '../../../../../plugins/playback/wsd/loader';
+import NoPlugin from '../../../../../plugins/error/noplugin';
 
-function WsdQuery(props){
-
+function WsdPlayback(props){
 
 //Load the React Components
-const pluginComponents= WsdQueryPluginLoader;
+const pluginComponents= WsdPlaybackPluginLoader;
 
 const [pluginSelectedIndex, setPluginSelectedIndex] = useState(0);
 
@@ -17,8 +16,8 @@ function nextPlugin() {
 }
 
 return (
-    <div className='query-wsd-container d-flex border-1 border rounded-3'>
-        <div className='query-wsd-inner-container'>
+    <div className='playback-wsd-container d-flex border-1 border rounded-3'>
+        <div className='playback-wsd-inner-container'>
             { typeof(pluginComponents[pluginSelectedIndex]) === 'function'  ? React.createElement(pluginComponents[pluginSelectedIndex]):
             <NoPlugin/> }
         </div>
@@ -28,4 +27,4 @@ return (
 
 }
 
-export default WsdQuery;
+export default WsdPlayback;

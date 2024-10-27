@@ -1,6 +1,6 @@
 import React, { } from 'react';
-import BrowseView from './browseview';
-import DetailsView from './detailsview';
+import BrowseView from './views/browseview';
+import DetailsView from './views/detailsview';
 
 function Presentation(props) {
     

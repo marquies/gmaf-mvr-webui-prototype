@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import Playback from './playback';
+import Playback from './components/playback';
 
 function BrowseView(props){
 

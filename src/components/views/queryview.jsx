@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Query from './query';
-import Presentation from '../presentation/presentation';
-import config from '../config/config';
+import Query from './query/query/query';
+import Presentation from './query/presentation/presentation';
+import config from '../../config/config';
 import GMAFAdapter from '../../js/GMAFAdapter';
 
 function QueryView(props) {

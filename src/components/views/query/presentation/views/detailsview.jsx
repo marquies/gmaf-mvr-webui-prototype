@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import Playback from './playback';
-import PlugInError from '../plugins/error/pluginerror';
+import Playback from './components/playback';
 import Carousel from 'react-bootstrap/Carousel';
 
 

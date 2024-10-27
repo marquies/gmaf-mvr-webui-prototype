@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
-import PdPlaybackPluginLoader from '../plugins/playback/pd/loader';
-import NoPlugin from '../plugins/error/noplugin';
-import PlugInError from '../plugins/error/pluginerror';
+import PdPlaybackPluginLoader from '../../../../../plugins/playback/pd/loader';
+import NoPlugin from '../../../../../plugins/error/noplugin';
+import PlugInError from '../../../../../plugins/error/pluginerror';
 
 function PdPlayback(props){
 

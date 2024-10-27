@@ -1,7 +1,6 @@
 import React, { useState} from 'react';
-import MultimediaPlaybackPluginLoader from '../plugins/playback/multimedia/loader';
-import NoPlugin from '../plugins/error/noplugin';
-import BlobInfo from '../../js/BlobInfo';
+import MultimediaPlaybackPluginLoader from '../../../../../plugins/playback/multimedia/loader';
+import NoPlugin from '../../../../../plugins/error/noplugin';
 
 function Multimedia(props){
 

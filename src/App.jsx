@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
-import QueryView from './components/query/queryview';
-import CollectionView from './components/collection/collectionview';
+import QueryView from './components/views/queryview';
+import CollectionView from './components/views/collectionview';
 import "font-awesome/css/font-awesome.min.css";
 import "./css/styles.css";
 import GMAFAdapter from './js/GMAFAdapter';
