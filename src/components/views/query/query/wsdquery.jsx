@@ -4,7 +4,6 @@ import NoPlugin from '../../../plugins/error/noplugin';
 
 function WsdQuery(props){
 
-
 //Load the React Components
 const pluginComponents= WsdQueryPluginLoader;
 
@@ -22,7 +21,7 @@ return (
             { typeof(pluginComponents[pluginSelectedIndex]) === 'function'  ? React.createElement(pluginComponents[pluginSelectedIndex]):
             <NoPlugin/> }
         </div>
-        { typeof(pluginComponents[pluginSelectedIndex]) === 'function'  ?   <i class="fa fa-chevron-right m-1" onClick={nextPlugin}></i>:""}
+        { typeof(pluginComponents[pluginSelectedIndex]) === 'function'  ?   <i class="fa fa-chevron-right fsize m-1" onClick={nextPlugin}></i>:""}
     </div>
 );
 

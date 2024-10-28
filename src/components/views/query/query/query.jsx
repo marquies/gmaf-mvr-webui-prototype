@@ -165,9 +165,9 @@ function Query(props) {
                             </div>
                         </div>
                         <textarea className="form-control textarea mt-1" placeholder="Enter your text query..." id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
-                            <div><i class="fa fa-chevron-down"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
+                            <div><i class="fa fa-chevron-down fsize"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdQuery ></WsdQuery>: ""}
-                            <div><i class="fa fa-chevron-down"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
+                            <div><i class="fa fa-chevron-down fsize"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
                             {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
                      <button className="w-25 btn btn-primary mt-2 float-end"  onClick={ ()=> props.query(createMmcoQuery())}>Query</button>   
                     </div>

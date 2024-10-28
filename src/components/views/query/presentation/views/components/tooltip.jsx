@@ -12,7 +12,7 @@ return (
      <div className='p-1'>
         <div className='text-overflow-cut'>id: {props.md.id}</div>
         <div className='text-overflow-cut'>name: {props.md.name}</div>
-        <div className='text-overflow-cut'>creation date: {props.md.creationDate}</div>
+        <div className='text-overflow-cut'>date: {props.md.Date}</div>
         <div className='text-overflow-cut'>desricption: {props.md.description}</div>
     </div>
          :""

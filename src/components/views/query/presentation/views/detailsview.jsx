@@ -23,13 +23,13 @@ function canRender(){
 }
 
 return (
-        <div  className="detailsview-container">
+        <div  className="detailsview-container ms-2">
                 {canRender()?
                 <Carousel interval={null} activeIndex={index} onSelect={handleSelect}>
-                {props.showresults.map((showresult, index) => (
+                {cmmcos.map((cmmco, index) => (
                     
                 <Carousel.Item>
-                    <Playback cmmco={showresult} id={showresult.md.id} view={"details"} />
+                    <Playback key={index} cmmco={cmmco} id={cmmco.md.id} view={"details"} />
                 </Carousel.Item>
                 ))}
               

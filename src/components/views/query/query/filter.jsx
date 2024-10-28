@@ -10,9 +10,6 @@ function Filter(props){
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
 
-function typeChanged(type) {
-
-}
 
 useEffect(() => {
     var filter=

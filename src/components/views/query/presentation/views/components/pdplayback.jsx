@@ -48,7 +48,7 @@ function PdPlayback(props){
                     <PlugInError/>  
                 }
             </div>
-              { noPlugin() ? "":<i class="fa fa-chevron-right m-1" onClick={nextPlugin}></i>}
+              { noPlugin() ? "":<i class="fa fa-chevron-right fsize m-1" onClick={nextPlugin}></i>}
         </div>
     );
     

@@ -285,3 +285,7 @@
     width: 2rem !important;
     height: 2rem!important;
 }
+
+.fsize{
+  font-size: 12px;
+}

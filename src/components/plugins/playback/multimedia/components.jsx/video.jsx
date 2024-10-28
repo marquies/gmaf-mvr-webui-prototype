@@ -7,8 +7,7 @@ function Video(props) {
     const{data, setTimeCode}= props;
 
     function canRender(){
-        
-        console.log("IN VIDEO",props.start);
+    
 
         if(data === undefined || data.file === undefined || setTimeCode === undefined) {
             console.error("Video Data incomplete or TimeCode Setter not set :", props.data);
@@ -41,7 +40,6 @@ function Video(props) {
         //Set Video StartTime
         const video = videoRef.current;
         var seconds= parseTimecode(props.start);
-        console.log("Secondes before fail", seconds);
         video.currentTime = seconds;
 
         video.addEventListener('timeupdate', handleTimeUpdate);

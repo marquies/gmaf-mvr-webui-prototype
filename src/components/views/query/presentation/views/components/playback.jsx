@@ -14,7 +14,7 @@ const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 const {cmmco} = props;
 
 useEffect(() => {
-    console.log("Timecode in Parent: ", timeCode);
+    //console.log("Timecode in Parent: ", timeCode);
 }, [timeCode]);
 
   // Ref to store the timeout ID
@@ -52,9 +52,9 @@ return (
                     <div className='border-1 border rounded-3'>
                         <Multimedia view={props.view} mmco={cmmco.mmco} start={props.cmmco.start} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
-                        <div><i class="fa fa-chevron-down fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
+                        <div><i class="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
-                        <div><i class="fa fa-chevron-down"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
+                        <div><i class="fa fa-chevron-down fsize"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
                             {pdUnfolded ? <PdPlayback data={props.cmmco.pd} timecode={timeCode}></PdPlayback> :""}  
                    </div>    
                 </div>

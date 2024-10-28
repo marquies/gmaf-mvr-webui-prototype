@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Query from './query/query/query';
 import Presentation from './query/presentation/presentation';
-import config from '../../config/config';
 import GMAFAdapter from '../../js/GMAFAdapter';
+import Filter from '../../js/Filter';
 
 function QueryView(props) {
 
@@ -11,15 +11,11 @@ function QueryView(props) {
   const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
-    console.log("Filter: ", filter);
-    setShowResults(queryResults);
-  }, [filter]); // Multiple dependencies
-
-  useEffect(() => {
-  
-    setShowResults(queryResults);
-  }, [queryResults]); // Multiple dependencies
-
+    console.log(filter);
+    var showResults= Filter.filter(queryResults,filter);
+    console.log("showResults:", showResults);
+    setShowResults(showResults);
+  }, [filter, queryResults]); 
 
   async function query(cmmcoQuery){
 
@@ -38,7 +34,7 @@ function QueryView(props) {
     return (
         <div className='d-flex query-view flex-start'>
             <Query query={query} setFilter={setFilter}/>
-            <Presentation cmmcos={queryResults} presentationView={props.presentationView}/>
+            <Presentation cmmcos={showResults} presentationView={props.presentationView}/>
         </div>
     );
   }
