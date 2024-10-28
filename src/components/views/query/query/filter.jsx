@@ -52,8 +52,7 @@ return (
                 <ul className="dropdown-menu">
                     <li><button onClick={(type)=> setType("Image")} className="dropdown-item">Image</button></li>
                     <li><button onClick={(type)=> setType("Video")} className="dropdown-item">Video</button></li>
-                    <li><button onClick={(type)=> setType("Video2D")} className="dropdown-item">Video 2D</button></li>
-                    <li><button onClick={(type)=> setType("Video3D")} className="dropdown-item">Video 3D</button></li>     
+                    <li><button onClick={(type)=> setType("MVR")} className="dropdown-item">MVR</button></li> 
                     <li><button onClick={(type)=> setType("")} className="dropdown-item">No type filter</button></li>
                 </ul>
             </div>

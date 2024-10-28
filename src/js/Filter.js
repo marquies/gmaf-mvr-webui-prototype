@@ -11,11 +11,11 @@ class Filter {
             const date= new Date(md.Date);
             const roundedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
             // Check each property in the filter object
-            const matchesName = filterObject.name ? md.name.includes(filterObject.name) : true;
-            const matchesType = filterObject.type ? md.type.includes(filterObject.type) : true;
+            const matchesName = filterObject.name ? md.name.toLowerCase().includes(filterObject.name.toLowerCase()) : true;
+            const matchesType = filterObject.type ? md.type.toLowerCase().includes(filterObject.type.toLowerCase()) : true;
             const matchesFromDate = filterObject.fromDate ? roundedDate >= new Date(filterObject.fromDate) : true;
             const matchesToDate = filterObject.toDate ? roundedDate <= new Date(filterObject.toDate) : true;
-
+            console.log("matchesName: ", matchesName, "matchesType: ", matchesType, "matchesFromDate: ", matchesFromDate, "matchesToDate: ", matchesToDate);
             // Return true if all conditions match
             return matchesName && matchesType && matchesFromDate && matchesToDate;
         });
