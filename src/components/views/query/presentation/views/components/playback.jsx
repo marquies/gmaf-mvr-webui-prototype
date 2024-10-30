@@ -14,14 +14,14 @@ const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 const {cmmco} = props;
 
 useEffect(() => {
-    //console.log("Timecode in Parent: ", timeCode);
+   console.log("Timecode in Parent: ", timeCode);
 }, [timeCode]);
 
   // Ref to store the timeout ID
   const hoverTimeout = useRef(null);
 
   const handleRightClick = (event) => {
-   event.preventDefault(); // Prevent the default context menu
+   //event.preventDefault(); // Prevent the default context menu
    setIsTooltipVisible(true);
  };
 
@@ -50,12 +50,12 @@ return (
             <div className="card bg-light" style={{width: "100%"}}>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
-                        <Multimedia view={props.view} mmco={cmmco.mmco} start={props.cmmco.start} setTimeCode={setTimeCode} />
+                        <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.mmco.start} timecode={timeCode} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
                         <div><i class="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
                         <div><i class="fa fa-chevron-down fsize"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
-                            {pdUnfolded ? <PdPlayback data={props.cmmco.pd} timecode={timeCode}></PdPlayback> :""}  
+                            {pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.mmco.start} timecode={timeCode}></PdPlayback> :""}  
                    </div>    
                 </div>
             </div>    

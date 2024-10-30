@@ -1,13 +1,10 @@
 
-import ThreeDGolf from "./components/threedgolf";
+import ThreeDGolf from "./components/activitydata";
 import PluginOne from "../../query/wsd/components/pluginone";
-
-
+import ActivityData from "./components/activitydata";
 
 const PdPlaybackPluginLoader = {
-   Plugin1: PluginOne,
-   threedgolf:ThreeDGolf
+   "application/vnd.ms-excel": ActivityData,
 };
-
 
 export default PdPlaybackPluginLoader

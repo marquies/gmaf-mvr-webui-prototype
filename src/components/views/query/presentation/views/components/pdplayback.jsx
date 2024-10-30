@@ -6,37 +6,59 @@ import PlugInError from '../../../../../plugins/error/pluginerror';
 function PdPlayback(props){
 
     //Load the React Components
-    var pluginComponents= PdPlaybackPluginLoader;
-    
+    var PdPlaybackComponents= PdPlaybackPluginLoader;
+    const {pd} = props;
     const [pluginSelectedIndex, setPluginSelectedIndex] = useState(0);
+    var pdfile= false;
+    var type=false;
+
     
-    // Map the Plugins to the indexes 
-    useEffect(() => {
+      // Map the Plugins to the indexes 
+      useEffect(() => {
         
-        console.log("TimeCode: ", props.timeCode);
-        console.log(props.data[pluginSelectedIndex]);
+    }, [pluginSelectedIndex]); 
+
     
-    }, []); 
 
     function nextPlugin() {
 
-        setPluginSelectedIndex((pluginSelectedIndex + 1) % Object.keys(pluginComponents).length);
+        setPluginSelectedIndex((pluginSelectedIndex + 1) % Object.keys(PdPlaybackComponents).length);
         //console.log(pluginComponents[pluginSelectedIndex].canRender());
     }
     
     function canRender() {
 
-        if(props.data != undefined &&  props.data[pluginSelectedIndex] != undefined && props.data[pluginSelectedIndex].id!=undefined && typeof(pluginComponents[props.data[pluginSelectedIndex].id]) === 'function') {
-            return true;
-        }
-        return false; 
+     //Take selected file
+     if(typeof(pd) =="object" && pd.mmcofiles && pd.mmcofiles[pluginSelectedIndex] && pd.mmcofiles[pluginSelectedIndex].filetype && pd.mmcofiles[pluginSelectedIndex].file){
+
+        pdfile= pd.mmcofiles[pluginSelectedIndex];
+        Object.keys(PdPlaybackComponents).forEach((key) => {
+            if(pdfile.filetype.includes(key)){
+                type=key
+               
+            };
+          });
+     
+    }else
+    {
+        return false;
+    }
+    if(type==false){
+        console.log("Type not recognized: ", type);
+        return false;
+    }
+
+    return true;
     }
     function noPlugin(){
-
-        if(props.data != undefined && typeof(props.data) == 'object' && Object.keys(props.data).length >0 &&  Object.keys(pluginComponents).length!=0){
-
+        console.log("PROPS PB: ", props);
+        console.log("TimeCode: ", props.timecode);
+        
+        if(pd.mmcofiles!= undefined && typeof(pd.mmcofiles) == 'object' && Object.keys(pd.mmcofiles).length >0 &&  Object.keys(PdPlaybackComponents).length!=0){
+         
             return false;
         }
+       
         return true;
     }
 
@@ -44,7 +66,7 @@ function PdPlayback(props){
         <div className='query-wsd-container d-flex border-1 border rounded-3'>
             <div className='query-wsd-inner-container'>
                 { noPlugin() ? <NoPlugin/>: 
-                  canRender() ? React.createElement(pluginComponents[props.data[pluginSelectedIndex].id], {data: props.data[pluginSelectedIndex], timecode: props.timecode}):
+                  canRender() && typeof(PdPlaybackComponents[type]) === 'function'  ? React.createElement(PdPlaybackComponents[type], { data: pdfile, timecode: props.timecode, start:props.start}):
                     <PlugInError/>  
                 }
             </div>

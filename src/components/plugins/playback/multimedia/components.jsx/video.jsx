@@ -24,6 +24,9 @@ function Video(props) {
     };
 
     function parseTimecode(timecode) {
+        if (!timecode) {
+            return false;
+        }
         const parts = timecode.split(':').map(parseFloat); // Split by ":" and convert each part to a number
         if (parts.length === 3) {
           const [hours, minutes, seconds] = parts;
