@@ -4,10 +4,8 @@ import PlugInError from '../../../error/pluginerror';
 
 function ActivityData(props) {
     
-    const [text, setText] = useState(""); 
     const [heartRate, setHeartRate] = useState(null);
     const [altitude, setAltitude] = useState(null);
-    const [timecode, setTimeCode] = useState(props.timecode);
 
     function canRender(){
     
