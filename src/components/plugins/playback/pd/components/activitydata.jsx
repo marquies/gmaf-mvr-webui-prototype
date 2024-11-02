@@ -77,7 +77,7 @@ function ActivityData(props) {
             {canRender() ? 
             <div>
                 <div>
-                    <h3>Activity </h3>
+                    <h3 className='m-3 ms-5'>Activity </h3>
                 </div>
                 <div className='m-3'>
                         <div className="d-flex mt-2">
