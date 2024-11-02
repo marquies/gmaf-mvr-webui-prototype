@@ -11,11 +11,16 @@ function QueryView(props) {
   const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
-    console.log(filter);
+  
     var showResults= Filter.filter(queryResults,filter);
-    console.log("showResults:", showResults);
     setShowResults(showResults);
   }, [filter, queryResults]); 
+
+
+  useEffect(() => { 
+    console.log("LOADED QUERY: ");
+    query({});
+  }, []);
 
   async function query(cmmcoQuery){
 

@@ -39,7 +39,7 @@ useEffect(() => {
     const handleMouseLeave = () => {
        clearTimeout(hoverTimeout.current);
        setIsTooltipVisible(false);
-    };
+  };
 
 
 return (

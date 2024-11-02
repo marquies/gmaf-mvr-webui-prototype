@@ -14,6 +14,7 @@ function App() {
   const [status, setStatus] = useState(0); 
   const [statuslength, setStatusLength] = useState(0); 
 
+
   function changePresentationView(view){
     setPresentationView(view);
   }
@@ -45,9 +46,6 @@ function App() {
         <div className="progress-bar" role="progressbar"   style={{ width: `${statuslength > 0 ? (status / statuslength) * 100 : 0}%` }} aria-valuenow={status} aria-valuemin="0" aria-valuemax={statuslength}></div>
       </div>:""
       }
-
-
-    
       <div className='d-flex'>
         <div className="dropdown m-1">
             <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
