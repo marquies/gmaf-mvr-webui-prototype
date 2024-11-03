@@ -14,7 +14,11 @@ function DetailsView(props){
     };
 
 function canRender(){
-    
+
+    if (Array.isArray(cmmcos) && cmmcos.length === 0) {
+        return false;
+    }
+
     if(cmmcos === false || typeof(cmmcos) != 'object'){
         return false;
     }
@@ -25,7 +29,7 @@ function canRender(){
 return (
         <div  className="detailsview-container ms-2">
                 {canRender()?
-                <Carousel interval={null} activeIndex={index} onSelect={handleSelect}>
+                <Carousel  key={cmmcos.length} interval={null} activeIndex={index} onSelect={handleSelect}>
                 {cmmcos.map((cmmco, index) => (
                     
                 <Carousel.Item>
@@ -33,7 +37,7 @@ return (
                 </Carousel.Item>
                 ))}
               
-            </Carousel>:""
+            </Carousel>:<h3>No Elements found for the query</h3>
             }
 
         </div>

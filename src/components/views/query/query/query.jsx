@@ -13,7 +13,7 @@ function Query(props) {
     const [audiourl, setAudiourl] = useState("");
     const [wsd, setWsd] = useState(null);
     const [wsdUnfolded, setWsdUnfolded] = useState(null);
-    const [filterUnfolded, setFilterUnfolded] = useState(null);
+    const [filterUnfolded, setFilterUnfolded] = useState(true); //Show by default
    
 
     const [pluginSelected, setPluginSelected] = useState(0);
