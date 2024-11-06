@@ -18,7 +18,6 @@ function QueryView(props) {
 
 
   useEffect(() => { 
-    console.log("LOADED QUERY: ");
     query({});
   }, []);
 

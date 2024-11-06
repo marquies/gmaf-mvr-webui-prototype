@@ -81,11 +81,11 @@ function ActivityData(props) {
                 </div>
                 <div className='m-3'>
                         <div className="d-flex mt-2">
-                            <i class="fa fa-heart fsize2"></i>        
+                            <i className="fa fa-heart fsize2"></i>        
                             <div className='h3 ms-2 mt-1'>Pulse {heartRate}</div>
                         </div>
                         <div className='d-flex mt-2'>
-                            <i class="fa fa-arrow-up fsize2"></i>
+                            <i className="fa fa-arrow-up fsize2"></i>
                             <div className='h3 ms-2 mt-1'>Altitude {altitude}</div>
                         </div>
                     </div>

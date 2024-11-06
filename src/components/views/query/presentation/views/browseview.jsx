@@ -8,7 +8,7 @@ const {cmmcos} = props;
 function canRender(){
 
     if(cmmcos === false || typeof(cmmcos) != 'object'){
-        console.log("false or not an object: ", cmmcos);
+        //console.log("false or not an object: ", cmmcos);
         return false;
     }
 

@@ -89,12 +89,12 @@ class GMAFAdapter
     async processAllAssets(updateStatus)
     {
         var collectionIds= await this.getCollectionIds(true);
-        console.log("collectionIds: ", collectionIds);
+     
         if (typeof collectionIds === 'object') {
             for (let index = 0; index < collectionIds.length; index++) {
               let collectionId = collectionIds[index];
               var processResult = await this.processAssetById(collectionId);
-              console.log("processResult: ", processResult);
+        
               updateStatus(index, collectionIds.length - 1);
             }
           }
@@ -193,7 +193,7 @@ class GMAFAdapter
             return await response.text();
 
         }catch (error) {
-            console.log(error);
+            
             if(error.message==="Failed to fetch"){
                 // alert("GMAF Service not reachable")
                 console.error("GMAF Service not reachable");

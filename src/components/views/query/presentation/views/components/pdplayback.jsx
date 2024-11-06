@@ -51,8 +51,7 @@ function PdPlayback(props){
     return true;
     }
     function noPlugin(){
-        console.log("PROPS PB: ", props);
-        console.log("TimeCode: ", props.timecode);
+    
         
         if(pd.mmcofiles!= undefined && typeof(pd.mmcofiles) == 'object' && Object.keys(pd.mmcofiles).length >0 &&  Object.keys(PdPlaybackComponents).length!=0){
          
@@ -70,7 +69,7 @@ function PdPlayback(props){
                     <PlugInError/>  
                 }
             </div>
-              { noPlugin() ? "":<i class="fa fa-chevron-right fsize m-1" onClick={nextPlugin}></i>}
+              { noPlugin() ? "":<i className="fa fa-chevron-right fsize m-1" onClick={nextPlugin}></i>}
         </div>
     );
     

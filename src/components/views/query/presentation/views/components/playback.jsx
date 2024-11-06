@@ -52,9 +52,9 @@ return (
                     <div className='border-1 border rounded-3'>
                         <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.mmco.start} timecode={timeCode} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
-                        <div><i class="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
+                        <div><i className="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
-                        <div><i class="fa fa-chevron-down fsize"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
+                        <div><i className="fa fa-chevron-down fsize"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
                             {pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.mmco.start} timecode={timeCode}></PdPlayback> :""}  
                    </div>    
                 </div>

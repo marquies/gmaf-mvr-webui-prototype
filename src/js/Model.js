@@ -73,7 +73,7 @@ class Model
         this.collectionids= await this.gmaf.getCollectionIds();
         this.metaData= await this.gmaf.getMetadata();
         
-        console.log(this.metaData);
+        //console.log(this.metaData);
         return await this.getPresentationArray();
 
     }

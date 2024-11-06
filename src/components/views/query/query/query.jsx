@@ -86,6 +86,15 @@ function Query(props) {
         var images= imageObj?[imageObj]:[];
         var audios = audiObj?[audiObj]:[];
 
+        if(text!=""){
+
+            if(!isValidCommaSeparatedKeywords(text)){
+
+                alert("Please enter a comma separated list of keywords");
+                return false;
+            }
+        }
+
         const mmco={
             images: images,
             audios: audios,
@@ -94,10 +103,43 @@ function Query(props) {
             srd:{},
             pd:{},
             mmco:mmco,
-            md:{description: text},
+            md:{keywords: text},
             wsd:{}
         }
+
+        console.log("Query: ", cmmcoQuery);
         return cmmcoQuery;
+    }
+
+    function isValidCommaSeparatedKeywords(str) {
+        if (typeof str !== 'string') {
+            return false;
+        }
+    
+        // Trim the entire string to remove leading/trailing whitespace
+        const trimmedStr = str.trim();
+    
+        // An empty string is not considered a valid list of keywords
+        if (trimmedStr.length === 0) {
+            return false;
+        }
+    
+        // Split the string by commas and trim each keyword immediately
+        const keywords = trimmedStr.split(',').map(keyword => keyword.trim());
+    
+        // Define a regular expression for a valid keyword
+        const keywordRegex = /^[A-Za-z0-9_-]+$/;
+    
+        // Check each trimmed keyword
+        for (let keyword of keywords) {
+            // Check if the keyword is non-empty and matches the regex
+            if (keyword.length === 0 || !keywordRegex.test(keyword)) {
+                return false;
+            }
+        }
+    
+        // All keywords are valid
+        return true;
     }
 
     function fileInputToMmmcoObject(file){
@@ -165,9 +207,9 @@ function Query(props) {
                             </div>
                         </div>
                         <textarea className="form-control textarea mt-1" placeholder="Enter your comma seperated keywords here..." id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
-                            <div><i class="fa fa-chevron-down fsize"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
+                            <div><i className="fa fa-chevron-down fsize"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdQuery ></WsdQuery>: ""}
-                            <div><i class="fa fa-chevron-down fsize"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
+                            <div><i className="fa fa-chevron-down fsize"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
                             {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
                      <button className="w-25 btn btn-primary mt-2 float-end"  onClick={ ()=> props.query(createMmcoQuery())}>Query</button>   
                     </div>
