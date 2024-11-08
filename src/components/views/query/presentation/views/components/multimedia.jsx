@@ -12,6 +12,7 @@ var type=false;
 
 function canRender(){
 
+    console.log("Multimedia Propes: ", props);
     //Take first File
     if(typeof(mmco) =="object" && mmco.mmcofiles && mmco.mmcofiles[0] && mmco.mmcofiles[0].filetype && mmco.mmcofiles[0].file){
         mmcofile= mmco.mmcofiles[0];

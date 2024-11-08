@@ -41,16 +41,20 @@ useEffect(() => {
        setIsTooltipVisible(false);
   };
 
+function canRender(){
+
+    console.log("Props in Playback: ", props);
+}
 
 return (
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onContextMenu={handleRightClick} className={props.view === "details" ? "playback-big" : "playback-small"}>
-            <div className='tooltip-container'>
+            <div className='tooltip-container'>{canRender()}
               {isTooltipVisible? <ToolTip md={props.cmmco.md} />:""}
               </div>
             <div className="card bg-light" style={{width: "100%"}}>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
-                        <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.mmco.start} timecode={timeCode} setTimeCode={setTimeCode} />
+                        <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.start} timecode={timeCode} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
                         <div><i className="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
