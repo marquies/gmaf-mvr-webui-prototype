@@ -41,14 +41,10 @@ useEffect(() => {
        setIsTooltipVisible(false);
   };
 
-function canRender(){
-
-    console.log("Props in Playback: ", props);
-}
 
 return (
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onContextMenu={handleRightClick} className={props.view === "details" ? "playback-big" : "playback-small"}>
-            <div className='tooltip-container'>{canRender()}
+            <div className='tooltip-container'>
               {isTooltipVisible? <ToolTip md={props.cmmco.md} />:""}
               </div>
             <div className="card bg-light" style={{width: "100%"}}>
