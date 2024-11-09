@@ -14,6 +14,7 @@ function QueryView(props) {
   
     var showResults= Filter.filter(queryResults,filter);
     setShowResults(showResults);
+    
   }, [filter, queryResults]); 
 
 
@@ -30,7 +31,9 @@ function QueryView(props) {
     if(gmaf===false){
       return;
     }
-
+    //Empty Results
+    setQueryResults(false);
+    setShowResults(false);
     var results= await gmaf.query(cmmcoQuery, props.updateStatus);
     console.log("results", results);
     setQueryResults(results);

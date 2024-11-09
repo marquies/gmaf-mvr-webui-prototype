@@ -23,10 +23,16 @@ function ActivityData(props) {
 
     function setDataForTimeCode(timecode){
 
+      
         var records= readData();
         let dataIndex = Math.round(timecode);
         let datarow= records[dataIndex];
 
+        if(!datarow){
+            //console.log("Datarow incomplete!: ", datarow);
+            //setHeartRate("No Data");
+            return;
+        }
         let heartRate= datarow["record.heart_rate[bpm]"];
         let altitude= datarow["record.enhanced_altitude[m]"];
 

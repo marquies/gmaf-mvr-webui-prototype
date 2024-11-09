@@ -112,28 +112,34 @@ function Query(props) {
     }
 
     function isValidCommaSeparatedKeywords(str) {
+
+        //Here further methods can be added
+        return true;
+
+
         if (typeof str !== 'string') {
             return false;
         }
     
         // Trim the entire string to remove leading/trailing whitespace
-        const trimmedStr = str.trim();
-    
+        const trimmedStr =  str.trim();
+        console.log("Here1");
         // An empty string is not considered a valid list of keywords
         if (trimmedStr.length === 0) {
             return false;
         }
-    
+        console.log("Here2");
         // Split the string by commas and trim each keyword immediately
         const keywords = trimmedStr.split(',').map(keyword => keyword.trim());
     
         // Define a regular expression for a valid keyword
         const keywordRegex = /^[A-Za-z0-9_-]+$/;
-    
+        console.log("Here3");
         // Check each trimmed keyword
         for (let keyword of keywords) {
             // Check if the keyword is non-empty and matches the regex
             if (keyword.length === 0 || !keywordRegex.test(keyword)) {
+                console.log("Here4");
                 return false;
             }
         }

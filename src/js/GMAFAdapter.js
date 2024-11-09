@@ -94,7 +94,8 @@ class GMAFAdapter
             for (let index = 0; index < collectionIds.length; index++) {
               let collectionId = collectionIds[index];
               var processResult = await this.processAssetById(collectionId);
-        
+              console.log("processResult:", processResult);
+              console.log(index, collectionIds.length - 1);
               updateStatus(index, collectionIds.length - 1);
             }
           }
