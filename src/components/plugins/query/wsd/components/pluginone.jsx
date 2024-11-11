@@ -1,5 +1,6 @@
 import React, { useState} from 'react';
 import PluginError from '../../../error/pluginerror';
+import NoPlugin from '../../../error/noplugin';
 
 
 function PluginOne() {
@@ -12,7 +13,7 @@ function PluginOne() {
 
     return (
         <div>
-            {canRender() ? <div id="plugin" className=''>Plugin 1 Here!</div> : <PluginError/>}
+            {canRender() ? <div id="plugin" className=''>Plugin 1 Here!</div> : <NoPlugin/>}
         </div>
        
     );
