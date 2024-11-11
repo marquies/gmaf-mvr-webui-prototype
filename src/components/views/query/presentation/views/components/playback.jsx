@@ -3,6 +3,7 @@ import Multimedia from './multimedia';
 import ToolTip from './tooltip';
 import PdPlayback from './pdplayback';
 import WsdPlayback from './wsdplayback';
+import GMAFAdapter from '../../../../../../js/GMAFAdapter';
 
 
 function Playback(props){
@@ -15,6 +16,7 @@ const {cmmco} = props;
 
 useEffect(() => {
    console.log("Timecode in Parent: ", timeCode);
+   console.log("Props: ", props);
 }, [timeCode]);
 
   // Ref to store the timeout ID
@@ -41,13 +43,34 @@ useEffect(() => {
        setIsTooltipVisible(false);
   };
 
+  async function deleteitem(){
+
+    var gmaf= gmaf= await GMAFAdapter.getInstance();
+
+    var result= await gmaf.deleteItemFromCollection(props.id);
+    console.log("Result: ", result);
+    if(result == "true"){
+      alert("Item deleted successfully!");
+    }else
+    {
+      alert("Item deletion failed!");
+    }
+ 
+    if(props.deleteItem){
+
+       props.deleteItem(props.id);
+    }
+
+  }
+
 
 return (
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onContextMenu={handleRightClick} className={props.view === "details" ? "playback-big" : "playback-small"}>
             <div className='tooltip-container'>
               {isTooltipVisible? <ToolTip md={props.cmmco.md} />:""}
               </div>
-            <div className="card bg-light" style={{width: "100%"}}>
+              {props.deletable?<i className="fa fa-sm fa-trash" onClick={()=>deleteitem()} type="button"></i>:""}
+            <div className="card bg-light"  style={{width: "100%"}}>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
                         <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.start} timecode={timeCode} setTimeCode={setTimeCode} />

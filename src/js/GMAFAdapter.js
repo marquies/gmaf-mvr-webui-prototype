@@ -100,9 +100,20 @@ class GMAFAdapter
             }
           }
     }
-    async getCollection()
+    async getCollection(updateStatus)
     {
-        return await this.post("gmaf/getCollection/"+this.apiToken,"json");
+         var collectionIds= await this.getCollectionIds(true);
+     
+         var collectionResults= [];
+         if (typeof collectionIds === 'object') {
+             for (let index = 0; index < collectionIds.length; index++) {
+               var cmmco = await this.getCMMCO(collectionIds[index]);
+               collectionResults.push(cmmco);
+               updateStatus(index, collectionIds.length - 1);
+             }
+           }
+     
+         return collectionResults;
     }
 
     async getCollectionIds(withtcmmcos=false)

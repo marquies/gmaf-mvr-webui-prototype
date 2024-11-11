@@ -41,7 +41,7 @@ function QueryView(props) {
     return (
         <div className='d-flex query-view flex-start'>
             <Query query={query} setFilter={setFilter}/>
-            <Presentation cmmcos={showResults} presentationView={props.presentationView}/>
+            <Presentation cmmcos={showResults} presentationView={props.presentationView} deletable={false}/>
         </div>
     );
   }

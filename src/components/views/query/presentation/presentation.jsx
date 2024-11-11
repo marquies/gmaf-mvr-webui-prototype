@@ -15,7 +15,7 @@ function Presentation(props) {
         <div className= {props.presentationView==="Browse View"? "presentation ms-2 overflow-auto": "presentation"}>
             { canRender()?  
                 props.presentationView==="Browse View"? 
-                    <BrowseView cmmcos={cmmcos} />
+                    <BrowseView cmmcos={cmmcos} deletable={props.deletable} deleteItem={props.deleteItem}/>
                     :<DetailsView cmmcos={cmmcos} />
             : "Could not Render"}
         </div>  

@@ -12,7 +12,7 @@ function App() {
   const [view, setView] = useState("Query"); 
   const [presentationView, setPresentationView] = useState("Browse View"); 
   const [status, setStatus] = useState(-1); 
-  const [statuslength, setStatusLength] = useState(0); 
+  const [statuslength, setStatusLength] = useState(0);
 
 
   function changePresentationView(view){
@@ -23,9 +23,8 @@ function App() {
   }
 
   function updateStatus(status, length){
-    console.log("In Update Status");
-    setStatus(status);
-    setStatusLength(length);
+    setStatus(status+1);
+    setStatusLength(length+1);
   }
 
   async function processAllAssets(){
@@ -42,7 +41,7 @@ function App() {
 
   return (
     <div className='app-container m-2'>
-      {status >= 0 && statuslength!==status ?
+      {status >= 0 && statuslength+1!==status+1 ?
         <div className="progress">
         <div className="progress-bar" role="progressbar"   style={{ width: `${statuslength > 0 ? (status / statuslength) * 100 : 0}%` }} aria-valuenow={status} aria-valuemin="0" aria-valuemax={statuslength}></div>
       </div>:""
@@ -74,7 +73,7 @@ function App() {
           Process all Assets
         </button>
       </div>
-      { view === "Query" ? <QueryView updateStatus={updateStatus} presentationView={presentationView}/> : <CollectionView /> }
+      { view === "Query" ? <QueryView updateStatus={updateStatus} presentationView={presentationView}/> : <CollectionView updateStatus={updateStatus} /> }
     </div>
   );
 }
