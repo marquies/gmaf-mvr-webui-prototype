@@ -19,7 +19,6 @@ function PdPlayback(props){
     }, [pluginSelectedIndex]); 
 
     
-
     function nextPlugin() {
 
         setPluginSelectedIndex((pluginSelectedIndex + 1) % Object.keys(PdPlaybackComponents).length);
@@ -51,8 +50,7 @@ function PdPlayback(props){
     return true;
     }
     function noPlugin(){
-    
-        
+          
         if(pd.mmcofiles!= undefined && typeof(pd.mmcofiles) == 'object' && Object.keys(pd.mmcofiles).length >0 &&  Object.keys(PdPlaybackComponents).length!=0){
          
             return false;
@@ -65,14 +63,14 @@ function PdPlayback(props){
         <div className='query-wsd-container d-flex border-1 border rounded-3'>
             <div className='query-wsd-inner-container'>
                 { noPlugin() ? <NoPlugin/>: 
-                  canRender() && typeof(PdPlaybackComponents[type]) === 'function'  ? React.createElement(PdPlaybackComponents[type], { data: pdfile, timecode: props.timecode, start:props.start}):
+                  canRender() && typeof(PdPlaybackComponents[type]) === 'function'  ?
+                   React.createElement(PdPlaybackComponents[type], { data: pdfile, timecode: props.timecode, start:props.start}):
                     <PlugInError/>  
                 }
             </div>
               { noPlugin() ? "":<i className="fa fa-chevron-right fsize m-1" onClick={nextPlugin}></i>}
         </div>
-    );
-    
+    );   
 }
 
 export default PdPlayback;

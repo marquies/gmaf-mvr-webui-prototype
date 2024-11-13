@@ -15,8 +15,8 @@ const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 const {cmmco} = props;
 
 useEffect(() => {
-   console.log("Timecode in Parent: ", timeCode);
-   console.log("Props: ", props);
+   console.log("Timecode ", timeCode);
+
 }, [timeCode]);
 
   // Ref to store the timeout ID
@@ -39,8 +39,8 @@ useEffect(() => {
 
     // Handle mouse leave (clear timer and hide tooltip)
     const handleMouseLeave = () => {
-       clearTimeout(hoverTimeout.current);
-       setIsTooltipVisible(false);
+       //clearTimeout(hoverTimeout.current);
+       //setIsTooltipVisible(false);
   };
 
   async function deleteitem(){

@@ -35,7 +35,6 @@ function QueryView(props) {
     setQueryResults(false);
     setShowResults(false);
     var results= await gmaf.query(cmmcoQuery, props.updateStatus);
-    console.log("results", results);
     setQueryResults(results);
   }
     return (

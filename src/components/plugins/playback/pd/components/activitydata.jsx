@@ -7,23 +7,13 @@ function ActivityData(props) {
     const [heartRate, setHeartRate] = useState(null);
     const [altitude, setAltitude] = useState(null);
 
-    function canRender(){
-    
-        if(props.data == undefined || props.timecode == undefined) {
-            console.error("Activity Data incomplete or TimeCode Setter not set :", props.data);
-            return false;
-        }
 
-        return true;
-    }
 
     useEffect(() => {   
         setDataForTimeCode(props.timecode);
     }, [props.timecode]);
 
     function setDataForTimeCode(timecode){
-
-      
         var records= readData();
         let dataIndex = Math.round(timecode);
         let datarow= records[dataIndex];
@@ -45,37 +35,46 @@ function ActivityData(props) {
 
     function readData(){
                  
-            if(!props.data.file){
-        
-                return null;
-            }
+        if(!props.data.file){
+    
+            return null;
+        }
 
-            const base64String = props.data.file;
+        const base64String = props.data.file;
 
-            // Step 1: Remove the base64 prefix and decode the string
-            const csvString = atob(base64String.split(",")[1]);
+        // Step 1: Remove the base64 prefix and decode the string
+        const csvString = atob(base64String.split(",")[1]);
 
-            // Step 2: Split CSV into lines
-            const lines = csvString.trim().split("\n");
+        // Step 2: Split CSV into lines
+        const lines = csvString.trim().split("\n");
 
-            // Step 3: Extract headers
-            const headers = lines[0].split(",");
+        // Step 3: Extract headers
+        const headers = lines[0].split(",");
 
-            // Step 4: Map CSV rows to objects
-            const records = lines.slice(1).map(line => {
-                const values = line.split(",");
-                let record = {};
-                headers.forEach((header, index) => {
-                    record[header.trim()] = values[index].trim().replace(/"/g, '');
-                });
-                return record;
+        // Step 4: Map CSV rows to objects
+        const records = lines.slice(1).map(line => {
+            const values = line.split(",");
+            let record = {};
+            headers.forEach((header, index) => {
+                record[header.trim()] = values[index].trim().replace(/"/g, '');
             });
+            return record;
+        });
 
-            // Output the result
-            return records;
+        // Output the result
+        return records;
     }
 
 
+    function canRender(){
+    
+        if(props.data == undefined || props.timecode == undefined) {
+            console.error("Activity Data incomplete or TimeCode Setter not set :", props.data);
+            return false;
+        }
+
+        return true;
+    }
 
     return (
         <div id="plugin" className=''>
@@ -88,7 +87,7 @@ function ActivityData(props) {
                 <div className='m-3'>
                         <div className="d-flex mt-2">
                             <i className="fa fa-heart fsize2"></i>        
-                            <div className='h3 ms-2 mt-1'>Pulse {heartRate}</div>
+                            <div className='h3 ms-2 mt-1'>HR {heartRate}</div>
                         </div>
                         <div className='d-flex mt-2'>
                             <i className="fa fa-arrow-up fsize2"></i>
@@ -98,9 +97,8 @@ function ActivityData(props) {
                 </div>
             
             : <PlugInError/>}
-        </div>
-       
-);
+        </div>    
+    );
 
 }
 

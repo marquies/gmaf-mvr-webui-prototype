@@ -35,7 +35,8 @@ function canRender(){
 
 return (
     <div className= {props.view === "details" ? 'playback-multimedia-container-big border-1 border rounded-3': 'playback-multimedia-container-small border-1 border rounded-3'}>
-            { canRender() && typeof(multimediaPlaybackComponents[type]) === 'function'  ? React.createElement(multimediaPlaybackComponents[type], { data: mmcofile, start:props.start, setTimeCode: props.setTimeCode}):
+            { canRender() && typeof(multimediaPlaybackComponents[type]) === 'function'  ? 
+            React.createElement(multimediaPlaybackComponents[type], { data: mmcofile, start:props.start, setTimeCode: props.setTimeCode}):
             <NoPlugin/> }
        
     </div>

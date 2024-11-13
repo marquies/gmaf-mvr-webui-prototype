@@ -23,8 +23,9 @@ function App() {
   }
 
   function updateStatus(status, length){
-    setStatus(status+1);
-    setStatusLength(length+1);
+    console.log("STAT",status, length);
+    setStatus(status);
+    setStatusLength(length);
   }
 
   async function processAllAssets(){
@@ -41,7 +42,7 @@ function App() {
 
   return (
     <div className='app-container m-2'>
-      {status >= 0 && statuslength+1!==status+1 ?
+      {status >= 0 && statuslength!==status ?
         <div className="progress">
         <div className="progress-bar" role="progressbar"   style={{ width: `${statuslength > 0 ? (status / statuslength) * 100 : 0}%` }} aria-valuenow={status} aria-valuemin="0" aria-valuemax={statuslength}></div>
       </div>:""

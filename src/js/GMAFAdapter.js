@@ -67,13 +67,13 @@ class GMAFAdapter
     {       
         //First get QueryIds
         var queryIds= await this.getQueryIds(query);
-      
+        updateStatus(0, queryIds.length);
         var queryResults= [];
         if (typeof queryIds === 'object') {
             for (let index = 0; index < queryIds.length; index++) {
               var cmmco = await this.getCMMCO(queryIds[index]);
               queryResults.push(cmmco);
-              updateStatus(index, queryIds.length - 1);
+              updateStatus(index+1, queryIds.length);
             }
           }
     
@@ -89,27 +89,26 @@ class GMAFAdapter
     async processAllAssets(updateStatus)
     {
         var collectionIds= await this.getCollectionIds(true);
-     
+        updateStatus(0, collectionIds.length);
         if (typeof collectionIds === 'object') {
             for (let index = 0; index < collectionIds.length; index++) {
               let collectionId = collectionIds[index];
               var processResult = await this.processAssetById(collectionId);
-              console.log("processResult:", processResult);
-              console.log(index, collectionIds.length - 1);
-              updateStatus(index, collectionIds.length - 1);
+    
+              updateStatus(index+1, collectionIds.length);
             }
           }
     }
     async getCollection(updateStatus)
     {
          var collectionIds= await this.getCollectionIds(true);
-     
+         updateStatus(0, collectionIds.length);
          var collectionResults= [];
          if (typeof collectionIds === 'object') {
              for (let index = 0; index < collectionIds.length; index++) {
                var cmmco = await this.getCMMCO(collectionIds[index]);
                collectionResults.push(cmmco);
-               updateStatus(index, collectionIds.length - 1);
+               updateStatus(index+1, collectionIds.length);
              }
            }
      
