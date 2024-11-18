@@ -16,6 +16,7 @@ const {cmmco} = props;
 
 useEffect(() => {
    console.log("Timecode ", timeCode);
+   console.log("Props in PB", props);
 
 }, [timeCode]);
 
