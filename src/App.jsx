@@ -23,7 +23,7 @@ function App() {
   }
 
   function updateStatus(status, length){
-    console.log("STAT",status, length);
+   
     setStatus(status);
     setStatusLength(length);
   }

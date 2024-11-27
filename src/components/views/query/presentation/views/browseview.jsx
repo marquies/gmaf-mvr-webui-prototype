@@ -26,24 +26,27 @@ useEffect(() => {
     {
         return;
     } 
-    console.log("In pagination the state is: ", paginationState);
+   
     const startIndex = (paginationState - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
-    console.log("Indices", startIndex, endIndex);
     var showCmmcos= cmmcos.slice(startIndex, endIndex);
     console.log(showCmmcos);
     setShowCmmcos(showCmmcos);
+    
+    if(document.getElementById("prev-button")===null || document.getElementById("next-button")===null){
+        return;
+    }
 
     //change Pagination numbers 
-    if(paginationState==1){
+    if(paginationState===1){
         document.getElementById("prev-button").className="page-item disabled";
     }else
     {
         document.getElementById("prev-button").className="page-item";
     }
     
-    if(paginationState==Math.ceil(cmmcos.length / itemsPerPage)){
+    if(paginationState===Math.ceil(cmmcos.length / itemsPerPage)){
         document.getElementById("next-button").className="page-item disabled";
     }else
     {
@@ -66,13 +69,14 @@ function handlePagination(currentPage) {
 
 return (
   <div>
-     <nav aria-label="Page navigation example">
+     {showCmmcos.length>0? <nav aria-label="Page navigation example">
         <ul className="pagination">
-            <li id="prev-button" onClick={()=>handlePagination(paginationState-1)} className="page-item"><a className="page-link" >Previous</a></li>  
-            <li id="pagi2" className="page-item"><a className="page-link" >{paginationState}</a></li>   
-            <li id="next-button" onClick={()=>handlePagination(paginationState+1)} className="page-item"><a className="page-link" >Next</a></li>
+            <li id="prev-button" onClick={()=>handlePagination(paginationState-1)} className="page-item"><button className="page-link" >Previous</button></li>  
+            <li id="pagi2" className="page-item"><button className="page-link" >{paginationState}</button></li>   
+            <li id="next-button" onClick={()=>handlePagination(paginationState+1)} className="page-item"><button className="page-link" >Next</button></li>
         </ul>
-    </nav>
+    </nav>:""
+    }
      {canRender()?
     <div className='d-flex flex-wrap flex-start gap'>
        

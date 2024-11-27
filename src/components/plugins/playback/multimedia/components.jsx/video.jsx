@@ -24,7 +24,7 @@ function Video(props) {
     };
 
     function parseTimecode(timecode) {
-        console.log("timecode: ", timecode);
+       
         if (!timecode) {
             return false;
         }
@@ -44,10 +44,14 @@ function Video(props) {
         //Set Video StartTime
         const video = videoRef.current;
         //console.log("PROPS Start:  ", props.start);
-        var seconds= parseTimecode(props.start);
+        var secondsStart= parseTimecode(props.start);
+        var secondsEnd= parseTimecode(props.end);
+        var middleSeconds= secondsStart+secondsEnd/2;
+        video.currentTime = middleSeconds;
+        //console.log("Start: ", secondsStart, "End: ", secondsEnd, "Middle: ", middleSeconds);
 
         //console.log("Seconrds   ", seconds);
-        video.currentTime = seconds;
+       
 
         video.addEventListener('timeupdate', handleTimeUpdate);
 
@@ -55,7 +59,7 @@ function Video(props) {
             video.removeEventListener('timeupdate', handleTimeUpdate);
         };
 
-    }, []);  
+    } );  
 
     return (
 

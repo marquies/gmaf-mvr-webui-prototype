@@ -212,7 +212,7 @@ function Query(props) {
                                 </div>
                             </div>
                         </div>
-                        <textarea className="form-control textarea mt-1" placeholder="Enter your comma seperated keywords here..." spellcheck="false" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
+                        <textarea className="form-control textarea mt-1" placeholder="Enter your comma seperated keywords here..." spellCheck="false" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
                             <div><i className="fa fa-chevron-down fsize"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdQuery ></WsdQuery>: ""}
                             <div><i className="fa fa-chevron-down fsize"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>

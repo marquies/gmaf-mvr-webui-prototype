@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState} from 'react';
 import Multimedia from './multimedia';
 import ToolTip from './tooltip';
 import PdPlayback from './pdplayback';
@@ -16,12 +16,12 @@ const {cmmco} = props;
 
 useEffect(() => {
    console.log("Timecode ", timeCode);
-   console.log("Props in PB", props);
+   //console.log("Props in PB", props);
 
 }, [timeCode]);
 
   // Ref to store the timeout ID
-  const hoverTimeout = useRef(null);
+  //const hoverTimeout = useRef(null);
 
   const handleRightClick = (event) => {
    //event.preventDefault(); // Prevent the default context menu
@@ -41,16 +41,16 @@ useEffect(() => {
     // Handle mouse leave (clear timer and hide tooltip)
     const handleMouseLeave = () => {
        //clearTimeout(hoverTimeout.current);
-       //setIsTooltipVisible(false);
+       setIsTooltipVisible(false);
   };
 
   async function deleteitem(){
 
-    var gmaf= gmaf= await GMAFAdapter.getInstance();
+    var gmaf= await GMAFAdapter.getInstance();
 
     var result= await gmaf.deleteItemFromCollection(props.id);
-    console.log("Result: ", result);
-    if(result == "true"){
+   
+    if(result === "true"){
       alert("Item deleted successfully!");
     }else
     {
@@ -59,10 +59,10 @@ useEffect(() => {
  
     if(props.deleteItem){
 
-       props.deleteItem(props.id);
+      props.deleteItem(props.id);
     }
 
-  }
+}
 
 
 return (
@@ -71,10 +71,10 @@ return (
               {isTooltipVisible? <ToolTip md={props.cmmco.md} />:""}
               </div>
               {props.deletable?<i className="fa fa-sm fa-trash" onClick={()=>deleteitem()} type="button"></i>:""}
-            <div className="card bg-light"  style={{width: "100%"}}>
+            <div className={cmmco.start===""?"card bg-cmmco":"card bg-light"}  style={{width: "100%"}}>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
-                        <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.start} timecode={timeCode} setTimeCode={setTimeCode} />
+                        <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.start} end={cmmco.end} timecode={timeCode} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
                         <div><i className="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
                             {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}

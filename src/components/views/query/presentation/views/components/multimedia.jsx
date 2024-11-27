@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { } from 'react';
 import MultimediaPlaybackPluginLoader from '../../../../../plugins/playback/multimedia/loader';
 import NoPlugin from '../../../../../plugins/error/noplugin';
 
@@ -25,7 +25,7 @@ function canRender(){
     {
         return false;
     }
-    if(type==false){
+    if(type===false){
         console.log("Type not recognized: ", type);
         return false;
     }
@@ -36,7 +36,7 @@ function canRender(){
 return (
     <div className= {props.view === "details" ? 'playback-multimedia-container-big border-1 border rounded-3': 'playback-multimedia-container-small border-1 border rounded-3'}>
             { canRender() && typeof(multimediaPlaybackComponents[type]) === 'function'  ? 
-            React.createElement(multimediaPlaybackComponents[type], { data: mmcofile, start:props.start, setTimeCode: props.setTimeCode}):
+            React.createElement(multimediaPlaybackComponents[type], { data: mmcofile, start:props.start, end:props.end, setTimeCode: props.setTimeCode}):
             <NoPlugin/> }
        
     </div>
