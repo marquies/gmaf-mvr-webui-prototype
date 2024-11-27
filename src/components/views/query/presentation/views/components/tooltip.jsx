@@ -3,6 +3,7 @@ import React, {} from 'react';
 function ToolTip(props){
 
 function canRender(){
+    console.log(props);
     return true;
 }
 
@@ -13,7 +14,8 @@ return (
         <div className='text-overflow-cut'>id: {props.md.id}</div>
         <div className='text-overflow-cut'>name: {props.md.name}</div>
         <div className='text-overflow-cut'>date: {props.md.Date}</div>
-        <div className='text-overflow-cut'>desricption: {props.md.description}</div>
+        {props.start? <div className='text-overflow-cut'>start: {props.start}</div>:""}
+        {props.end? <div className='text-overflow-cut'>start: {props.end}</div>:""}
     </div>
          :""
     }

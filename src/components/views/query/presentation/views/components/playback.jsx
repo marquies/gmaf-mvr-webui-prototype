@@ -14,11 +14,6 @@ const [timeCode, setTimeCode] = useState(props.cmmco.start);
 const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 const {cmmco} = props;
 
-useEffect(() => {
-   console.log("Timecode ", timeCode);
-   //console.log("Props in PB", props);
-
-}, [timeCode]);
 
   // Ref to store the timeout ID
   //const hoverTimeout = useRef(null);
@@ -68,7 +63,7 @@ useEffect(() => {
 return (
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onContextMenu={handleRightClick} className={props.view === "details" ? "playback-big" : "playback-small"}>
             <div className='tooltip-container'>
-              {isTooltipVisible? <ToolTip md={props.cmmco.md} />:""}
+              {isTooltipVisible? <ToolTip md={props.cmmco.md} start={props.cmmco.start} end={props.cmmco.end} />:""}
               </div>
               {props.deletable?<i className="fa fa-sm fa-trash" onClick={()=>deleteitem()} type="button"></i>:""}
             <div className={cmmco.start===""?"card bg-cmmco":"card bg-light"}  style={{width: "100%"}}>

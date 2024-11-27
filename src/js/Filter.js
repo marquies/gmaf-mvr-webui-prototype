@@ -16,7 +16,7 @@ class Filter {
             const matchesType = filterObject.type ? md.type.toLowerCase().includes(filterObject.type.toLowerCase()) : true;
             const matchesFromDate = filterObject.fromDate ? roundedDate >= new Date(filterObject.fromDate) : true;
             const matchesToDate = filterObject.toDate ? roundedDate <= new Date(filterObject.toDate) : true;
-            console.log("matchesName: ", matchesName, "matchesType: ", matchesType, "matchesFromDate: ", matchesFromDate, "matchesToDate: ", matchesToDate);
+            //console.log("matchesName: ", matchesName, "matchesType: ", matchesType, "matchesFromDate: ", matchesFromDate, "matchesToDate: ", matchesToDate);
             // Return true if all conditions match
             return matchesName && matchesType && matchesFromDate && matchesToDate;
         });

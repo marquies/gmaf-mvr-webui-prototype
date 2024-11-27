@@ -59,7 +59,7 @@ function Video(props) {
             video.removeEventListener('timeupdate', handleTimeUpdate);
         };
 
-    } );  
+    }, []);  
 
     return (
 
