@@ -6,6 +6,7 @@ function BrowseView(props){
 
 const [paginationState, setPaginationState] = useState(1); 
 const [showCmmcos, setShowCmmcos] = useState([]); 
+const [_, setRerender] = useState(0);
 const itemsPerPage=8;
 
 const {cmmcos} = props;
@@ -13,6 +14,7 @@ const {cmmcos} = props;
 
 function canRender(){
 
+    console.log("PROPS hier: ", props);
     if(cmmcos === false || typeof(cmmcos) != 'object'){
         //console.log("false or not an object: ", cmmcos);
         return false;
@@ -20,6 +22,7 @@ function canRender(){
 
     return true;
 }
+
 
 useEffect(() => {
     if (!cmmcos || typeof cmmcos !== 'object')

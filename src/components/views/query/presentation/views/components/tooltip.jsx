@@ -15,7 +15,7 @@ return (
         <div className='text-overflow-cut'>name: {props.md.name}</div>
         <div className='text-overflow-cut'>date: {props.md.Date}</div>
         {props.start? <div className='text-overflow-cut'>start: {props.start}</div>:""}
-        {props.end? <div className='text-overflow-cut'>start: {props.end}</div>:""}
+        {props.end? <div className='text-overflow-cut'>end: {props.end}</div>:""}
     </div>
          :""
     }

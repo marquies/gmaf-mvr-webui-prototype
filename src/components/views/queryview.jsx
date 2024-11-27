@@ -9,17 +9,20 @@ function QueryView(props) {
   const [filter, setFilter] = useState(false);
   const [queryResults, setQueryResults] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [key, setKey] = useState("23423432432"); //trigger rerender
+
 
   useEffect(() => {
   
     var showResults= Filter.filter(queryResults,filter);
+    setKey(Math.random());
     setShowResults(showResults);
     
   }, [filter, queryResults]); 
 
 
   useEffect(() => { 
-    query({});
+    //query({});
   }, []);
 
   async function query(cmmcoQuery){
@@ -32,15 +35,17 @@ function QueryView(props) {
       return;
     }
     //Empty Results
-    setQueryResults(false);
-    setShowResults(false);
+   
+   
     var results= await gmaf.query(cmmcoQuery, props.updateStatus);
+    setKey(Math.random());
+    //setPaginationReset(true);
     setQueryResults(results);
   }
     return (
         <div className='d-flex query-view flex-start'>
             <Query query={query} setFilter={setFilter}/>
-            <Presentation cmmcos={showResults} presentationView={props.presentationView} deletable={false}/>
+            <Presentation key={key} cmmcos={showResults} presentationView={props.presentationView}  deletable={false} se/>
         </div>
     );
   }
