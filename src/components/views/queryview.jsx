@@ -2,23 +2,24 @@ import React, { useState, useEffect } from 'react';
 import Query from './query/query/query';
 import Presentation from './query/presentation/presentation';
 import GMAFAdapter from '../../js/GMAFAdapter';
-import Filter from '../../js/Filter';
+
 
 function QueryView(props) {
 
   const [filter, setFilter] = useState(false);
   const [queryResults, setQueryResults] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [key, setKey] = useState("23423432432"); //trigger rerender
-
+  //const [showResults, setShowResults] = useState(false);
+  const [key, setKey] = useState(Math.random()); 
+  const [page, setPage] = useState(1); 
+  const [numberOfPages, setNumberOfPages] = useState(1);
 
   useEffect(() => {
   
-    var showResults= Filter.filter(queryResults,filter);
+    //var showResults= Filter.filter(queryResults,filter);
     setKey(Math.random());
-    setShowResults(showResults);
+    //setShowResults(queryResults);
     
-  }, [filter, queryResults]); 
+  }, [ queryResults]); 
 
 
   useEffect(() => { 
@@ -27,25 +28,29 @@ function QueryView(props) {
 
   async function query(cmmcoQuery){
 
-    cmmcoQuery=await cmmcoQuery;
+    console.log(filter);
+    var query= {"cmmcoQuery":cmmcoQuery, "filter": filter};
   
     var gmaf= await GMAFAdapter.getInstance();
 
     if(gmaf===false){
       return;
     }
-    //Empty Results
-   
-   
-    var results= await gmaf.query(cmmcoQuery, props.updateStatus);
-    setKey(Math.random());
-    //setPaginationReset(true);
-    setQueryResults(results);
+
+    var results= await gmaf.query(query, props.updateStatus);
+
+    //setKey(Math.random());
+    console.log(results);
+    setPage(results.page);
+    
+    setNumberOfPages(results.numberOfPages);
+    setQueryResults(results.results);
+
   }
     return (
         <div className='d-flex query-view flex-start'>
             <Query query={query} setFilter={setFilter}/>
-            <Presentation key={key} cmmcos={showResults} presentationView={props.presentationView}  deletable={false} se/>
+            {queryResults.length>0?<Presentation updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={props.presentationView}  deletable={false} se/>:<h2 className='ms-5'>No  machting results found</h2>}
         </div>
     );
   }

@@ -1,7 +1,9 @@
 import config from "../config/config";
+import Cache from "./Cache";
 
 class GMAFAdapter
 {
+   
     basePath= "http://localhost:8242/gmaf/gmafApi/";
     getCollectionPath = "gmaf/getCollection/";
     queryPath1= "gmaf/"
@@ -52,7 +54,6 @@ class GMAFAdapter
             for (let index = 0; index < collectionIds.length; index++) {
               let collectionId = collectionIds[index];
               var processResult = await this.processAssetById(collectionId);
-    
               updateStatus(index+1, collectionIds.length);
             }
         }
@@ -71,7 +72,15 @@ class GMAFAdapter
     async query(query={}, updateStatus)
     {       
         //First get QueryIds
-        var queryIds= await this.getQueryIds(query);
+        var result= await this.getQueryIds(query);
+
+        if(!result.results){
+            console.log("No results received from Query");
+            return;
+        }
+
+        var queryIds= result.results;
+       
         updateStatus(0, queryIds.length);
         var queryResults= [];
         if (typeof queryIds === 'object') {
@@ -82,13 +91,48 @@ class GMAFAdapter
             }
           }
     
-        return queryResults;
+        return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages};
+    }
+
+    async getPage(page=1,resultsPerPage=8, updateStatus){
+     
+    //First get QueryIds
+    var result= await this.post("gmaf/getPage/"+this.apiToken+"/"+page+"/"+resultsPerPage +"/","json");
+
+    if(!result.results){
+        console.log("No results received from Query");
+        return;
+    }
+  
+    var queryIds= result.results;
+       
+    updateStatus(0, queryIds.length);
+    var queryResults= [];
+    if (typeof queryIds === 'object') {
+        for (let index = 0; index < queryIds.length; index++) {
+        var cmmco = await this.getCMMCO(queryIds[index]);
+        queryResults.push(cmmco);
+        updateStatus(index+1, queryIds.length);
+        }
+    }
+
+    return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages};
+    
     }
 
     async getCMMCO(queryId){
 
-        return this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId,"json");
+        var cache= Cache.getInstance();
+        var cmmco= cache.getCmmcos(queryId);
+        if(cmmco){
+            console.log("Found Cmmco in Cache");
+            return cmmco;
+        }
 
+        //If Id is in Cache!
+        var cmmco= this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId,"json");
+        cache.addCmmcos(queryId, cmmco);
+        return cmmco;
     }
 
 

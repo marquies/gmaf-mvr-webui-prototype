@@ -30,13 +30,11 @@ function CollectionView(props) {
 
   function deleteItem(id){
 
-    console.log("RES HERE", showResults);
-
     setShowResults((showResults) => showResults.filter((item) => item.md.id !== id));
   }
 
   async function fileUploaded(e){
-    console.log("Before redaer");
+  
     const reader = new FileReader();
     const file = e.target.files[0];
 

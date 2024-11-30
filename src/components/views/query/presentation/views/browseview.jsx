@@ -1,20 +1,19 @@
 import React, { useEffect, useState} from 'react';
 import Playback from './components/playback';
+import GMAFAdapter from '../../../../../js/GMAFAdapter';
 
 
 function BrowseView(props){
 
-const [paginationState, setPaginationState] = useState(1); 
-const [showCmmcos, setShowCmmcos] = useState([]); 
+const [paginationState, setPaginationState] = useState(props.page); 
+const [numberOfPages, setNumberOfPages] = useState(props.numberOfPages);
 const [_, setRerender] = useState(0);
 const itemsPerPage=8;
-
-const {cmmcos} = props;
-
+const [cmmcos, setCmmcos] = useState(props.cmmcos);
 
 function canRender(){
-
-    console.log("PROPS hier: ", props);
+   
+    //console.log("NUMO OF PAGES HERE"+numberOfPages);
     if(cmmcos === false || typeof(cmmcos) != 'object'){
         //console.log("false or not an object: ", cmmcos);
         return false;
@@ -25,18 +24,13 @@ function canRender(){
 
 
 useEffect(() => {
+    
     if (!cmmcos || typeof cmmcos !== 'object')
     {
         return;
     } 
-   
-    const startIndex = (paginationState - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
 
-    var showCmmcos= cmmcos.slice(startIndex, endIndex);
-    console.log(showCmmcos);
-    setShowCmmcos(showCmmcos);
-    
+
     if(document.getElementById("prev-button")===null || document.getElementById("next-button")===null){
         return;
     }
@@ -49,30 +43,49 @@ useEffect(() => {
         document.getElementById("prev-button").className="page-item";
     }
     
-    if(paginationState===Math.ceil(cmmcos.length / itemsPerPage)){
+    if(paginationState===numberOfPages){
         document.getElementById("next-button").className="page-item disabled";
     }else
     {
         document.getElementById("next-button").className="page-item";
     }
+    
 
 
     }, [cmmcos,paginationState]);
 
 
 
-function handlePagination(currentPage) {
-    if (currentPage < 1 || (cmmcos && currentPage > Math.ceil(cmmcos.length / itemsPerPage))) {
+async function handlePagination(requestedPage) {
+
+    console.log("num of", numberOfPages);
+    if (requestedPage > numberOfPages || requestedPage < 1) {
         console.log("Invalid Page");
         return; // Prevent invalid pages
     }
+
+    var gmaf= await GMAFAdapter.getInstance();
+
+    if(gmaf===false){
+      return;
+    }
+
+    var results= await gmaf.getPage(requestedPage,8, props.updateStatus);
+    console.log("Results: ", results);
+    var currentPage= results.page;
+    //console.log(results);
+    //setKey(Math.random());
+    console.log(results.results);
+    setCmmcos(results.results);
+
     console.log("Pagination State set: ", paginationState);
     setPaginationState(currentPage); 
+
 }
 
 return (
   <div>
-     {showCmmcos.length>0? <nav aria-label="Page navigation example">
+     {props.cmmcos.length>0? <nav aria-label="Page navigation example">
         <ul className="pagination">
             <li id="prev-button" onClick={()=>handlePagination(paginationState-1)} className="page-item"><button className="page-link" >Previous</button></li>  
             <li id="pagi2" className="page-item"><button className="page-link" >{paginationState}</button></li>   
@@ -83,7 +96,7 @@ return (
      {canRender()?
     <div className='d-flex flex-wrap flex-start gap'>
        
-        {showCmmcos.map((cmmco, index) => (
+        {cmmcos.map((cmmco, index) => (
             canRender(index)? <Playback key={cmmco.md.id+"-"+cmmco.selectedScene} cmmco={cmmco} id={cmmco.md.id} view={"browse"} deletable={props.deletable} deleteItem={props.deleteItem}/>: null
         ))}
      
