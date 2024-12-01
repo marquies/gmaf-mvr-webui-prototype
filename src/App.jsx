@@ -13,7 +13,6 @@ function App() {
   const [presentationView, setPresentationView] = useState("Browse View"); 
   const [status, setStatus] = useState(-1); 
   const [statuslength, setStatusLength] = useState(0);
-  const [cmmcos, setCmmcos] = useState(false);
 
 
   function changePresentationView(view){

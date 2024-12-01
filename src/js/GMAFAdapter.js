@@ -122,17 +122,42 @@ class GMAFAdapter
 
     async getCMMCO(queryId){
 
+        //Check for stanrd CMMCO in Cache
         var cache= Cache.getInstance();
         var cmmco= cache.getCmmcos(queryId);
+
         if(cmmco){
-            console.log("Found Cmmco in Cache");
             return cmmco;
         }
 
-        //If Id is in Cache!
-        var cmmco= this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId,"json");
+        //First get complete CMMCO or reduced Tccmmco
+        var cmmco= await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId+"/"+false,"json");
+        
+        //TCMMCO 
+        if(cmmco.reduced==true){
+
+            var tcmmco= cmmco;
+            //Check if the origin cmmco is already in cache and add playback infos to it
+            var cmmco= cache.getCmmcos(tcmmco.originid);
+            if(cmmco){
+               
+                cmmco["selectedScene"]= tcmmco.selectedScene;
+                cmmco["start"]= tcmmco.start;
+                cmmco["end"]= tcmmco.end;
+                cmmco["id"]= tcmmco.queryId;
+                return cmmco;
+
+            }else
+            {     
+                //Get Full Tcmmco
+                var cmmco= await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId+"/"+true,"json");
+                return cmmco;
+            }
+        }
+        
         cache.addCmmcos(queryId, cmmco);
         return cmmco;
+            
     }
 
 
@@ -244,7 +269,6 @@ class GMAFAdapter
         }catch (error) {
             
             if(error.message==="Failed to fetch"){
-                // alert("GMAF Service not reachable")
                 console.error("GMAF Service not reachable");
             }
             console.error(error);       

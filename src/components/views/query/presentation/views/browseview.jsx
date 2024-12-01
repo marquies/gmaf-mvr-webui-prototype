@@ -71,14 +71,11 @@ async function handlePagination(requestedPage) {
     }
 
     var results= await gmaf.getPage(requestedPage,8, props.updateStatus);
-    console.log("Results: ", results);
     var currentPage= results.page;
     //console.log(results);
     //setKey(Math.random());
     console.log(results.results);
     setCmmcos(results.results);
-
-    console.log("Pagination State set: ", paginationState);
     setPaginationState(currentPage); 
 
 }

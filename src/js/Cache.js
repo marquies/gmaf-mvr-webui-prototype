@@ -11,23 +11,25 @@ class Cache {
         // Store the instance in a static property
         Cache.instance = this;
 
-        console.log('Cache instance created.');
+      
     }
 
     // Add or update a cmmcos object in the cache
     addCmmcos(id, cmmcosObject) {
         this.cmmcosCache[id] = cmmcosObject;
-        console.log(`Added/Updated cmmcos with ID: ${id}`);
+       
     }
 
     // Retrieve a cmmcos object by ID
     getCmmcos(id) {
         const cmmcosObject = this.cmmcosCache[id];
         if (cmmcosObject) {
-            console.log(`Retrieved cmmcos with ID: ${id}`, cmmcosObject);
-            return cmmcosObject;
+           
+           
+            //return cmmcosObject;
+            return  JSON.parse(JSON.stringify(cmmcosObject));
         } else {
-            console.log(`No cmmcos found with ID: ${id}`);
+          
             return null;
         }
     }

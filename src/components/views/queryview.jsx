@@ -15,11 +15,9 @@ function QueryView(props) {
 
   useEffect(() => {
   
-    //var showResults= Filter.filter(queryResults,filter);
     setKey(Math.random());
-    //setShowResults(queryResults);
     
-  }, [ queryResults]); 
+  }, [queryResults]); 
 
 
   useEffect(() => { 
@@ -28,7 +26,6 @@ function QueryView(props) {
 
   async function query(cmmcoQuery){
 
-    console.log(filter);
     var query= {"cmmcoQuery":cmmcoQuery, "filter": filter};
   
     var gmaf= await GMAFAdapter.getInstance();
