@@ -9,20 +9,9 @@ function QueryView(props) {
   const [filter, setFilter] = useState(false);
   const [queryResults, setQueryResults] = useState(false);
   //const [showResults, setShowResults] = useState(false);
-  const [key, setKey] = useState(Math.random()); 
+  const [key, setKey] = useState(false); 
   const [page, setPage] = useState(1); 
   const [numberOfPages, setNumberOfPages] = useState(1);
-
-  useEffect(() => {
-  
-    setKey(Math.random());
-    
-  }, [queryResults]); 
-
-
-  useEffect(() => { 
-    //query({});
-  }, []);
 
   async function query(cmmcoQuery){
 
@@ -36,12 +25,10 @@ function QueryView(props) {
 
     var results= await gmaf.query(query, props.updateStatus);
 
-    //setKey(Math.random());
-    console.log(results);
+    setKey(Math.random());
     setPage(results.page);
-    
     setNumberOfPages(results.numberOfPages);
-    setQueryResults(results.results);
+    setQueryResults([...results.results]);
 
   }
     return (

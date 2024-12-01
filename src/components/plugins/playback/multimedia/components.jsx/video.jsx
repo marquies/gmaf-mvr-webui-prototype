@@ -4,7 +4,7 @@ import React, {useEffect, useRef} from 'react';
 function Video(props) {
     
     const videoRef = useRef(null);
-    const{data, setTimeCode}= props;
+    const{data, setTimeCode, start, end}= props;
 
     function canRender(){
        
@@ -58,13 +58,13 @@ function Video(props) {
             video.removeEventListener('timeupdate', handleTimeUpdate);
         };
 
-    }, []);  
+    }, [start, end]);  
 
     return (
 
         <div id="" className='center-container'>
         
-        { canRender()? <video className='centerelement' ref={videoRef} src= {data.file}  controls> Your browser does not support the video tag.
+        { canRender()? <video preload="metadata" className='centerelement' ref={videoRef} src= {data.file}  controls> Your browser does not support the video tag.
                 </video>:
                 "Imcomplete Video Data"}
       
