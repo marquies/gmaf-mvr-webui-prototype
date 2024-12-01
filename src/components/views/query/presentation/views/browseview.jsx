@@ -69,16 +69,20 @@ async function handlePagination(requestedPage) {
     if(gmaf===false){
       return;
     }
+    //Collection View
+    if(props.deletable){
 
-    var results= await gmaf.getPage(requestedPage,8, props.updateStatus);
+        var results= await gmaf.getCollectionPage(requestedPage,8, props.updateStatus);
+    }else //Query View
+    {
+        var results= await gmaf.getPage(requestedPage,8, props.updateStatus);
+    }
+   
     console.log("Results: ", results);
     var currentPage= results.page;
-    //console.log(results);
-    //setKey(Math.random());
-    console.log(results.results);
+  
     setCmmcos(results.results);
 
-    console.log("Pagination State set: ", paginationState);
     setPaginationState(currentPage); 
 
 }

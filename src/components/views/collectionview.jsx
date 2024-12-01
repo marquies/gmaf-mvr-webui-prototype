@@ -1,24 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Presentation from './query/presentation/presentation';
 import GMAFAdapter from '../../js/GMAFAdapter';
 
 function CollectionView(props) {
 
-  const [showResults, setShowResults] = useState(false);
+  const [queryResults, setQueryResults] = useState(false);
+  //const [showResults, setShowResults] = useState(false);
+  const [key, setKey] = useState(false); 
+  const [page, setPage] = useState(1); 
+  const [numberOfPages, setNumberOfPages] = useState(1);
+  const isInitialized = useRef(false);
 
   useEffect(() => {
 
+    console.log("BiN HIER");
+    //getCollection();
+    if (!isInitialized.current) {
+      getCollection();
+      isInitialized.current = true;
+    }
 
-    getCollection();
-
-  
-  
   }, []);
 
-  async function getCollection(){
-     var gmaf= await GMAFAdapter.getInstance();
-    var showResults= await gmaf.getCollection(props.updateStatus);
-    setShowResults(showResults);
+
+  async function getCollection(cmmcoQuery){
+  
+    var gmaf= await GMAFAdapter.getInstance();
+
+    if(gmaf===false){
+      return;
+    }
+
+    var results= await gmaf.getCollection(props.updateStatus);
+    setKey(Math.random());
+    setPage(results.page);
+    setNumberOfPages(results.numberOfPages);
+    setQueryResults([...results.results]);
 
   }
 
@@ -30,7 +47,7 @@ function CollectionView(props) {
 
   function deleteItem(id){
 
-    setShowResults((showResults) => showResults.filter((item) => item.md.id !== id));
+    setQueryResults((queryResults) => queryResults.filter((item) => item.md.id !== id));
   }
 
   async function fileUploaded(e){
@@ -63,7 +80,8 @@ function CollectionView(props) {
        <button className="btn btn-secondary m-1" type="button" onClick={addItem}>Add Item</button>
        <input type="file" onChange={(e)=>fileUploaded(e)} hidden id="file-input-collection" accept=".png,.jpg,.jpeg"></input>  
     <div className='d-flex query-view flex-start'>
-    <Presentation cmmcos={showResults} presentationView={"Browse View"} deletable={true} deleteItem={deleteItem}/>
+    {/*<Presentation cmmcos={showResults} presentationView={"Browse View"} deletable={true} deleteItem={deleteItem}/> */}
+    {queryResults.length>0?<Presentation updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={"Browse View"} deleteItem={deleteItem} deletable={true} se/>:<h2 className='ms-5'>No Collection Elements found results found</h2>}
   </div>
   </div>
   );

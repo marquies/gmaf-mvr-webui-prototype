@@ -42,9 +42,9 @@ const {cmmco} = props;
   async function deleteitem(){
 
     var gmaf= await GMAFAdapter.getInstance();
-
+    console.log("ID To Delete: ",props.id);
     var result= await gmaf.deleteItemFromCollection(props.id);
-   
+    console.log("Result: ", result);
     if(result === "true"){
       alert("Item deleted successfully!");
     }else

@@ -16,6 +16,7 @@ class GMAFAdapter
 
     static async getInstance()
     {
+        console.log("INSTANCE INSTANCIATE");
         if(!this.GMAFInstance){
             try{
                 var gmaf= new GMAFAdapter();
@@ -65,7 +66,7 @@ class GMAFAdapter
     }
     
     async getQueryIds(query={}){
-
+        console.log("AUth Token 1: ", this.apiToken);
         return this.post("gmaf/getQueryIds/"+this.apiToken,"json", query);
     }
 
@@ -120,8 +121,35 @@ class GMAFAdapter
     
     }
 
-    async getCMMCO(queryId){
+    async getCollectionPage(page=1,resultsPerPage=8, updateStatus){
+     
+        //First get QueryIds
+        var result= await this.post("gmaf/getCollectionPage/"+this.apiToken+"/"+page+"/"+resultsPerPage +"/","json");
+    
+        if(!result.results){
+            console.log("No results received from Query");
+            return;
+        }
+      
+        var queryIds= result.results;
+           
+        updateStatus(0, queryIds.length);
+        var queryResults= [];
+        if (typeof queryIds === 'object') {
+            for (let index = 0; index < queryIds.length; index++) {
+            var cmmco = await this.getCMMCO(queryIds[index]);
+            queryResults.push(cmmco);
+            updateStatus(index+1, queryIds.length);
+            }
+        }
+    
+        return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages};
+        
+        }
 
+
+    async getCMMCO(queryId){
+        console.log("ASKED FOR: ", queryId);
         //Check for stanrd CMMCO in Cache
         var cache= Cache.getInstance();
         var cmmco= cache.getCmmcos(queryId);
@@ -156,6 +184,7 @@ class GMAFAdapter
         }
         
         cache.addCmmcos(queryId, cmmco);
+        console.log("RETURNED: ", cmmco);
         return cmmco;
             
     }
@@ -163,23 +192,32 @@ class GMAFAdapter
 
     async getCollection(updateStatus)
     {
-         var collectionIds= await this.getCollectionIds(true);
-         updateStatus(0, collectionIds.length);
-         var collectionResults= [];
-         if (typeof collectionIds === 'object') {
-             for (let index = 0; index < collectionIds.length; index++) {
-               var cmmco = await this.getCMMCO(collectionIds[index]);
-               collectionResults.push(cmmco);
-               updateStatus(index+1, collectionIds.length);
-             }
-           }
-     
-         return collectionResults;
+         var result= await this.getCollectionIds(true);
+         if(!result.results){
+            console.log("No results received from Query");
+            return;
+        }
+        
+        var queryIds= result.results;
+        console.log("GET COLLECTION IDS",queryIds);
+        updateStatus(0, queryIds.length);
+        var queryResults= [];
+        if (typeof queryIds === 'object') {
+            for (let index = 0; index < queryIds.length; index++) {
+              var cmmco = await this.getCMMCO(queryIds[index]);
+              queryResults.push(cmmco);
+              updateStatus(index+1, queryIds.length);
+            }
+          }
+    
+        return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages};
+         //return collectionResults;
     }
 
     async getCollectionIds(withtcmmcos=false)
     {
-        return await this.post("gmaf/get-collection-ids/"+withtcmmcos+"/"+this.apiToken,"json");
+        console.log("AUth Token 1: ", this.apiToken);
+        return await this.post("gmaf/get-collection-ids/"+this.apiToken+"/"+withtcmmcos,"json");
     }
     
     async getCollectionMetaData()
@@ -202,7 +240,7 @@ class GMAFAdapter
     }
 
     async deleteItemFromCollection(itemid=""){
-
+        console.log("AUth Token 2: ", this.apiToken);
         return await this.post("gmaf/deleteItem/"+this.apiToken+"/"+itemid);
     }
     async get(path="", type="", initial=false)
