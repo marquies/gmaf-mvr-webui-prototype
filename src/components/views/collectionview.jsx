@@ -13,7 +13,7 @@ function CollectionView(props) {
 
   useEffect(() => {
 
-    console.log("BiN HIER");
+
     //getCollection();
     if (!isInitialized.current) {
       getCollection();
@@ -47,7 +47,11 @@ function CollectionView(props) {
 
   function deleteItem(id){
 
-    setQueryResults((queryResults) => queryResults.filter((item) => item.md.id !== id));
+    console.log("IN CALLBACK");
+    var deletedItems= queryResults.filter((item) => item.md.id !== id);
+    console.log("Deleted Items")
+    setQueryResults(deletedItems);
+    setKey(Math.random());
   }
 
   async function fileUploaded(e){
@@ -81,7 +85,7 @@ function CollectionView(props) {
        <input type="file" onChange={(e)=>fileUploaded(e)} hidden id="file-input-collection" accept=".png,.jpg,.jpeg"></input>  
     <div className='d-flex query-view flex-start'>
     {/*<Presentation cmmcos={showResults} presentationView={"Browse View"} deletable={true} deleteItem={deleteItem}/> */}
-    {queryResults.length>0?<Presentation updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={"Browse View"} deleteItem={deleteItem} deletable={true} se/>:<h2 className='ms-5'>No Collection Elements found results found</h2>}
+    {queryResults.length>0 || !isInitialized.current?<Presentation updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={"Browse View"} deleteItem={deleteItem} deletable={true} se/>:<h2 className='ms-5'>No Collection Elements found results found</h2>}
   </div>
   </div>
   );

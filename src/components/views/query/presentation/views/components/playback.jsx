@@ -51,7 +51,8 @@ const {cmmco} = props;
     {
       alert("Item deletion failed!");
     }
- 
+    console.log("DELTE ITEM: ",props.deleteItem);
+    console.log("ID To Delete: ",props.id);
     if(props.deleteItem){
 
       props.deleteItem(props.id);

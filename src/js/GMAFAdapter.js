@@ -49,12 +49,19 @@ class GMAFAdapter
 
     async processAllAssets(updateStatus)
     {
-        var collectionIds= await this.getCollectionIds(true);
+        var results = await this.getCollectionIds(false);
+       
+        var collectionIds= results.allresults;
+       
         updateStatus(0, collectionIds.length);
+        
         if (typeof collectionIds === 'object') {
+            
             for (let index = 0; index < collectionIds.length; index++) {
               let collectionId = collectionIds[index];
+              console.log("IN PROCESS");
               var processResult = await this.processAssetById(collectionId);
+              console.log("Process Result: ", processResult);
               updateStatus(index+1, collectionIds.length);
             }
         }
@@ -149,7 +156,7 @@ class GMAFAdapter
 
 
     async getCMMCO(queryId){
-        console.log("ASKED FOR: ", queryId);
+       
         //Check for stanrd CMMCO in Cache
         var cache= Cache.getInstance();
         var cmmco= cache.getCmmcos(queryId);
@@ -184,7 +191,7 @@ class GMAFAdapter
         }
         
         cache.addCmmcos(queryId, cmmco);
-        console.log("RETURNED: ", cmmco);
+    
         return cmmco;
             
     }
@@ -192,7 +199,7 @@ class GMAFAdapter
 
     async getCollection(updateStatus)
     {
-         var result= await this.getCollectionIds(true);
+         var result= await this.getCollectionIds(false);
          if(!result.results){
             console.log("No results received from Query");
             return;

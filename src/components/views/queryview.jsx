@@ -12,6 +12,7 @@ function QueryView(props) {
   const [key, setKey] = useState(false); 
   const [page, setPage] = useState(1); 
   const [numberOfPages, setNumberOfPages] = useState(1);
+  const [firstQueryMade, setFirstQueryMade] = useState(false);
 
   async function query(cmmcoQuery){
 
@@ -29,12 +30,13 @@ function QueryView(props) {
     setPage(results.page);
     setNumberOfPages(results.numberOfPages);
     setQueryResults([...results.results]);
+    setFirstQueryMade(true);
 
   }
     return (
         <div className='d-flex query-view flex-start'>
             <Query query={query} setFilter={setFilter}/>
-            {queryResults.length>0?<Presentation updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={props.presentationView}  deletable={false} se/>:<h2 className='ms-5'>No  machting results found</h2>}
+            {queryResults.length>0 || !firstQueryMade?<Presentation updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={props.presentationView}  deletable={false} se/>:<h2 className='ms-5'>No  machting results found</h2>}
         </div>
     );
   }
