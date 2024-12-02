@@ -58,7 +58,7 @@ useEffect(() => {
 
 async function handlePagination(requestedPage) {
 
-    console.log("num of", numberOfPages);
+ 
     if (requestedPage > numberOfPages || requestedPage < 1) {
         console.log("Invalid Page");
         return; // Prevent invalid pages

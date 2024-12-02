@@ -16,7 +16,7 @@ function Presentation(props) {
             { canRender()?  
                 props.presentationView==="Browse View"? 
                     <BrowseView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={cmmcos} deletable={props.deletable} deleteItem={props.deleteItem} />
-                    :<DetailsView cmmcos={cmmcos} />
+                    :<DetailsView cmmcos={cmmcos} numOfAllResults={props.numOfAllResults} updateStatus={props.updateStatus} />
             : "Could not Render"}
         </div>  
     );

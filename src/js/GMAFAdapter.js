@@ -97,9 +97,10 @@ class GMAFAdapter
               queryResults.push(cmmco);
               updateStatus(index+1, queryIds.length);
             }
-          }
+        }
     
-        return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages};
+
+        return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages, "numOfAllResults":result.allresults.length};
     }
 
     async getPage(page=1,resultsPerPage=8, updateStatus){
@@ -123,8 +124,8 @@ class GMAFAdapter
         updateStatus(index+1, queryIds.length);
         }
     }
-
-    return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages};
+    
+    return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages, "numOfAllResults":result.allresults.length};
     
     }
 
