@@ -7,6 +7,7 @@ import GMAFAdapter from '../../js/GMAFAdapter';
 function QueryView(props) {
 
   const [filter, setFilter] = useState(false);
+  const [cmmcoQuery, setCmmcoQuery] = useState(false);
   const [queryResults, setQueryResults] = useState(false);
   //const [showResults, setShowResults] = useState(false);
   const [key, setKey] = useState(false); 
@@ -18,7 +19,9 @@ function QueryView(props) {
   async function query(cmmcoQuery){
 
     var query= {"cmmcoQuery":cmmcoQuery, "filter": filter};
-  
+
+    console.log("Query: ", query);
+    
     var gmaf= await GMAFAdapter.getInstance();
 
     if(gmaf===false){
@@ -37,9 +40,20 @@ function QueryView(props) {
     setNumOfAllResults(results.numOfAllResults); 
 
   }
+
+
+  useEffect( ()=>{
+  
+      cmmcoQuery.then(cmmcoQuery=>{
+          query(cmmcoQuery);
+      });
+  
+    }, [cmmcoQuery]);
+
+
     return (
         <div className='d-flex query-view flex-start'>
-            <Query query={query} setFilter={setFilter}/>
+            <Query query={query} setCmmcoQuery={setCmmcoQuery} setFilter={setFilter}/>
             {queryResults.length>0 || !firstQueryMade?<Presentation numOfAllResults={numOfAllResults}  updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={props.presentationView}  deletable={false} se/>:<h2 className='ms-5'>No  machting results found</h2>}
         </div>
     );

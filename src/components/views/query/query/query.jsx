@@ -107,7 +107,6 @@ function Query(props) {
             wsd:{}
         }
 
-        console.log("Query: ", cmmcoQuery);
         return cmmcoQuery;
     }
 
@@ -173,6 +172,12 @@ function Query(props) {
         });
     }
 
+     const handleQueryClicked = () => {
+            const query = createMmcoQuery(); // Generate the query
+            props.setCmmcoQuery(query); // Update the state in the parent
+      };
+
+
     
     return (
      
@@ -217,7 +222,7 @@ function Query(props) {
                             {wsdUnfolded ? <WsdQuery ></WsdQuery>: ""}
                             <div><i className="fa fa-chevron-down fsize"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
                             {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
-                     <button className="w-25 btn btn-primary mt-2 float-end"  onClick={ ()=> props.query(createMmcoQuery())}>Query</button>   
+                     <button className="w-25 btn btn-primary mt-2 float-end"  onClick={handleQueryClicked}>Query</button>   
                     </div>
             </div>     
         </div>
