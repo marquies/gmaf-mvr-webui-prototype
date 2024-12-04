@@ -43,11 +43,11 @@ function QueryView(props) {
 
 
   useEffect( ()=>{
-  
+    if(cmmcoQuery){
       cmmcoQuery.then(cmmcoQuery=>{
           query(cmmcoQuery);
       });
-  
+    }
     }, [cmmcoQuery]);
 
 

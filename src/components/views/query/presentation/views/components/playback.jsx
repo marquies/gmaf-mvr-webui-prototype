@@ -36,7 +36,7 @@ const {cmmco} = props;
     // Handle mouse leave (clear timer and hide tooltip)
     const handleMouseLeave = () => {
        //clearTimeout(hoverTimeout.current);
-       setIsTooltipVisible(false);
+       //setIsTooltipVisible(false);
   };
 
   async function deleteitem(){
@@ -44,15 +44,14 @@ const {cmmco} = props;
     var gmaf= await GMAFAdapter.getInstance();
     console.log("ID To Delete: ",props.id);
     var result= await gmaf.deleteItemFromCollection(props.id);
-    console.log("Result: ", result);
+  
     if(result === "true"){
       alert("Item deleted successfully!");
     }else
     {
       alert("Item deletion failed!");
     }
-    console.log("DELTE ITEM: ",props.deleteItem);
-    console.log("ID To Delete: ",props.id);
+   
     if(props.deleteItem){
 
       props.deleteItem(props.id);

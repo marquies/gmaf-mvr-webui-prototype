@@ -295,5 +295,6 @@
 }
 
 .bg-cmmco{
-  background-color: rgb(221, 236, 196)!important;
+ /*background-color: rgb(221, 236, 196)!important;*/
+ background-color: rgb(255, 255, 255)
 }
