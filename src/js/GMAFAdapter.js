@@ -16,7 +16,6 @@ class GMAFAdapter
 
     static async getInstance()
     {
-        console.log("INSTANCE INSTANCIATE");
         if(!this.GMAFInstance){
             try{
                 var gmaf= new GMAFAdapter();
@@ -73,7 +72,7 @@ class GMAFAdapter
     }
     
     async getQueryIds(query={}){
-        console.log("AUth Token 1: ", this.apiToken);
+      
         return this.post("gmaf/getQueryIds/"+this.apiToken,"json", query);
     }
 
@@ -153,7 +152,7 @@ class GMAFAdapter
     
         return {"results":queryResults, "page":result.currentPage, "numberOfPages":result.totalPages};
         
-        }
+    }
 
 
     async getCMMCO(queryId){
@@ -207,7 +206,6 @@ class GMAFAdapter
         }
         
         var queryIds= result.results;
-        console.log("GET COLLECTION IDS",queryIds);
         updateStatus(0, queryIds.length);
         var queryResults= [];
         if (typeof queryIds === 'object') {
@@ -224,33 +222,19 @@ class GMAFAdapter
 
     async getCollectionIds(withtcmmcos=false)
     {
-        console.log("AUth Token 1: ", this.apiToken);
         return await this.post("gmaf/get-collection-ids/"+this.apiToken+"/"+withtcmmcos,"json");
     }
     
-    async getCollectionMetaData()
-    {
-        return await this.post("gmaf/getMetadata/"+this.apiToken,"json");
-    }
-    async getPreviewBlob(itemid)
-    {
-
-        return await this.get("gmaf/preview/"+this.apiToken+"/"+itemid, "blob");
-    }
-    async getPreviewUrl(itemid)
-    {
-        return await this.post("gmaf/preview/"+this.apiToken+"/"+itemid);
-    }
-
     async addItemToCollection(filename="", base64file="", inputoverwrite=false){
 
         return await this.post("gmaf/addItem/"+this.apiToken, false, {name: filename, file :base64file, overwrite: inputoverwrite});
     }
 
     async deleteItemFromCollection(itemid=""){
-        console.log("AUth Token 2: ", this.apiToken);
+    
         return await this.post("gmaf/deleteItem/"+this.apiToken+"/"+itemid);
     }
+
     async get(path="", type="", initial=false)
     {   
         if(!this.apiToken && !initial)
@@ -280,6 +264,7 @@ class GMAFAdapter
         }
        
     }
+
     async post(path="",jsonResponse=false,body={})
     {
         if(!this.apiToken)

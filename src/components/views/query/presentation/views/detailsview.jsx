@@ -19,9 +19,6 @@ function DetailsView(props){
 
     const handleSelect = async (selectedIndex) => {
 
-        console.log("Selected index Begining: ", selectedIndex);
-        console.log("Selected index Begining: ", lastIndex.current);
-
         var backward= lastIndex.current==0 && selectedIndex==cmmcos.length-1;
         var countdown= (lastIndex.current>selectedIndex) && ((lastIndex.current-selectedIndex)==1);
 
@@ -36,14 +33,11 @@ function DetailsView(props){
             var currentPage=page;
         
             var newPage= currentPage-1;
-         
-            console.log(cmmcoMap);
-            console.log(cmmcoMap[newPage]);
+        
             setPage(newPage);
             setCmmcos(cmmcoMap[newPage]);
             setIndex(7);
             lastIndex.current = 7;
-            //justNegative.current = true;
             return;
         }
 
@@ -65,10 +59,9 @@ function DetailsView(props){
             //justNegative.current = false;
             return;
         }
+
         lastOverallIndex.current = overallIndex.current;
 
-    
-        console.log("COUNTDOWN: ", countdown);
         // Check if we need to load the next page
         if (lastIndex.current+1 === cmmcos.length && !countdown) {
             let nextPage = page + 1;
@@ -85,7 +78,6 @@ function DetailsView(props){
 
                 setCmmcos(results.results); // Update current page items
                 setPage(nextPage); // Move to the next page
-                //setItemsLoaded((prev) => prev + results.results.length); // Update loaded count
                 setIndex(0); // Reset carousel index to the first item
                 lastIndex.current = 0;
             } else {
@@ -96,14 +88,12 @@ function DetailsView(props){
                 lastIndex.current = 0;
             }
         } else {
+
             //Normal case: Move within the current page
-            console.log("Selected index Down: ", selectedIndex);
             setIndex(selectedIndex);
             lastIndex.current = selectedIndex;
             
         }
-
-        //justNegative.current = false;
     };
 
 function canRender(){

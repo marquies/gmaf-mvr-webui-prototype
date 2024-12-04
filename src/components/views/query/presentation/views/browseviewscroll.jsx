@@ -1,6 +1,7 @@
 import React, { useState} from 'react';
 import Playback from './components/playback';
 
+//Scroll Variante wird nicht genutzt
 function BrowseView(props){
 
 const {cmmcos} = props;
