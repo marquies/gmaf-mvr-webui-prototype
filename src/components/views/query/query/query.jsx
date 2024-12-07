@@ -11,6 +11,7 @@ function Query(props) {
     const [imageurl, setImageurl] = useState("");
     const [audio, setAudio] = useState(null);
     const [audiourl, setAudiourl] = useState("");
+    const [wsdKey, setWsdKey] = useState(Math.random());
     const [wsd, setWsd] = useState(null);
     const [wsdUnfolded, setWsdUnfolded] = useState(null);
     const [filterUnfolded, setFilterUnfolded] = useState(true); //Show by default
@@ -69,11 +70,15 @@ function Query(props) {
     function clearAudio() {
        setAudio(null);
     }
+    function clearGolf() {
+        setWsdKey(Math.random());
+    }
 
     function clearAll() {
         setText("");
         setImage(null);
         setAudio(null);
+        setWsdKey(Math.random());
     }
     
    async function createMmcoQuery() {
@@ -111,37 +116,6 @@ function Query(props) {
     function isValidCommaSeparatedKeywords(str) {
 
         //Here further methods can be added
-        return true;
-
-
-        if (typeof str !== 'string') {
-            return false;
-        }
-    
-        // Trim the entire string to remove leading/trailing whitespace
-        const trimmedStr =  str.trim();
-        console.log("Here1");
-        // An empty string is not considered a valid list of keywords
-        if (trimmedStr.length === 0) {
-            return false;
-        }
-        console.log("Here2");
-        // Split the string by commas and trim each keyword immediately
-        const keywords = trimmedStr.split(',').map(keyword => keyword.trim());
-    
-        // Define a regular expression for a valid keyword
-        const keywordRegex = /^[A-Za-z0-9_-]+$/;
-        console.log("Here3");
-        // Check each trimmed keyword
-        for (let keyword of keywords) {
-            // Check if the keyword is non-empty and matches the regex
-            if (keyword.length === 0 || !keywordRegex.test(keyword)) {
-                console.log("Here4");
-                return false;
-            }
-        }
-    
-        // All keywords are valid
         return true;
     }
 
@@ -208,7 +182,8 @@ function Query(props) {
                                     <ul className="dropdown-menu">
                                         <li><button onClick={clearImage} className="dropdown-item" >Image/Video</button></li>
                                         <li><button onClick={clearText} className="dropdown-item" >Text</button></li>
-                                        <li><button onClick={clearAudio} className="dropdown-item" >Audio</button></li>     
+                                        <li><button onClick={clearAudio} className="dropdown-item" >Audio</button></li>  
+                                        <li><button onClick={clearGolf} className="dropdown-item" >World Specific Data</button></li>   
                                         <li><button onClick={clearAll} className="dropdown-item" >All</button></li>
                                     </ul>
                                     </div>
@@ -217,7 +192,7 @@ function Query(props) {
                         </div>
                         <textarea className="form-control textarea mt-1" placeholder="Enter your comma seperated keywords here..." spellCheck="false" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
                             <div><i className="fa fa-chevron-down fsize"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
-                            {wsdUnfolded ? <WsdQuery ></WsdQuery>: ""}
+                            {wsdUnfolded ? <WsdQuery key={wsdKey}></WsdQuery>: ""}
                             <div><i className="fa fa-chevron-down fsize"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
                             {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
                      <button className="w-25 btn btn-primary mt-2 float-end"  onClick={handleQueryClicked}>Query</button>   

@@ -7,8 +7,6 @@ function ActivityData(props) {
     const [heartRate, setHeartRate] = useState(null);
     const [altitude, setAltitude] = useState(null);
 
-
-
     useEffect(() => {   
         setDataForTimeCode(props.timecode);
     }, [props.timecode]);
