@@ -60,7 +60,7 @@ function PdPlayback(props){
     }
 
     return (
-        <div className='query-wsd-container d-flex border-1 border rounded-3'>
+        <div className='playback-wsd-container d-flex border-1 border rounded-3'>
             <div className='query-wsd-inner-container'>
                 { noPlugin() ? <NoPlugin/>: 
                   canRender() && typeof(PdPlaybackComponents[type]) === 'function'  ?
@@ -68,7 +68,7 @@ function PdPlayback(props){
                     <PlugInError/>  
                 }
             </div>
-              { noPlugin() ? "":<i className="fa fa-chevron-right fsize m-1" onClick={nextPlugin}></i>}
+              { PdPlaybackComponents.length>=pluginSelectedIndex+1 ?<i className="fa fa-chevron-right fsize m-1" onClick={nextPlugin}></i> :""}
         </div>
     );   
 }

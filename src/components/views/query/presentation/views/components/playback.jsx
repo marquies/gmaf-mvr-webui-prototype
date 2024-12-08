@@ -19,7 +19,7 @@ const {cmmco} = props;
   //const hoverTimeout = useRef(null);
 
   const handleRightClick = (event) => {
-   //event.preventDefault(); // Prevent the default context menu
+   event.preventDefault(); // Prevent the default context menu
    setIsTooltipVisible(true);
  };
 
@@ -36,7 +36,7 @@ const {cmmco} = props;
     // Handle mouse leave (clear timer and hide tooltip)
     const handleMouseLeave = () => {
        //clearTimeout(hoverTimeout.current);
-       //setIsTooltipVisible(false);
+       setIsTooltipVisible(false);
   };
 
   async function deleteitem(){
@@ -71,10 +71,11 @@ return (
                     <div className='border-1 border rounded-3'>
                         <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.start} end={cmmco.end} timecode={timeCode} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
-                        <div><i className="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
-                            {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
+                       
                         <div><i className="fa fa-chevron-down fsize"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
                             {pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.mmco.start} timecode={timeCode}></PdPlayback> :""}  
+                          <div><i className="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
+                          {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
                    </div>    
                 </div>
             </div>    
