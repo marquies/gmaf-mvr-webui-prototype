@@ -4,6 +4,7 @@ import WsdQuery from './wsdquery';
 
 
 
+
 function Query(props) {
     
     const [text, setText] = useState(""); 
@@ -32,14 +33,16 @@ function Query(props) {
     }
 
     function imageUploaded(event) {
+        
         const file = event.target.files[0];
-        if (file) {
-            setImage(file);
+        if (file) {   
+          setImage(file);
         }
     }
 
     //Update Preview
     useEffect(() => {
+       
     var url= image? URL.createObjectURL(image):"";
     setImageurl(url);
     }, [image]);
@@ -61,6 +64,7 @@ function Query(props) {
 
     function clearImage() {
         setImage(null);
+        document.getElementById('image-input').value="";
     }
 
     function clearText() {
@@ -69,15 +73,16 @@ function Query(props) {
 
     function clearAudio() {
        setAudio(null);
+       document.getElementById('audio-input').value="";
     }
     function clearGolf() {
         setWsdKey(Math.random());
     }
 
     function clearAll() {
-        setText("");
-        setImage(null);
-        setAudio(null);
+        clearText();
+        clearImage();
+        clearAudio();
         setWsdKey(Math.random());
     }
     
@@ -180,7 +185,7 @@ function Query(props) {
                                         Clear
                                     </button>
                                     <ul className="dropdown-menu">
-                                        <li><button onClick={clearImage} className="dropdown-item" >Image/Video</button></li>
+                                        <li><button onClick={clearImage} className="dropdown-item" >Image</button></li>
                                         <li><button onClick={clearText} className="dropdown-item" >Text</button></li>
                                         <li><button onClick={clearAudio} className="dropdown-item" >Audio</button></li>  
                                         <li><button onClick={clearGolf} className="dropdown-item" >World Specific Data</button></li>   
