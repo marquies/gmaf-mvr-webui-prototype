@@ -40,6 +40,18 @@ function App() {
   
   }
 
+  async function loadFromExistingMMFGs(){
+
+    var gmaf= await GMAFAdapter.getInstance();
+   
+    if(gmaf===false){
+      return;
+    }
+
+    gmaf.processAllAssets(updateStatus);
+
+  }
+
   return (
     <div className='app-container m-2'>
       {status >= 0 && statuslength!==status ?
@@ -73,6 +85,8 @@ function App() {
         <button onClick={()=>processAllAssets()} className="btn btn-secondary m-1" type="button" aria-expanded="false">
           Process all Assets
         </button>
+        <button onClick={()=>loadFromExistingMMFGs()} className="btn btn-secondary m-1" type="button" aria-expanded="false">
+        Load From Existing MMFGS</button>
       </div>
       { view === "Query" ? <QueryView updateStatus={updateStatus} presentationView={presentationView}/> : <CollectionView updateStatus={updateStatus} /> }
     </div>

@@ -49,22 +49,35 @@ class GMAFAdapter
     async processAllAssets(updateStatus)
     {
         var results = await this.getCollectionIds(false);
-       
+
         var collectionIds= results.allresults;
-       
-        updateStatus(0, collectionIds.length);
-        
+        console.log("CollectionIds: ", collectionIds);
         if (typeof collectionIds === 'object') {
             
+            //Filter
+            var cmmcocollectionIds=[];
             for (let index = 0; index < collectionIds.length; index++) {
-              let collectionId = collectionIds[index];
+                let collectionId = collectionIds[index];
+                //if has No origin cmmco == cmmco else tcmmco
+                if(!collectionId.cmmco){
+                    var cmmcocollectionId = collectionIds[index].id;
+                    cmmcocollectionIds.push(cmmcocollectionId);
+                }
+               
+            }
+
+            updateStatus(0, cmmcocollectionIds.length);
+            console.log("CMMCO CollectionIds: ", cmmcocollectionIds);
+            for (let index = 0; index < cmmcocollectionIds.length; index++) {
+              let collectionId = cmmcocollectionIds[index];
               console.log("IN PROCESS");
               var processResult = await this.processAssetById(collectionId);
               console.log("Process Result: ", processResult);
-              updateStatus(index+1, collectionIds.length);
+              updateStatus(index+1, cmmcocollectionIds.length);
             }
         }
     }
+    
 
     async processAssetById(itemid=""){
 
@@ -80,6 +93,7 @@ class GMAFAdapter
     {       
         //First get QueryIds
         var result= await this.getQueryIds(query);
+        console.log("IDS Result: ",result);
 
         if(!result.results){
             console.log("No results received from Query");
@@ -156,44 +170,49 @@ class GMAFAdapter
 
 
     async getCMMCO(queryId){
-       
-        //Check for stanrd CMMCO in Cache
-        var cache= Cache.getInstance();
-        var cmmco= cache.getCmmcos(queryId);
 
-        if(cmmco){
-            return cmmco;
+        if(!queryId.id){
+            console.log("No queryId received from getCMMCO");
         }
+        var cache= Cache.getInstance();
 
-        //First get complete CMMCO or reduced Tccmmco
-        var cmmco= await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId+"/"+false,"json");
-        
-        //TCMMCO 
-        if(cmmco.reduced==true){
+        //Standard CMMCO
+        if(queryId.id && !queryId.cmmco){
 
-            var tcmmco= cmmco;
-            //Check if the origin cmmco is already in cache and add playback infos to it
-            var cmmco= cache.getCmmcos(tcmmco.originid);
+            //Try to Get CMMCO from Cache
+            var cmmco= cache.getCmmcos(queryId.id);
+
             if(cmmco){
-               
-                cmmco["selectedScene"]= tcmmco.selectedScene;
-                cmmco["start"]= tcmmco.start;
-                cmmco["end"]= tcmmco.end;
-                cmmco["id"]= tcmmco.queryId;
                 return cmmco;
-
             }else
-            {     
+            {
                 //Get Full Tcmmco
-                var cmmco= await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId+"/"+true,"json");
+                var cmmco= await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.id+"/"+false,"json");
+                cache.addCmmcos(queryId.id, cmmco);
                 return cmmco;
             }
         }
-        
-        cache.addCmmcos(queryId, cmmco);
-    
-        return cmmco;
+
+        //TCMMCO
+        if(queryId.cmmco){
+
+            //Try to get CMMCO from Cache
+            var cmmco= cache.getCmmcos(queryId.cmmco);
             
+            if(!cmmco){
+
+               var cmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.cmmco+"/"+false,"json");
+               cache.addCmmcos(queryId.id, cmmco);
+            }
+
+            var tcmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.id+"/"+true,"json");
+            cmmco["selectedScene"]= tcmmco.selectedScene;
+            cmmco["start"]= tcmmco.start;
+            cmmco["end"]= tcmmco.end;
+            cmmco["id"]= tcmmco.queryId;
+            return cmmco;
+
+        }
     }
 
 
@@ -204,12 +223,16 @@ class GMAFAdapter
             console.log("No results received from Query");
             return;
         }
-        
+       
         var queryIds= result.results;
         updateStatus(0, queryIds.length);
         var queryResults= [];
         if (typeof queryIds === 'object') {
+
             for (let index = 0; index < queryIds.length; index++) {
+
+            console.log("Before CMMCMO");
+
               var cmmco = await this.getCMMCO(queryIds[index]);
               queryResults.push(cmmco);
               updateStatus(index+1, queryIds.length);
