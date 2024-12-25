@@ -86,7 +86,7 @@ class GMAFAdapter
     
     async getQueryIds(query={}){
       
-        return this.post("gmaf/getQueryIds/"+this.apiToken,"json", query);
+        return this.post("gmaf/getQueryIds/"+this.apiToken+"/true","json", query);
     }
 
     async query(query={}, updateStatus)
