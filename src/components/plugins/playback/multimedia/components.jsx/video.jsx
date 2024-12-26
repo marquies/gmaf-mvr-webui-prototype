@@ -48,7 +48,7 @@ function Video(props) {
         var secondsEnd= parseTimecode(props.end);
         var middleSeconds= (secondsStart+secondsEnd)/2;
         
-        video.currentTime = middleSeconds;
+        video.currentTime = secondsStart+1;//middleSeconds;
 
         //console.log("Seconrds   ", seconds);
        
