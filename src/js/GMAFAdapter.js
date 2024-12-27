@@ -202,11 +202,11 @@ class GMAFAdapter
             var cmmco= cache.getCmmcos(queryId.cmmco);
            
             if(!cmmco){
-                console.log("Not from Cache");
+              //console.log("Not from Cache");
                var cmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.cmmco+"/"+false,"json");
                cache.addCmmcos(queryId.cmmco, cmmco);
             }else{
-                console.log("From Cache");
+                //console.log("From Cache");
             }
            
             var tcmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.id+"/"+true,"json");
