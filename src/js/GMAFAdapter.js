@@ -176,7 +176,6 @@ class GMAFAdapter
         }
         var cache= Cache.getInstance();
     
-        console.log("Cache : ", cache);
         //Standard CMMCO
         if(queryId.id && !queryId.cmmco){
 
@@ -211,11 +210,11 @@ class GMAFAdapter
             }
            
             var tcmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.id+"/"+true,"json");
-   
+           
             cmmco["selectedScene"]= tcmmco.selectedScene;
             cmmco["start"]= tcmmco.start;
             cmmco["end"]= tcmmco.end;
-            cmmco["id"]= tcmmco.queryId;
+            cmmco["md"]["id"]= tcmmco.id;
             return cmmco;
 
         }
