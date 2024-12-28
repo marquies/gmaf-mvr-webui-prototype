@@ -177,7 +177,7 @@ class GMAFAdapter
         var cache= Cache.getInstance();
     
         //Standard CMMCO
-        if(queryId.id && !queryId.cmmco){
+        if(queryId.id && !queryId.originId){
 
             //Try to Get CMMCO from Cache
             var cmmco= cache.getCmmcos(queryId.id);
@@ -196,20 +196,20 @@ class GMAFAdapter
         }
 
         //TCMMCO
-        if(queryId.cmmco){
+        if(queryId.originId){
 
             //Try to get CMMCO from Cache
-            var cmmco= cache.getCmmcos(queryId.cmmco);
+            var cmmco= cache.getCmmcos(queryId.originId);
            
             if(!cmmco){
               //console.log("Not from Cache");
-               var cmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.cmmco+"/"+false,"json");
-               cache.addCmmcos(queryId.cmmco, cmmco);
+               var cmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.originId,"json");
+               cache.addCmmcos(queryId.originId, cmmco);
             }else{
                 //console.log("From Cache");
             }
            
-            var tcmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.id+"/"+true,"json");
+            var tcmmco = await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.id,"json");
            
             cmmco["selectedScene"]= tcmmco.selectedScene;
             cmmco["start"]= tcmmco.start;
