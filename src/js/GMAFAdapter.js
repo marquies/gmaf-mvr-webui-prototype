@@ -67,12 +67,12 @@ class GMAFAdapter
             }
 
             updateStatus(0, cmmcocollectionIds.length);
-            console.log("CMMCO CollectionIds: ", cmmcocollectionIds);
+         
             for (let index = 0; index < cmmcocollectionIds.length; index++) {
               let collectionId = cmmcocollectionIds[index];
-              console.log("IN PROCESS");
+              
               var processResult = await this.processAssetById(collectionId);
-              console.log("Process Result: ", processResult);
+           
               updateStatus(index+1, cmmcocollectionIds.length);
             }
         }
@@ -94,7 +94,12 @@ class GMAFAdapter
         //First get QueryIds
         var result= await this.getQueryIds(query);
         console.log("IDS Result: ",result);
-
+        if(!result)
+        {
+            console.log("No results received from Query");
+            return;
+        }
+        
         if(!result.results){
             console.log("No results received from Query");
             return;
