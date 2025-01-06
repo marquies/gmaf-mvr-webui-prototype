@@ -189,12 +189,11 @@ class GMAFAdapter
 
             if(cmmco){
             
-                return cmmco;
+                return cmmco;   
             }else
             {
-            
                 //Get Full Tcmmco
-                var cmmco= await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.id+"/"+false,"json");
+                var cmmco= await this.post("gmaf/getCmmco/"+this.apiToken+"/"+queryId.id,"json");
                 cache.addCmmcos(queryId.id, cmmco);
                 return cmmco;
             }
@@ -233,15 +232,13 @@ class GMAFAdapter
             console.log("No results received from Query");
             return;
         }
-       
+        console.log("CollectionIds: ", result.results);
         var queryIds= result.results;
         updateStatus(0, queryIds.length);
         var queryResults= [];
         if (typeof queryIds === 'object') {
 
             for (let index = 0; index < queryIds.length; index++) {
-
-            console.log("Before CMMCMO");
 
               var cmmco = await this.getCMMCO(queryIds[index]);
               queryResults.push(cmmco);
