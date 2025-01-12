@@ -19,7 +19,7 @@ const {cmmco} = props;
   //const hoverTimeout = useRef(null);
 
   const handleRightClick = (event) => {
-   //event.preventDefault(); // Prevent the default context menu
+   event.preventDefault(); // Prevent the default context menu
    setIsTooltipVisible(true);
  };
 
