@@ -18,6 +18,7 @@
     "react-datepicker": "^7.4.0",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
+    "react-tag-input": "^6.10.3",
     "web-vitals": "^2.1.4",
     "webview": "file:"
   },

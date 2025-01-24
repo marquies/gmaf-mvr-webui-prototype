@@ -1,14 +1,21 @@
 import React, { useEffect, useState} from 'react';
 import Filter from './filter';
 import WsdQuery from './wsdquery';
+import { WithContext as ReactTags } from 'react-tag-input';
+import './ReactTags.css';
 
+const KeyCodes = {
+    comma: 188,
+    enter: 13,
+};
 
-
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 function Query(props) {
     
     const [text, setText] = useState(""); 
     const [isValidKeywords, setIsValidKeywords] = useState(true);
+    const [tags, setTags] = useState([]);
     const [image, setImage] = useState(null);  
     const [imageurl, setImageurl] = useState("");
     const [audio, setAudio] = useState(null);
@@ -77,6 +84,7 @@ function Query(props) {
 
     function clearText() {
         setText("");
+        setTags([]);
     }
 
     function clearAudio() {
@@ -157,6 +165,29 @@ function Query(props) {
         });
     }
 
+    function handleDelete(i) {
+        setTags(tags.filter((tag, index) => index !== i));
+        updateText(tags.filter((tag, index) => index !== i));
+    }
+
+    function handleAddition(tag) {
+        setTags([...tags, tag]);
+        updateText([...tags, tag]);
+    }
+
+    function handleDrag(tag, currPos, newPos) {
+        const newTags = tags.slice();
+        newTags.splice(currPos, 1);
+        newTags.splice(newPos, 0, tag);
+        setTags(newTags);
+        updateText(newTags);
+    }
+
+    function updateText(newTags) {
+        const newText = newTags.map(tag => tag.text).join(', ');
+        setText(newText);
+    }
+
      const handleQueryClicked = () => {
             const query = createMmcoQuery(); // Generate the query
             props.setCmmcoQuery(query); // Update the state in the parent
@@ -175,15 +206,24 @@ function Query(props) {
                         <div className='border-1 border border-dark rounded-3 p-3'>
                             <h5>Keywords</h5>
                             <p className="text-muted small mb-2">Enter keywords separated by commas to search for specific content (e.g., "nature, mountains, sunset")</p>
-                            <textarea 
-                                className={`form-control textarea mt-1 ${!isValidKeywords ? 'is-invalid' : ''}`} 
-                                placeholder="Enter your comma seperated keywords here..." 
-                                spellCheck="false" 
-                                id="query-textarea" 
-                                value={text} 
-                                rows="3" 
-                                onChange={textChange}
-                            ></textarea>
+                            <ReactTags
+                                tags={tags}
+                                delimiters={delimiters}
+                                handleDelete={handleDelete}
+                                handleAddition={handleAddition}
+                                handleDrag={handleDrag}
+                                inputFieldPosition="bottom"
+                                autocomplete
+                                placeholder="Type and press enter or comma to add keywords"
+                                classNames={{
+                                    tags: 'ReactTags__tags',
+                                    tagInput: 'ReactTags__tagInput form-control',
+                                    tagInputField: 'ReactTags__tagInputField',
+                                    selected: 'ReactTags__selected',
+                                    tag: 'ReactTags__tag btn btn-primary btn-sm me-2 mb-2',
+                                    remove: 'ReactTags__remove',
+                                }}
+                            />
                             {!isValidKeywords && (
                                 <div className="invalid-feedback">
                                     Please use commas to separate multiple keywords (e.g., "nature, mountains")
