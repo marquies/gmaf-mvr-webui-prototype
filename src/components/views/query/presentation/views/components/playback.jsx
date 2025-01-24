@@ -67,15 +67,35 @@ return (
               </div>
               {props.deletable?<i className="fa fa-sm fa-trash" onClick={()=>deleteitem()} type="button"></i>:""}
             <div className={cmmco.start===""?"card bg-cmmco":"card bg-light"}  style={{width: "100%"}}>
+              <div className="card-header bg-light">
+                <p className="small text-muted mb-0">{cmmco.md.filename}</p>
+              </div>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
                         <Multimedia view={props.view} mmco={cmmco.mmco} start={cmmco.start} end={cmmco.end} timecode={timeCode} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
-                       
-                        <div><i className="fa fa-chevron-down fsize"onClick={() => setPdUnfolded(!pdUnfolded)}></i></div>
-                            {pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.mmco.start} timecode={timeCode}></PdPlayback> :""}  
-                          <div><i className="fa fa-chevron-down fsize fa-2xs"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
-                          {wsdUnfolded ? <WsdPlayback ></WsdPlayback>: ""}
+                        {cmmco.pd && Object.keys(cmmco.pd).length > 0 && (
+                            <>
+                                <div className="d-flex align-items-center">
+                                    <i className="fa fa-chevron-down fsize me-2" onClick={() => setPdUnfolded(!pdUnfolded)}></i>
+                                    <div>
+                                        <p className="text-muted small mb-0">Peripheral Data</p>
+                                    </div>
+                                </div>
+                                {pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.start} timecode={timeCode}></PdPlayback> :""}
+                            </>
+                        )}
+                        {cmmco.wsd && Object.keys(cmmco.wsd).length > 0 && (
+                            <>
+                                <div className="d-flex align-items-center">
+                                    <i className="fa fa-chevron-down fsize me-2" onClick={() => setWsdUnfolded(!wsdUnfolded)}></i>
+                                    <div>
+                                        <p className="text-muted small mb-0">World Specific Data</p>
+                                    </div>
+                                </div>
+                                {wsdUnfolded ? <WsdPlayback></WsdPlayback> : ""}
+                            </>
+                        )}
                    </div>    
                 </div>
             </div>    

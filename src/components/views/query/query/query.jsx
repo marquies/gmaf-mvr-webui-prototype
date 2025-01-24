@@ -8,6 +8,7 @@ import WsdQuery from './wsdquery';
 function Query(props) {
     
     const [text, setText] = useState(""); 
+    const [isValidKeywords, setIsValidKeywords] = useState(true);
     const [image, setImage] = useState(null);  
     const [imageurl, setImageurl] = useState("");
     const [audio, setAudio] = useState(null);
@@ -19,7 +20,14 @@ function Query(props) {
     const [pluginSelected, setPluginSelected] = useState(0);
 
     function textChange(event) {
-        setText(event.target.value);
+        const newText = event.target.value;
+        setText(newText);
+        // Check if text is not empty and doesn't contain commas
+        if (newText.trim() !== "" && !newText.includes(',')) {
+            setIsValidKeywords(false);
+        } else {
+            setIsValidKeywords(true);
+        }
     }    
 
     function imageInput() {
@@ -167,7 +175,20 @@ function Query(props) {
                         <div className='border-1 border border-dark rounded-3 p-3'>
                             <h5>Keywords</h5>
                             <p className="text-muted small mb-2">Enter keywords separated by commas to search for specific content (e.g., "nature, mountains, sunset")</p>
-                            <textarea className="form-control textarea mt-1" placeholder="Enter your comma seperated keywords here..." spellCheck="false" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
+                            <textarea 
+                                className={`form-control textarea mt-1 ${!isValidKeywords ? 'is-invalid' : ''}`} 
+                                placeholder="Enter your comma seperated keywords here..." 
+                                spellCheck="false" 
+                                id="query-textarea" 
+                                value={text} 
+                                rows="3" 
+                                onChange={textChange}
+                            ></textarea>
+                            {!isValidKeywords && (
+                                <div className="invalid-feedback">
+                                    Please use commas to separate multiple keywords (e.g., "nature, mountains")
+                                </div>
+                            )}
                             <h5>Examples</h5>
                             <p className="text-muted small mb-2">Upload image or audio files as examples to find similar content in the database</p>
                             <div className="d-flex align-items-center gap-3 mb-3">
