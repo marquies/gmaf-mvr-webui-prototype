@@ -20,7 +20,6 @@ useEffect(() => {
 
 return (
     <div>
-        <h5 className="card-title mt-1">Filter</h5>
         <div className="input-group mb-1">
             <div className="input-group-prepend filter-prepend">
                 <span className="input-group-text">Name</span>

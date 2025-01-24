@@ -159,10 +159,53 @@ function Query(props) {
     return (
      
         <div className='query'>
-                <div className="card" style={{width: "100%"}}>
+                <div className="card border-primary shadow" style={{width: "100%"}}>
+                    <div className="card-header bg-primary text-white">
+                        <h5 className="card-title mb-0">Query Menu</h5>
+                    </div>
                     <div className="card-body">
-                        <div className='border-1 border rounded-3'>
-                            <div className="visual-input mb-2 border-1 border rounded-3">
+                        <div className='border-1 border border-dark rounded-3 p-3'>
+                            <h5>Keywords</h5>
+                            <p className="text-muted small mb-2">Enter keywords separated by commas to search for specific content (e.g., "nature, mountains, sunset")</p>
+                            <textarea className="form-control textarea mt-1" placeholder="Enter your comma seperated keywords here..." spellCheck="false" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
+                            <h5>Examples</h5>
+                            <p className="text-muted small mb-2">Upload image or audio files as examples to find similar content in the database</p>
+                            <div className="d-flex align-items-center gap-3 mb-3">
+                                <div>
+                                    <h6 className="mb-2">Upload</h6>
+                                    <div className="btn-group" role="group" aria-label="Upload options">
+                                        <button onClick={imageInput} type="button" className="btn btn-outline-primary" title="Upload Image">
+                                            <span className="fa fa-image"></span>
+                                            <span className="ms-2">Image</span>
+                                        </button>
+                                        <button onClick={audioInput} type="button" className="btn btn-outline-primary" title="Upload Audio">
+                                            <span className="fa fa-file-audio-o"></span>
+                                            <span className="ms-2">Audio</span>
+                                        </button>
+                                    </div>
+                                    <input type="file" onChange={imageUploaded} hidden id="image-input" accept=".png,.jpg,.jpeg"></input>  
+                                    <input type="file" onChange={audioUploaded} hidden id="audio-input" accept=".mp3,.wav"></input>  
+                                </div>
+                                <div className="ms-3">
+                                    <h6 className="mb-2">Actions</h6>
+                                    <div className="dropdown">
+                                        <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="null">
+                                            Clear
+                                        </button>
+                                        <ul className="dropdown-menu">
+                                            <li><button onClick={clearImage} className="dropdown-item">Image</button></li>
+                                            <li><button onClick={clearText} className="dropdown-item">Text</button></li>
+                                            <li><button onClick={clearAudio} className="dropdown-item">Audio</button></li>  
+                                            <li><button onClick={clearGolf} className="dropdown-item">World Specific Data</button></li>   
+                                            <li><button onClick={clearAll} className="dropdown-item">All</button></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <h6>Preview</h6>
+                            <div className="border-1 border rounded-3">
+                                
+                            <div className="visual-input mb-2">
                             {image ? 
                                 <img id="query-chosen-image" src={imageurl} alt=""/>
                                 : <i id= "query-placeholder-image" className="query-placeholder-image fa fa-image fa-3x"></i>
@@ -173,35 +216,36 @@ function Query(props) {
                                  
                                 </audio>    
                             </div>
-                            <div>
-                                <div className='query-menu mt-1'>
-                            { /*<button type="button" className='btn border border-secondary rounded-1 m-1' data-bs-toggle="modal" data-bs-target="#sketchinputModal"><span className="fa fa-paint-brush"></span></button>*/}
-                                <button onClick={imageInput} type="button" className='btn border border-secondary rounded-1 m-1'><span className="fa fa-image"></span></button>
-                                <button onClick={audioInput} type="button" className='btn border border-secondary rounded-1 m-1'><span className="fa fa-file-audio-o"></span></button>
-                                <input type="file" onChange={imageUploaded} hidden id="image-input" accept=".png,.jpg,.jpeg"></input>  
-                                <input type="file" onChange={audioUploaded} hidden id="audio-input" accept=".mp3,.wav"></input>  
-                                <div className="dropdown m-1">
-                                    <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="null">
-                                        Clear
-                                    </button>
-                                    <ul className="dropdown-menu">
-                                        <li><button onClick={clearImage} className="dropdown-item" >Image</button></li>
-                                        <li><button onClick={clearText} className="dropdown-item" >Text</button></li>
-                                        <li><button onClick={clearAudio} className="dropdown-item" >Audio</button></li>  
-                                        <li><button onClick={clearGolf} className="dropdown-item" >World Specific Data</button></li>   
-                                        <li><button onClick={clearAll} className="dropdown-item" >All</button></li>
-                                    </ul>
-                                    </div>
-                                </div>
                             </div>
                         </div>
-                        <textarea className="form-control textarea mt-1" placeholder="Enter your comma seperated keywords here..." spellCheck="false" id="query-textarea" value={text} rows="3" onChange={textChange}></textarea>
-                            <div><i className="fa fa-chevron-down fsize"onClick={() => setWsdUnfolded(!wsdUnfolded)}></i></div>   
-                           
-                            {wsdUnfolded ? <WsdQuery key={wsdKey}></WsdQuery>: ""}
-                            <div><i className="fa fa-chevron-down fsize"onClick={() => setFilterUnfolded(!filterUnfolded)}></i></div>
-                            {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}     
-                     <button className="w-25 btn btn-primary mt-2 float-end"  onClick={handleQueryClicked}>Query</button>   
+                        
+                        <div className="card border-dark mt-3 mb-2">
+                            <div className="card-header d-flex align-items-center bg-light">
+                                <i className="fa fa-chevron-down fsize me-2" onClick={() => setWsdUnfolded(!wsdUnfolded)}></i>
+                                <div>
+                                    <span>World Specific Data</span>
+                                    <p className="text-muted small mb-0 mt-1">Define domain-specific search criteria for your query</p>
+                                </div>
+                            </div>
+                            <div className="card-body p-2">
+                                {wsdUnfolded ? <WsdQuery key={wsdKey}></WsdQuery>: ""}
+                            </div>
+                        </div>
+
+                        <div className="card border-dark mb-2">
+                            <div className="card-header d-flex align-items-center bg-light">
+                                <i className="fa fa-chevron-down fsize me-2" onClick={() => setFilterUnfolded(!filterUnfolded)}></i>
+                                <div>
+                                    <span>Filter</span>
+                                    <p className="text-muted small mb-0 mt-1">Refine your search results by applying specific filters</p>
+                                </div>
+                            </div>
+                            <div className="card-body p-2">
+                                {filterUnfolded ? <Filter setFilter={props.setFilter}></Filter> :""}
+                            </div>
+                        </div>
+                        
+                        <button className="w-25 btn btn-primary mt-2 float-end" onClick={handleQueryClicked}>Query</button>
                     </div>
             </div>     
         </div>

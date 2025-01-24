@@ -96,13 +96,13 @@ class GMAFAdapter
         console.log("IDS Result: ",result);
         if(!result)
         {
-            console.log("No results received from Query");
-            return;
+            console.log("No response received from Query");
+            return {"results":[], "page":0, "numberOfPages":0, "numOfAllResults":0};
         }
         
         if(!result.results){
             console.log("No results received from Query");
-            return;
+            return {"results":[], "page":0, "numberOfPages":0, "numOfAllResults":0};
         }
 
         var queryIds= result.results;

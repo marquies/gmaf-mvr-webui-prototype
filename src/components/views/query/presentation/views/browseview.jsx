@@ -88,15 +88,18 @@ async function handlePagination(requestedPage) {
 }
 
 return (
-  <div>
-     {props.cmmcos.length>0? <nav aria-label="Page navigation example">
+  <div className="card border-primary shadow" style={{width: "100%"}}>
+    <div className="card-header bg-primary text-white">
+      <h5 className="card-title mb-0">Result Browser</h5>
+    </div>
+    <div className="card-body">
+      {props.cmmcos.length>0? <nav aria-label="Page navigation example">
         <ul className="pagination">
             <li id="prev-button" onClick={()=>handlePagination(paginationState-1)} className="page-item"><button className="page-link" >Previous</button></li>  
             <li id="pagi2" className="page-item"><button className="page-link" >{paginationState}</button></li>   
             <li id="next-button" onClick={()=>handlePagination(paginationState+1)} className="page-item"><button className="page-link" >Next</button></li>
         </ul>
-    </nav>:""
-    }
+    </nav>:""}
      {canRender()?
     <div className='d-flex flex-wrap flex-start gap'>
        
@@ -109,6 +112,7 @@ return (
     }
        
     </div>
+  </div>
 );
 
 }
