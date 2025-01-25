@@ -1,0 +1,69 @@
+@startuml
+title Query Execution Sequence
+
+actor User
+participant "Query Component" as Query
+participant "Filter Component" as Filter
+participant "QueryHandler" as Handler
+participant "GMAFAdapter" as GMAF
+participant "Backend API" as API
+participant "BrowseView" as Browse
+participant "Details Component" as Details
+
+User -> Query: Enter Keywords/Upload Files
+activate Query
+
+Query -> Query: handleSearch()
+activate Query
+Query -> Handler: fetchIds(query, wsd, plugin)
+activate Handler
+
+Handler -> GMAF: query(queryData)
+activate GMAF
+
+GMAF -> API: POST /gmaf/gmafApi/gmaf/query
+activate API
+API --> GMAF: Return Search Results
+deactivate API
+
+GMAF --> Handler: Return Processed Results
+deactivate GMAF
+
+Handler --> Query: Return Results Array
+deactivate Handler
+
+Query -> Query: setAllResults(results)
+Query -> Query: applyClientFilter()
+activate Query
+
+Query -> Filter: Apply Filters (name, date, type)
+activate Filter
+Filter --> Query: Return Filtered Results
+deactivate Filter
+
+Query -> Browse: Update Results Display
+activate Browse
+Browse -> Browse: Render Result Cards
+Browse --> User: Display Results
+deactivate Browse
+
+User -> Browse: Select Result Item
+activate Browse
+
+Browse -> Details: Load Item Details
+activate Details
+
+Details -> API: GET /gmaf/gmafApi/gmaf/getmmfg/{id}
+activate API
+API --> Details: Return Item Details
+deactivate API
+
+Details -> Details: Update Display
+Details --> User: Show Detailed View
+deactivate Details
+
+deactivate Browse
+deactivate Query
+deactivate Query
+
+@enduml
