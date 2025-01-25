@@ -26,8 +26,102 @@ function Query(props) {
   const [wsdUnfolded, setWsdUnfolded] = useState(null);
   const [filterUnfolded, setFilterUnfolded] = useState(true); //Show by default
   const [pluginSelected, setPluginSelected] = useState(0);
+  const [filter, setFilter] = useState({});
+  const [allResults, setAllResults] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
 
   const { isLoading, fetchIds } = useQueryHandler(props.setCmmcoQuery);
+
+  useEffect(() => {
+    if (allResults.length > 0) {
+      applyClientFilter();
+    }
+  }, [filter, allResults]);
+
+  const applyClientFilter = () => {
+    let results = [...allResults];
+    
+    if (filter.name) {
+      results = results.filter(result => 
+        result.generalMetadata?.fileName?.toLowerCase().includes(filter.name.toLowerCase())
+      );
+    }
+
+    if (filter.fromDate) {
+      results = results.filter(result => {
+        const resultDate = new Date(result.generalMetadata?.creationDate);
+        return resultDate >= filter.fromDate;
+      });
+    }
+
+    if (filter.toDate) {
+      results = results.filter(result => {
+        const resultDate = new Date(result.generalMetadata?.creationDate);
+        return resultDate <= filter.toDate;
+      });
+    }
+
+    if (filter.type) {
+      results = results.filter(result => 
+        result.generalMetadata?.type === filter.type
+      );
+    }
+
+    setFilteredResults(results);
+    props.onResultsChange(results);
+  };
+
+  const handleSearch = async () => {
+    try {
+      // Fetch all results without filtering
+      const results = await fetchIds({
+        query: text,
+        wsd: wsd,
+        plugin: pluginSelected,
+        filter: {} // Empty filter since we're doing client-side filtering
+      });
+      setAllResults(results);
+      props.setCmmcoQuery(results); // Update the results immediately
+      // Initial filtering will be applied through useEffect
+    } catch (error) {
+      console.error('Error performing search:', error);
+    }
+  };
+
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+    if (allResults.length > 0) {
+      let filtered = [...allResults];
+      
+      if (newFilter.name) {
+        filtered = filtered.filter(result => 
+          result.generalMetadata?.fileName?.toLowerCase().includes(newFilter.name.toLowerCase())
+        );
+      }
+
+      if (newFilter.fromDate) {
+        filtered = filtered.filter(result => {
+          const resultDate = new Date(result.generalMetadata?.creationDate);
+          return resultDate >= newFilter.fromDate;
+        });
+      }
+
+      if (newFilter.toDate) {
+        filtered = filtered.filter(result => {
+          const resultDate = new Date(result.generalMetadata?.creationDate);
+          return resultDate <= newFilter.toDate;
+        });
+      }
+
+      if (newFilter.type) {
+        filtered = filtered.filter(result => 
+          result.generalMetadata?.type === newFilter.type
+        );
+      }
+
+      props.setCmmcoQuery(filtered); // Update the filtered results
+    }
+  };
 
   function textChange(event) {
     const newText = event.target.value;
@@ -351,28 +445,6 @@ function Query(props) {
             </div>
             <div className="card-body p-2">
               {wsdUnfolded ? <WsdQuery key={wsdKey}></WsdQuery> : ""}
-            </div>
-          </div>
-
-          <div className="card border-dark mb-2">
-            <div className="card-header d-flex align-items-center bg-light">
-              <i
-                className="fa fa-chevron-down fsize me-2"
-                onClick={() => setFilterUnfolded(!filterUnfolded)}
-              ></i>
-              <div>
-                <span>Filter</span>
-                <p className="text-muted small mb-0 mt-1">
-                  Refine your search results by applying specific filters
-                </p>
-              </div>
-            </div>
-            <div className="card-body p-2">
-              {filterUnfolded ? (
-                <Filter setFilter={props.setFilter}></Filter>
-              ) : (
-                ""
-              )}
             </div>
           </div>
 

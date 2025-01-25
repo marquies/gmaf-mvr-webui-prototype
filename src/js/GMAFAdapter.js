@@ -109,7 +109,6 @@ class GMAFAdapter {
         if (typeof queryIds === 'object') {
             for (let index = 0; index < queryIds.length; index++) {
                 var cmmco = await this.getCMMCO(queryIds[index]);
-                if (!cmmco?.generalMetadata?.fileName || !cmmco.generalMetadata.fileName.includes(query.filter.name)) continue;
                 queryResults.push(cmmco);
                 updateStatus(index + 1, queryIds.length);
             }
