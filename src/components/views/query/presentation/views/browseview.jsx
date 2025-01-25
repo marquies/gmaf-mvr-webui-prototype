@@ -5,11 +5,11 @@ import Filter from '../../query/filter';
 function BrowseView(props) {
     const [selectedId, setSelectedId] = useState(null);
     const [showAlert, setShowAlert] = useState(true);
-    const [filteredResults, setFilteredResults] = useState(props.cmmcos);
+    const [filteredResults, setFilteredResults] = useState(props.cmmcos || []);
     const [filterUnfolded, setFilterUnfolded] = useState(true);
 
     useEffect(() => {
-        setFilteredResults(props.cmmcos);
+        setFilteredResults(props.cmmcos || []);
     }, [props.cmmcos]);
 
     useEffect(() => {
@@ -30,6 +30,11 @@ function BrowseView(props) {
     };
 
     const handleFilterChange = (newFilter) => {
+        if (!props.cmmcos || !Array.isArray(props.cmmcos)) {
+            setFilteredResults([]);
+            return;
+        }
+        
         let filtered = [...props.cmmcos];
         
         if (newFilter.name) {

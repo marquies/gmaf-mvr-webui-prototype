@@ -62,7 +62,7 @@ function Filter(props) {
           <div className='w-25 me-1'>
             <div className="input-group">
                 <div className="input-group-prepend w-100">
-                    <span className="input-group-text w-100">From</span>
+                    <span className="input-group-text w-100">Creation Date From</span>
                 </div>
                 <DatePicker 
                     className="form-control datepicker filter-input" 
@@ -74,7 +74,7 @@ function Filter(props) {
             <div className='w-25'>
                 <div className="input-group">
                     <div className="input-group-prepend w-100">
-                        <span className="input-group-text w-100">To</span>
+                        <span className="input-group-text w-100">Creation Date To</span>
                     </div>
                     <DatePicker  
                         className="form-control datepicker filter-input" 

@@ -290,35 +290,38 @@ function Query(props) {
         </div>
         <div className="card-body">
           <div className="border-1 border border-dark rounded-3 p-3">
-            <h5>Keywords</h5>
-            <p className="text-muted small mb-2">
-              Enter keywords separated by commas to search for specific content
-              (e.g., "nature, mountains, sunset")
-            </p>
-            <ReactTags
-              tags={tags}
-              delimiters={delimiters}
-              handleDelete={handleDelete}
-              handleAddition={handleAddition}
-              handleDrag={handleDrag}
-              inputFieldPosition="bottom"
-              autocomplete
-              placeholder="Type and press enter or comma to add keywords"
-              classNames={{
-                tags: "ReactTags__tags",
-                tagInput: "ReactTags__tagInput form-control",
-                tagInputField: "ReactTags__tagInputField",
-                selected: "ReactTags__selected",
-                tag: "ReactTags__tag btn btn-primary btn-sm me-2 mb-2",
-                remove: "ReactTags__remove",
-              }}
-            />
-            {!isValidKeywords && (
-              <div className="invalid-feedback">
-                Please use commas to separate multiple keywords (e.g., "nature,
-                mountains")
+            <div className="keywords-container">
+              <h5>Keywords</h5>
+              <p className="text-muted small mb-2">
+                Enter keywords separated by commas to search for specific content
+                (e.g., "nature, mountains, sunset")
+              </p>
+              <div className="keywords-input-container">
+                <ReactTags
+                  tags={tags}
+                  delimiters={delimiters}
+                  handleDelete={handleDelete}
+                  handleAddition={handleAddition}
+                  handleDrag={handleDrag}
+                  inputFieldPosition="top"
+                  autocomplete
+                  placeholder="Type and press enter or comma to add keywords"
+                  classNames={{
+                    tags: "ReactTags__tags",
+                    tagInput: "ReactTags__tagInput form-control",
+                    tagInputField: "ReactTags__tagInputField",
+                    selected: "ReactTags__selected",
+                    tag: "ReactTags__tag btn btn-primary btn-sm",
+                    remove: "ReactTags__remove",
+                  }}
+                />
+                {!isValidKeywords && (
+                  <div className="invalid-feedback d-block mt-2">
+                    Please use commas to separate multiple keywords (e.g., "nature, mountains")
+                  </div>
+                )}
               </div>
-            )}
+            </div>
             <h5>Examples</h5>
             <p className="text-muted small mb-2">
               Upload image or audio files as examples to find similar content in
@@ -375,7 +378,7 @@ function Query(props) {
                     data-bs-toggle="dropdown"
                     aria-expanded="null"
                   >
-                    Clear
+                    Clear Examples
                   </button>
                   <ul className="dropdown-menu">
                     <li>

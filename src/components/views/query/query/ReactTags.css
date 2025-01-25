@@ -1,10 +1,13 @@
 .ReactTags__tags {
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .ReactTags__tagInput {
     border-radius: 0.25rem;
-    display: inline-block;
+    width: 100%;
+    order: 1;
 }
 
 .ReactTags__tagInputField {
@@ -15,18 +18,25 @@
 
 .ReactTags__tagInputField:focus {
     outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .ReactTags__selected {
-    display: inline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    order: 2;
 }
 
 .ReactTags__tag {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
     line-height: 1.5;
     border-radius: 0.2rem;
+    margin: 0;
 }
 
 .ReactTags__remove {
@@ -37,8 +47,15 @@
     border: none;
     padding: 0;
     font-size: 14px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .ReactTags__remove:hover {
     color: #f8f9fa;
+}
+
+/* Add spacing between tags */
+.ReactTags__tag:not(:last-child) {
+    margin-right: 0.5rem;
 }
