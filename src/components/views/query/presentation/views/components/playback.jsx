@@ -78,7 +78,15 @@ return (
                 onMouseLeave={(e) => e.currentTarget.classList.remove('shadow', 'bg-light')}
             >
               <div className="card-header bg-light">
-                <p className="small text-muted mb-0">{cmmco?.generalMetadata?.fileName}</p>
+                <p className="small text-muted mb-0" style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: '3',
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  minHeight: '4.5em',
+                  lineHeight: '1.5em'
+                }}>{cmmco?.generalMetadata?.fileName}</p>
               </div>
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
