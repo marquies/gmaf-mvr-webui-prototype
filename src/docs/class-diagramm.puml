@@ -1,0 +1,65 @@
+@startuml
+class App {
+    - view: String
+    - presentationView: String
+}
+
+class Presentation
+
+class QueryView {
+    - query: Query
+    - filter: Filter
+    - queryResults: []MVR
+}
+
+class Query {
+    - text: String
+    - image: file
+    - audio: file
+    - filterUnfolded: bool
+    - wsdUnfolded: bool
+}
+
+class Filter {
+    - name: String
+    - fromDate: String
+    - toDate: String
+    - type: String
+}
+
+interface MMIRAdapter {
+}
+
+
+class BrowseView {
+    - selectedItem: MVR
+}
+
+class DetailsView {
+    - item: MVR
+}
+
+class CollectionView {
+}
+
+interface Playback {
+    - wsdUnfolded: boolean
+    - pdUnfolded
+    - timeCode
+    - isTooltipVisible
+}
+
+
+
+App *-- Presentation
+App *-- QueryView
+QueryView *-- Query
+Query *-- Filter
+Query --- MMIRAdapter
+QueryView *-- BrowseView
+QueryView *-- DetailsView
+QueryView *-- CollectionView
+DetailsView *-- Playback
+BrowseView --- DetailsView
+
+@enduml
