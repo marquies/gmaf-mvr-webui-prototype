@@ -98,7 +98,7 @@
   }
   .card-header{
   
-    height: 90%;
+    /*max-height: 90%;*/
   }
 
   .card-footer{

@@ -102,12 +102,15 @@ class GMAFAdapter {
 
         var queryIds = result;
 
+        
+
         updateStatus(0, queryIds.length);
         var queryResults = [];
         if (typeof queryIds === 'object') {
             for (let index = 0; index < queryIds.length; index++) {
                 var cmmco = await this.getCMMCO(queryIds[index]);
-                queryResults.push(cmmco.data);
+                if (!cmmco?.generalMetadata?.fileName || !cmmco.generalMetadata.fileName.includes(query.filter.name)) continue;
+                queryResults.push(cmmco);
                 updateStatus(index + 1, queryIds.length);
             }
         }
@@ -178,7 +181,7 @@ class GMAFAdapter {
 
 
         if (queryId) {
-            var collectionElement = await this.post("gmaf/getCmmco/" + this.apiToken + "/" + queryId, "json");
+            var collectionElement = await this.post("gmaf/getmmfg/" + this.apiToken + "/" + queryId, "json");
             return collectionElement;
         }
     }

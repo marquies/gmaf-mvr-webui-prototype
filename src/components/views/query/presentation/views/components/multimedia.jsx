@@ -1,5 +1,6 @@
-import React, { } from 'react';
+import React, { useRef} from 'react';
 import MultimediaPlaybackPluginLoader from '../../../../../plugins/playback/multimedia/loader';
+import ReactPlayer from 'react-player';
 import NoPlugin from '../../../../../plugins/error/noplugin';
 
 function Multimedia(props){
@@ -9,6 +10,8 @@ const multimediaPlaybackComponents= MultimediaPlaybackPluginLoader;
 const {mmco} = props;
 var mmcofile= false;
 var type=false;
+const playerRef = useRef(null); // Create a ref using useRef
+
 
 function canRender(){
 
@@ -34,10 +37,10 @@ function canRender(){
 }
 
 return (
-    <div className= {props.view === "details" ? 'playback-multimedia-container-big border-1 border rounded-3': 'playback-multimedia-container-small border-1 border rounded-3'}>
-            { canRender() && typeof(multimediaPlaybackComponents[type]) === 'function'  ? 
-            React.createElement(multimediaPlaybackComponents[type], { data: mmcofile, start:props.start, end:props.end, setTimeCode: props.setTimeCode}):
-            <NoPlugin/> }
+        <div className= {props.view === "details" ? 'playback-multimedia-container-big border-1 border rounded-3': 'playback-multimedia-container-small border-1 border rounded-3'}>
+            <img src={"http://localhost:8242/gmaf/gmafApi/gmaf/preview/s/"+ mmco.id} alt="" />
+            
+            
        
     </div>
 );

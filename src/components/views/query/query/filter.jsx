@@ -22,7 +22,7 @@ return (
     <div>
         <div className="input-group mb-1">
             <div className="input-group-prepend filter-prepend">
-                <span className="input-group-text">Name</span>
+                <span className="input-group-text">Fileame</span>
             </div>
             <input type="text" className="form-control filter-input" onChange={(name)=> setName(name.target.value)} aria-label=""></input>
         </div>
@@ -32,7 +32,11 @@ return (
                 <div className="input-group-prepend w-100">
                     <span className="input-group-text w-100">From</span>
                 </div>
-                <DatePicker className="form-control datepicker filter-input" selected={fromDate} onChange={(date) => setFromDate(date)} />
+                <DatePicker 
+                    className="form-control datepicker filter-input" 
+                    selected={fromDate} 
+                    onChange={(date) => setFromDate(date)}
+                    maxDate={toDate} />
             </div>
             </div>
             <div className='w-25'>
@@ -40,7 +44,11 @@ return (
                     <div className="input-group-prepend w-100">
                         <span className="input-group-text w-100">To</span>
                     </div>
-                    <DatePicker  className="form-control datepicker filter-input" selected={toDate} onChange={(date) => setToDate(date)} />
+                    <DatePicker  
+                        className="form-control datepicker filter-input" 
+                        selected={toDate} 
+                        onChange={(date) => setToDate(date)}
+                        minDate={fromDate} />
                 </div>
             </div>
         <div className='query-menu ms-2'>
