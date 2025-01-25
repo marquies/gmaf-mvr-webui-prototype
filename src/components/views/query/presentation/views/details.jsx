@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactPlayer from "react-player";
 
 import NodeTable from "./components/nodetable";
+import PdPlayer from "./components/pdplayer";
 
 function Details2({ mmfgid }) {
   const [data, setData] = useState(null);
@@ -139,6 +140,7 @@ function Details2({ mmfgid }) {
                       width="100%"
                       height="300px"
                     />
+                    <PdPlayer mmfgid={mmfgid} />
                   </div>
                 </div>
                 <div className="px-3 d-flex flex-column" style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
