@@ -20,6 +20,7 @@ return (<div>
      
     <div className='query-wsd-container d-flex border-1 border rounded-3'>
         <div className='query-wsd-inner-container'>
+            Select a location on the map
             { typeof(pluginComponents[pluginSelectedIndex]) === 'function' ? React.createElement(pluginComponents[pluginSelectedIndex],{}):
             <NoPlugin/> }
         </div>

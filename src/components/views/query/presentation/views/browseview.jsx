@@ -58,9 +58,20 @@ function BrowseView(props) {
         }
 
         if (newFilter.type) {
-            filtered = filtered.filter(result => 
-                result.generalMetadata?.type === newFilter.type
-            );
+            filtered = filtered.filter(result => {
+                const fileName = result.generalMetadata?.fileName?.toLowerCase() || '';
+                console.log(fileName + " + " + newFilter.type);
+                switch(newFilter.type?.toLowerCase()) {
+                    case 'image':
+                        return fileName.endsWith('.jpeg') || fileName.endsWith('.png');
+                    case 'video':
+                        return fileName.endsWith('.mp4');
+                    case 'mvr':
+                        return fileName.endsWith('.mvr');
+                    default:
+                        return true;
+                }
+            });
         }
 
         setFilteredResults(filtered);
