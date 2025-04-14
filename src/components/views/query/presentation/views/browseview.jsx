@@ -1,120 +1,140 @@
-import React, { useEffect, useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import Playback from './components/playback';
-import GMAFAdapter from '../../../../../js/GMAFAdapter';
+import Filter from '../../query/filter';
 
+function BrowseView(props) {
+    const [selectedId, setSelectedId] = useState(null);
+    const [showAlert, setShowAlert] = useState(true);
+    const [filteredResults, setFilteredResults] = useState(props.cmmcos || []);
+    const [filterUnfolded, setFilterUnfolded] = useState(true);
 
-function BrowseView(props){
+    useEffect(() => {
+        setFilteredResults(props.cmmcos || []);
+    }, [props.cmmcos]);
 
-const [paginationState, setPaginationState] = useState(props.page); 
-const [numberOfPages, setNumberOfPages] = useState(props.numberOfPages);
-const [_, setRerender] = useState(0);
-const itemsPerPage=8;
-const [cmmcos, setCmmcos] = useState(props.cmmcos);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowAlert(false);
+        }, 3000);
 
-function canRender(){
-   
-    //console.log("NUMO OF PAGES HERE"+numberOfPages);
-    if(cmmcos === false || typeof(cmmcos) != 'object'){
-        //console.log("false or not an object: ", cmmcos);
-        return false;
+        return () => clearTimeout(timer);
+    }, []);
+
+    function canRender() {
+        return filteredResults && filteredResults.length > 0;
     }
 
-    return true;
-}
+    const handleSelect = (id) => {
+        setSelectedId(id);
+        props.onSelectItem(id);
+    };
 
+    const handleFilterChange = (newFilter) => {
+        if (!props.cmmcos || !Array.isArray(props.cmmcos)) {
+            setFilteredResults([]);
+            return;
+        }
+        
+        let filtered = [...props.cmmcos];
+        
+        if (newFilter.name) {
+            filtered = filtered.filter(result => 
+                result.generalMetadata?.fileName?.toLowerCase().includes(newFilter.name.toLowerCase())
+            );
+        }
 
-useEffect(() => {
-    
-    if (!cmmcos || typeof cmmcos !== 'object')
-    {
-        return;
-    } 
+        if (newFilter.fromDate) {
+            filtered = filtered.filter(result => {
+                const resultDate = new Date(result.generalMetadata?.creationDate);
+                return resultDate >= newFilter.fromDate;
+            });
+        }
 
+        if (newFilter.toDate) {
+            filtered = filtered.filter(result => {
+                const resultDate = new Date(result.generalMetadata?.creationDate);
+                return resultDate <= newFilter.toDate;
+            });
+        }
 
-    if(document.getElementById("prev-button")===null || document.getElementById("next-button")===null){
-        return;
-    }
+        if (newFilter.type) {
+            filtered = filtered.filter(result => {
+                const fileName = result.generalMetadata?.fileName?.toLowerCase() || '';
+                console.log(fileName + " + " + newFilter.type);
+                switch(newFilter.type?.toLowerCase()) {
+                    case 'image':
+                        return fileName.endsWith('.jpeg') || fileName.endsWith('.png');
+                    case 'video':
+                        return fileName.endsWith('.mp4');
+                    case 'mvr':
+                        return fileName.endsWith('.mvr');
+                    default:
+                        return true;
+                }
+            });
+        }
 
-    //change Pagination numbers 
-    if(paginationState===1){
-        document.getElementById("prev-button").className="page-item disabled";
-    }else
-    {
-        document.getElementById("prev-button").className="page-item";
-    }
-    
-    if(paginationState===numberOfPages){
-        document.getElementById("next-button").className="page-item disabled";
-    }else
-    {
-        document.getElementById("next-button").className="page-item";
-    }
-    
+        setFilteredResults(filtered);
+    };
 
-
-    }, [cmmcos,paginationState]);
-
-
-
-async function handlePagination(requestedPage) {
-
- 
-    if (requestedPage > numberOfPages || requestedPage < 1) {
-        console.log("Invalid Page");
-        return; // Prevent invalid pages
-    }
-
-    var gmaf= await GMAFAdapter.getInstance();
-
-    if(gmaf===false){
-      return;
-    }
-    //Collection View
-    if(props.deletable){
-
-        var results= await gmaf.getCollectionPage(requestedPage,8, props.updateStatus);
-    }else //Query View
-    {
-        var results= await gmaf.getPage(requestedPage,8, props.updateStatus);
-    }
-   
-    console.log("Results: ", results);
-    var currentPage= results.page;
-  
-    setCmmcos(results.results);
-
-    setPaginationState(currentPage); 
-
-}
-
-return (
-  <div className="card border-primary shadow" style={{width: "100%"}}>
-    <div className="card-header bg-primary text-white">
-      <h5 className="card-title mb-0">Result Browser</h5>
-    </div>
-    <div className="card-body">
-      {props.cmmcos.length>0? <nav aria-label="Page navigation example">
-        <ul className="pagination">
-            <li id="prev-button" onClick={()=>handlePagination(paginationState-1)} className="page-item"><button className="page-link" >Previous</button></li>  
-            <li id="pagi2" className="page-item"><button className="page-link" >{paginationState}</button></li>   
-            <li id="next-button" onClick={()=>handlePagination(paginationState+1)} className="page-item"><button className="page-link" >Next</button></li>
-        </ul>
-    </nav>:""}
-     {canRender()?
-    <div className='d-flex flex-wrap flex-start gap'>
-       
-        {cmmcos.map((cmmco, index) => (
-            canRender(index)? <Playback key={cmmco.md.id+"-"+cmmco.selectedScene} cmmco={cmmco} id={cmmco.md.id} view={"browse"} deletable={props.deletable} deleteItem={props.deleteItem}/>: null
-        ))}
-     
-    </div>
-       :""
-    }
-       
-    </div>
-  </div>
-);
-
+    return (
+        <div className="card border-primary shadow" style={{ width: "100%" }}>
+            <div className="card-header bg-primary text-white">
+                <h5 className="card-title mb-0">Result Browser</h5>
+            </div>
+            <div className="card-body">
+                <div className="accordion mb-3">
+                    <div className="accordion-item">
+                        <h2 className="accordion-header">
+                            <button
+                                className={`accordion-button ${!filterUnfolded ? "collapsed" : ""}`}
+                                type="button"
+                                onClick={() => setFilterUnfolded(!filterUnfolded)}
+                            >
+                                Filter Results
+                            </button>
+                        </h2>
+                        <div className={`accordion-collapse collapse ${filterUnfolded ? "show" : ""}`}>
+                            <div className="card-body">
+                                <Filter setFilter={handleFilterChange} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {canRender() ? (
+                    <div>
+                        <div 
+                            className={`alert alert-primary ${showAlert ? 'show' : 'hide'}`}
+                            style={{
+                                transition: 'opacity 0.5s ease-out',
+                                opacity: showAlert ? 1 : 0,
+                                height: showAlert ? 'auto' : 0,
+                                overflow: 'hidden',
+                                marginBottom: showAlert ? '1rem' : 0,
+                                transitionProperty: 'opacity, height, margin',
+                                transitionDuration: '0.5s'
+                            }}
+                            role="alert"
+                        >
+                            Found {props.numOfAllResults} results... select to see details
+                        </div>
+                        <div className='d-flex flex-wrap flex-start gap'>
+                            {filteredResults.map((cmmco) => (
+                                <Playback 
+                                    key={cmmco?.id} 
+                                    cmmco={cmmco} 
+                                    id={cmmco?.id} 
+                                    view={"browse"} 
+                                    isSelected={selectedId === cmmco?.id}
+                                    onSelect={() => handleSelect(cmmco.id)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ) : ""}
+            </div>
+        </div>
+    );
 }
 
 export default BrowseView;

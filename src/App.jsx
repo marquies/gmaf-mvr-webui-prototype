@@ -47,7 +47,7 @@ function App() {
         <div className="progress-bar" role="progressbar"   style={{ width: `${statuslength > 0 ? (status / statuslength) * 100 : 0}%` }} aria-valuenow={status} aria-valuemin="0" aria-valuemax={statuslength}></div>
       </div>:""
       }
-      <div className='d-flex'>
+{/*       <div className='d-flex'>
         <div className="dropdown m-1">
             <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               {view}
@@ -73,7 +73,7 @@ function App() {
         <button onClick={()=>processAllAssets()} className="btn btn-secondary m-1" type="button" aria-expanded="false">
           Process all Assets
         </button>
-      </div>
+      </div> */}
       { view === "Query" ? <QueryView updateStatus={updateStatus} presentationView={presentationView}/> : <CollectionView updateStatus={updateStatus} /> }
     </div>
   );

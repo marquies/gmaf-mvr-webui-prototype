@@ -1,27 +1,27 @@
-import React, { } from 'react';
+import React from 'react';
 import BrowseView from './views/browseview';
 import DetailsView from './views/detailsview';
 
 function Presentation(props) {
-    
-    const {cmmcos} = props;
 
-    function canRender(){
-      
-        return true;
+    function getView(){
+        switch(props.presentationView) {
+            case "browse":
+              return <BrowseView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable} onSelectItem={props.onSelectItem} numOfAllResults={props.numOfAllResults}/>;
+            case "details":
+              return <DetailsView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable}/>;
+            default:
+              return <BrowseView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable} onSelectItem={props.onSelectItem} numOfAllResults={props.numOfAllResults}/>;
+          }
     }
-    
-    return (
-        <div className= {props.presentationView==="Browse View"? "presentation ms-2 overflow-auto": "presentation"}>
-            { canRender()?  
-                props.presentationView==="Browse View"? 
-                    <BrowseView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={cmmcos} deletable={props.deletable} deleteItem={props.deleteItem} />
-                    :<DetailsView cmmcos={cmmcos} numOfAllResults={props.numOfAllResults} updateStatus={props.updateStatus} />
-            : "Could not Render"}
-        </div>  
-    );
-          
 
+    return (
+        <div className='presentation-container d-flex flex-column' style={{ height: '100vh', maxWidth: '800px' }}>
+            <div className="flex-grow-1 overflow-auto">
+                {getView()}
+            </div>
+        </div>
+    );
 }
 
 export default Presentation;

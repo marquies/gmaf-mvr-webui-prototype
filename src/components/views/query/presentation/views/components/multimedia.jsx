@@ -1,5 +1,6 @@
-import React, { } from 'react';
+import React, { useRef} from 'react';
 import MultimediaPlaybackPluginLoader from '../../../../../plugins/playback/multimedia/loader';
+import ReactPlayer from 'react-player';
 import NoPlugin from '../../../../../plugins/error/noplugin';
 
 function Multimedia(props){
@@ -9,36 +10,92 @@ const multimediaPlaybackComponents= MultimediaPlaybackPluginLoader;
 const {mmco} = props;
 var mmcofile= false;
 var type=false;
+const playerRef = useRef(null); // Create a ref using useRef
+
+
+function getFileType(fileName) {
+    if (!fileName) return 'unknown';
+    
+    const extension = fileName.toLowerCase().split('.').pop();
+    
+    // Common image extensions
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+        return 'image';
+    }
+    // Common video extensions
+    if (['mp4', 'webm', 'ogg', 'mov', 'avi'].includes(extension)) {
+        return 'video';
+    }
+    // Common text extensions
+    if (['txt', 'log', 'md', 'rtf', 'json'].includes(extension)) {
+        return 'text';
+    }
+    
+    return 'unknown';
+}
 
 function canRender(){
 
-    //Take first File
-    if(typeof(mmco) =="object" && mmco.mmcofiles && mmco.mmcofiles[0] && mmco.mmcofiles[0].filetype && mmco.mmcofiles[0].file){
-        mmcofile= mmco.mmcofiles[0];
-        Object.keys(multimediaPlaybackComponents).forEach((key) => {
-            if(mmcofile.filetype.includes(key)){
-                type=key
-            };
-          });
-     
-    }else
-    {
-        return false;
-    }
-    if(type===false){
-        console.log("Type not recognized: ", type);
-        return false;
+    return mmco && mmco.generalMetadata && mmco.generalMetadata.fileName;
+}
+
+function renderContent() {
+    if (!canRender()) {
+        return <NoPlugin />;
     }
 
-    return true;
+    const previewUrl = "http://localhost:8242/gmaf/gmafApi/gmaf/preview/s/" + mmco.id;
+    const fileUrl = "http://localhost:8242/gmaf/gmafApi/gmaf/file/" + mmco.id;
+    const fileType = getFileType(mmco.generalMetadata.fileName);
+
+    if (fileType === 'image') {
+        return <img src={previewUrl} alt={mmco.generalMetadata.fileName || 'Image preview'} className="img-fluid" />;
+    } 
+    else if (fileType === 'video') {
+        return (
+            <ReactPlayer
+                ref={playerRef}
+                url={fileUrl}
+                controls={true}
+                width="100%"
+                height="100%"
+                config={{
+                    file: {
+                        attributes: {
+                            poster: previewUrl
+                        }
+                    }
+                }}
+            />
+        );
+    }
+    else if (fileType === 'text') {
+        return (
+            <div className="text-preview p-2">
+                <iframe 
+                    src={fileUrl}
+                    title={mmco.generalMetadata.fileName || 'Text preview'}
+                    className="w-100 h-100 border-0"
+                    style={{ minHeight: '200px' }}
+                />
+            </div>
+        );
+    }
+    else {
+        return (
+            <div className="unsupported-type p-3 text-center">
+                <p>Unsupported file type: {mmco.generalMetadata.fileName}</p>
+                <a href={fileUrl} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                    Download File
+                </a>
+            </div>
+        );
+    }
 }
 
 return (
-    <div className= {props.view === "details" ? 'playback-multimedia-container-big border-1 border rounded-3': 'playback-multimedia-container-small border-1 border rounded-3'}>
-            { canRender() && typeof(multimediaPlaybackComponents[type]) === 'function'  ? 
-            React.createElement(multimediaPlaybackComponents[type], { data: mmcofile, start:props.start, end:props.end, setTimeCode: props.setTimeCode}):
-            <NoPlugin/> }
-       
+    <div className={props.view === "details" ? 'playback-multimedia-container-big border-1 border rounded-3' : 'playback-multimedia-container-small border-1 border rounded-3'}>
+        {renderContent()}
     </div>
 );
 
