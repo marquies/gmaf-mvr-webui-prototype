@@ -3,7 +3,7 @@ import Cache from "./Cache";
 
 class GMAFAdapter {
 
-    basePath = "http://localhost:8242/gmaf/gmafApi/";
+    basePath = `${config.baseUrl}/`;
     getCollectionPath = "gmaf/getCollection/";
     queryPath1 = "gmaf/"
     apiToken = "";

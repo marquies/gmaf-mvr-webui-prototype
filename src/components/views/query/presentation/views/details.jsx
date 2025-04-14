@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactPlayer from "react-player";
+import config from "../../../../../config/config";
 
 import NodeTable from "./components/nodetable";
 import PdPlayer from "./components/pdplayer";
@@ -26,7 +27,7 @@ function Details2({ mmfgid }) {
     };
     try {
       const response = await fetch(
-        `http://127.0.0.1:8242/gmaf/gmafApi/gmaf/getmmfg/token1/${mmfgid}`,
+        `${config.baseUrl}/gmaf/getmmfg/token1/${mmfgid}`,
         options
       );
       const detailData = await response.json();
@@ -136,7 +137,7 @@ function Details2({ mmfgid }) {
                       ref={playerRef}
                       onSeek={(e) => console.log("onSeek", e)}
                       controls
-                      url={`http://localhost:8242/gmaf/gmafApi/gmaf/preview/token1/${mmfgid}`}
+                      url={`${config.baseUrl}/gmaf/preview/token1/${mmfgid}`}
                       width="100%"
                       height="300px"
                     />
