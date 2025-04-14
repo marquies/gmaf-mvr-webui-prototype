@@ -1,82 +1,14 @@
 import React, { useState, useRef } from "react";
 import Playback from "./components/playback";
 import Carousel from "react-bootstrap/Carousel";
-import GMAFAdapter from "../../../../../js/GMAFAdapter";
 
 function DetailsView(props) {
-  const [index, setIndex] = useState(0); // Current index in the carousel
-  const [page, setPage] = useState(1); // Current page
-  const [cmmcos, setCmmcos] = useState(props.cmmcos); // Current items on the page
+  const [index] = useState(0); // Current index in the carousel
+  const [page] = useState(1); // Current page
+  const [cmmcos] = useState(props.cmmcos); // Current items on the page
 
-  const lastIndex = useRef(0);
-  const lastOverallIndex = useRef(0); // Last selected index in the carousel
-  const overallIndex = useRef(0);
   const isInitialized = useRef(false);
 
-  const handleSelect = async (selectedIndex) => {
-    var backward = lastIndex.current == 0 && selectedIndex == cmmcos.length - 1;
-    var countdown =
-      lastIndex.current > selectedIndex &&
-      lastIndex.current - selectedIndex == 1;
-
-    //Backward navigation
-    if (backward) {
-      if (page == 1) {
-        console.log("negative break");
-        return;
-      }
-
-      var currentPage = page;
-
-      var newPage = currentPage - 1;
-
-      setPage(newPage);
-      // Fetch data for the previous page
-      const gmaf = await GMAFAdapter.getInstance();
-      const results = await gmaf.getPage(newPage, 8, props.updateStatus);
-      setCmmcos(results.results);
-      setIndex(7);
-      lastIndex.current = 7;
-      return;
-    }
-
-    // Calculate the overall index
-    const currentOverallIndex = (page - 1) * 8 + selectedIndex;
-    overallIndex.current = currentOverallIndex;
-
-    // Check if the overall index matches the last item
-    if (lastOverallIndex.current === props.numOfAllResults - 1) {
-      // Restart from the beginning
-      setPage(1);
-      setCmmcos(props.cmmcos);
-      setIndex(0);
-      overallIndex.current = 0;
-      lastIndex.current = 0;
-      lastOverallIndex.current = 0;
-      //justNegative.current = false;
-      return;
-    }
-
-    lastOverallIndex.current = overallIndex.current;
-
-    // Check if we need to load the next page
-    if (lastIndex.current + 1 === cmmcos.length && !countdown) {
-      let nextPage = page + 1;
-
-      // Fetch data for the next page
-      const gmaf = await GMAFAdapter.getInstance();
-      const results = await gmaf.getPage(nextPage, 8, props.updateStatus);
-      
-      setCmmcos(results.results); // Update current page items
-      setPage(nextPage); // Move to the next page
-      setIndex(0); // Reset carousel index to the first item
-      lastIndex.current = 0;
-    } else {
-      //Normal case: Move within the current page
-      setIndex(selectedIndex);
-      lastIndex.current = selectedIndex;
-    }
-  };
 
   function canRender() {
     isInitialized.current = true;
@@ -107,7 +39,6 @@ function DetailsView(props) {
             key={cmmcos.length}
             interval={null}
             activeIndex={index}
-            onSelect={handleSelect}
           >
             {cmmcos.map((cmmco, index) => (
               <Carousel.Item key={index + "2"}>
