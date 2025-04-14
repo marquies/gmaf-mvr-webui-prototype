@@ -1,7 +1,7 @@
 // config.js
 const config = {
     appKey: 'stw476',
-    baseUrl: 'http://locsalhost:8242/gmaf/gmafApi'
+    baseUrl: 'http://localhost:8242/gmaf/gmafApi'
 };
 
 module.exports = config;

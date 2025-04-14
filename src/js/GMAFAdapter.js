@@ -1,5 +1,4 @@
 import config from "../config/config";
-import Cache from "./Cache";
 
 class GMAFAdapter {
 
@@ -44,19 +43,19 @@ class GMAFAdapter {
     }
 
     async processAllAssets(updateStatus) {
-        var results = await this.getCollectionIds(false);
+        const results = await this.getCollectionIds(false);
 
-        var collectionIds = results.allresults;
+        const collectionIds = results.allresults;
         console.log("CollectionIds: ", collectionIds);
         if (typeof collectionIds === 'object') {
 
             //Filter
-            var cmmcocollectionIds = [];
+            const cmmcocollectionIds = [];
             for (let index = 0; index < collectionIds.length; index++) {
-                let collectionId = collectionIds[index];
+                const collectionId = collectionIds[index];
                 //if has No origin cmmco == cmmco else tcmmco
                 if (!collectionId.cmmco) {
-                    var cmmcocollectionId = collectionIds[index].id;
+                    const cmmcocollectionId = collectionIds[index].id;
                     cmmcocollectionIds.push(cmmcocollectionId);
                 }
 
@@ -67,7 +66,7 @@ class GMAFAdapter {
             for (let index = 0; index < cmmcocollectionIds.length; index++) {
                 let collectionId = cmmcocollectionIds[index];
 
-                var processResult = await this.processAssetById(collectionId);
+                const processResult = await this.processAssetById(collectionId);
 
                 updateStatus(index + 1, cmmcocollectionIds.length);
             }
@@ -88,53 +87,51 @@ class GMAFAdapter {
 
     async query(query = {}, updateStatus) {
         //First get QueryIds
-        var result = await this.getQueryIds(query);
+        const result = await this.getQueryIds(query);
         console.log("IDS Result: ", result);
         if (!result) {
             console.log("No response received from Query");
-            return { "results": [] }//, "page":0, "numberOfPages":0, "numOfAllResults":0};
+            return { "results": [] };
         }
 
         if (result.size == 0) {
             console.log("No results received from Query");
-            return { "results": [] }//, "page":0, "numberOfPages":0, "numOfAllResults":0};
+            return { "results": [] };
         }
 
-        var queryIds = result;
-
-        
+        const queryIds = result;
 
         updateStatus(0, queryIds.length);
-        var queryResults = [];
+        const queryResults = [];
         if (typeof queryIds === 'object') {
             for (let index = 0; index < queryIds.length; index++) {
-                var cmmco = await this.getCMMCO(queryIds[index]);
+                const cmmco = await this.getCMMCO(queryIds[index]);
                 queryResults.push(cmmco);
                 updateStatus(index + 1, queryIds.length);
             }
         }
 
 
-        return { "results": queryResults }//, "page": result.currentPage, "numberOfPages": result.totalPages, "numOfAllResults": result.allresults.length };
+        return { "results": queryResults };
     }
 
     async getPage(page = 1, resultsPerPage = 8, updateStatus) {
 
         //First get QueryIds
-        var result = await this.post("gmaf/getPage/" + this.apiToken + "/" + page + "/" + resultsPerPage + "/", "json");
+        const result = await this.post(`gmaf/getPage/${this.apiToken}/${page}/${resultsPerPage}/`, "json");
 
         if (!result.results) {
             console.log("No results received from Query");
             return;
         }
 
-        var queryIds = result.results;
+        const queryIds = result.results;
 
         updateStatus(0, queryIds.length);
-        var queryResults = [];
+        const queryResults = [];
         if (typeof queryIds === 'object') {
             for (let index = 0; index < queryIds.length; index++) {
-                var cmmco = await this.getCMMCO(queryIds[index]);
+                const cmmco = await this.getCMMCO(queryIds[index]);
                 queryResults.push(cmmco);
                 updateStatus(index + 1, queryIds.length);
             }
@@ -147,20 +144,20 @@ class GMAFAdapter {
     async getCollectionPage(page = 1, resultsPerPage = 8, updateStatus) {
 
         //First get QueryIds
-        var result = await this.post("gmaf/getCollectionPage/" + this.apiToken + "/" + page + "/" + resultsPerPage + "/", "json");
+        const result = await this.post(`gmaf/getCollectionPage/${this.apiToken}/${page}/${resultsPerPage}/`, "json");
 
         if (!result.results) {
             console.log("No results received from Query");
             return;
         }
 
-        var queryIds = result.results;
+        const queryIds = result.results;
 
         updateStatus(0, queryIds.length);
-        var queryResults = [];
+        const queryResults = [];
         if (typeof queryIds === 'object') {
             for (let index = 0; index < queryIds.length; index++) {
-                var cmmco = await this.getCMMCO(queryIds[index]);
+                const cmmco = await this.getCMMCO(queryIds[index]);
                 queryResults.push(cmmco.data);
                 updateStatus(index + 1, queryIds.length);
             }
@@ -176,42 +173,40 @@ class GMAFAdapter {
         if (!queryId) {
             console.log("No queryId received from getCMMCO");
         }
-        var cache = Cache.getInstance();
-
 
         if (queryId) {
-            var collectionElement = await this.post("gmaf/getmmfg/" + this.apiToken + "/" + queryId, "json");
+            const collectionElement = await this.post(`gmaf/getmmfg/${this.apiToken}/${queryId}`, "json");
             return collectionElement;
         }
     }
 
 
     async getCollection(updateStatus) {
-        var result = await this.getCollectionIds(false);
+        const result = await this.getCollectionIds(false);
         if (!result.results) {
             console.log("No results received from Query");
             return;
         }
         console.log("CollectionIds: ", result.results);
-        var queryIds = result.results;
+        const queryIds = result.results;
         updateStatus(0, queryIds.length);
-        var queryResults = [];
+        const queryResults = [];
         if (typeof queryIds === 'object') {
 
             for (let index = 0; index < queryIds.length; index++) {
 
-                var cmmco = await this.getCMMCO(queryIds[index]);
+                const cmmco = await this.getCMMCO(queryIds[index]);
                 queryResults.push(cmmco);
                 updateStatus(index + 1, queryIds.length);
             }
         }
 
-        return { "results": queryResults }//, "page": result.currentPage, "numberOfPages": result.totalPages };
-        //return collectionResults;
+        return { "results": queryResults };
+
     }
 
     async getCollectionIds(withtcmmcos = false) {
-        return await this.post("gmaf/get-collection-ids/" + this.apiToken + "/" + withtcmmcos, "json");
+        return await this.post(`gmaf/get-collection-ids/${this.apiToken}/${withtcmmcos}`, "json");
     }
 
     async addItemToCollection(filename = "", base64file = "", inputoverwrite = false) {
@@ -221,7 +216,7 @@ class GMAFAdapter {
 
     async deleteItemFromCollection(itemid = "") {
 
-        return await this.post("gmaf/deleteItem/" + this.apiToken + "/" + itemid);
+        return await this.post(`gmaf/deleteItem/${this.apiToken}/${itemid}`);
     }
 
     async get(path = "", type = "", initial = false) {
@@ -262,18 +257,13 @@ class GMAFAdapter {
             }
             );
 
+            // Check if response was successful based on status code
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
             if (jsonResponse) {
                 var result = await response.json();
-
-                // if(result.data){
-                //     return result.data;
-                // }
-
-                // if(result.error){
-                //     throw new Error(result.error);
-                // }
-
-                // throw new Error("Response unexepected! : "+result);
             }
 
             return await result;
