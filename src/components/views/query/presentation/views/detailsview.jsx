@@ -7,7 +7,7 @@ function DetailsView(props) {
   const [index, setIndex] = useState(0); // Current index in the carousel
   const [page, setPage] = useState(1); // Current page
   const [cmmcos, setCmmcos] = useState(props.cmmcos); // Current items on the page
-  const [cmmcoMap, setCmmcoMap] = useState({ 1: props.cmmcos }); // Cache for fetched pages
+
   const lastIndex = useRef(0);
   const lastOverallIndex = useRef(0); // Last selected index in the carousel
   const overallIndex = useRef(0);
@@ -31,7 +31,10 @@ function DetailsView(props) {
       var newPage = currentPage - 1;
 
       setPage(newPage);
-      setCmmcos(cmmcoMap[newPage]);
+      // Fetch data for the previous page
+      const gmaf = await GMAFAdapter.getInstance();
+      const results = await gmaf.getPage(newPage, 8, props.updateStatus);
+      setCmmcos(results.results);
       setIndex(7);
       lastIndex.current = 7;
       return;
@@ -60,27 +63,14 @@ function DetailsView(props) {
     if (lastIndex.current + 1 === cmmcos.length && !countdown) {
       let nextPage = page + 1;
 
-      // Fetch or use cached data for the next page
-      if (!cmmcoMap[nextPage]) {
-        const gmaf = await GMAFAdapter.getInstance();
-        const results = await gmaf.getPage(nextPage, 8, props.updateStatus);
-
-        setCmmcoMap((prevMap) => ({
-          ...prevMap,
-          [nextPage]: results.results,
-        }));
-
-        setCmmcos(results.results); // Update current page items
-        setPage(nextPage); // Move to the next page
-        setIndex(0); // Reset carousel index to the first item
-        lastIndex.current = 0;
-      } else {
-        // Use cached page
-        setCmmcos(cmmcoMap[nextPage]);
-        setPage(nextPage);
-        setIndex(0);
-        lastIndex.current = 0;
-      }
+      // Fetch data for the next page
+      const gmaf = await GMAFAdapter.getInstance();
+      const results = await gmaf.getPage(nextPage, 8, props.updateStatus);
+      
+      setCmmcos(results.results); // Update current page items
+      setPage(nextPage); // Move to the next page
+      setIndex(0); // Reset carousel index to the first item
+      lastIndex.current = 0;
     } else {
       //Normal case: Move within the current page
       setIndex(selectedIndex);
