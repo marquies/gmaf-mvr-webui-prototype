@@ -5,6 +5,14 @@ This is a web-based Frontend for the GMAF (Generic Multimedia Analysis Framework
 
 ## Available Scripts
 
+### Prerequisite
+
+To install the dependencies, run
+
+```
+npm install
+```
+
 In the project directory, you can run:
 
 ### `npm start`
