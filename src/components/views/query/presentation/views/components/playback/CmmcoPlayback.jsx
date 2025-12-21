@@ -10,7 +10,8 @@ import { PlaybackProvider, usePlayback } from './PlaybackContext';
  * Global playback controls component
  */
 function GlobalPlaybackControls() {
-  const { isPlaying, play, pause, reset, currentTime, globalStartTime, globalEndTime } = usePlayback();
+  const { isPlaying, play, pause, reset, seek, currentTime, globalStartTime, globalEndTime } = usePlayback();
+  const [isDragging, setIsDragging] = useState(false);
 
   const formatTime = (ms) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -42,51 +43,85 @@ function GlobalPlaybackControls() {
     ? globalEndTime - globalStartTime 
     : 0;
 
+  const handleSliderChange = (e) => {
+    const newTime = parseInt(e.target.value, 10);
+    seek(newTime);
+  };
+
+  const handleSliderMouseDown = () => {
+    setIsDragging(true);
+  };
+
+  const handleSliderMouseUp = () => {
+    setIsDragging(false);
+  };
+
   return (
     <div className="card mb-3 bg-primary text-white">
       <div className="card-body py-2">
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center">
-            <h6 className="mb-0 me-3">
-              <i className="fa fa-play-circle me-2"></i>
-              Global Playback Control
-            </h6>
-            <div className="btn-group btn-group-sm">
-              <button 
-                className={`btn ${isPlaying ? 'btn-warning' : 'btn-light'}`}
-                onClick={isPlaying ? pause : play}
-                title={isPlaying ? 'Pause' : 'Play'}
-              >
-                <i className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`}></i>
-                {isPlaying ? ' Pause' : ' Play'}
-              </button>
-              <button 
-                className="btn btn-light"
-                onClick={reset}
-                title="Reset"
-              >
-                <i className="fa fa-refresh"></i> Reset
-              </button>
+        <div className="d-flex flex-column gap-2">
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex align-items-center gap-2">
+              <div className="btn-group" role="group">
+                <button 
+                  className="btn btn-sm btn-light"
+                  onClick={reset}
+                  disabled={currentTime === 0}
+                  title="Reset to start"
+                >
+                  <i className="fa fa-step-backward"></i>
+                </button>
+                <button 
+                  className="btn btn-sm btn-primary"
+                  onClick={isPlaying ? pause : play}
+                  title={isPlaying ? 'Pause' : 'Play'}
+                >
+                  <i className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`}></i>
+                </button>
+              </div>
+            </div>
+            <div className="d-flex align-items-center gap-3">
+              <div className="small">
+                <i className="fa fa-clock-o me-1"></i>
+                {formatTime(currentTime)} / {formatTime(totalDuration)}
+              </div>
+              {globalStartTime !== null && (
+                <div className="small">
+                  <i className="fa fa-hourglass-start me-1"></i>
+                  Start: {formatTimeOfDay(globalStartTime)}
+                </div>
+              )}
+              {globalEndTime !== null && (
+                <div className="small">
+                  <i className="fa fa-hourglass-end me-1"></i>
+                  End: {formatTimeOfDay(globalEndTime)}
+                </div>
+              )}
             </div>
           </div>
-          <div className="d-flex align-items-center gap-3">
-            <div className="small">
-              <i className="fa fa-clock-o me-1"></i>
-              {formatTime(currentTime)} / {formatTime(totalDuration)}
+          
+          {/* Timeline Slider */}
+          {totalDuration > 0 && (
+            <div className="w-100">
+              <input
+                type="range"
+                className="form-range"
+                min="0"
+                max={totalDuration}
+                value={currentTime}
+                onChange={handleSliderChange}
+                onMouseDown={handleSliderMouseDown}
+                onMouseUp={handleSliderMouseUp}
+                onTouchStart={handleSliderMouseDown}
+                onTouchEnd={handleSliderMouseUp}
+                style={{
+                  cursor: 'pointer',
+                  accentColor: '#0d6efd'
+                }}
+                title={`Seek to ${formatTime(currentTime)}`}
+              />
             </div>
-            {globalStartTime !== null && (
-              <div className="small">
-                <i className="fa fa-hourglass-start me-1"></i>
-                Start: {formatTimeOfDay(globalStartTime)}
-              </div>
-            )}
-            {globalEndTime !== null && (
-              <div className="small">
-                <i className="fa fa-hourglass-end me-1"></i>
-                End: {formatTimeOfDay(globalEndTime)}
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </div>
