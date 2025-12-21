@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 /* global JSZip */
 import config from '../../../../../../../config/config';
 import MmcoPanel from './MmcoPanel';
@@ -98,10 +98,15 @@ function GlobalPlaybackControls() {
  */
 function CmmcoPlaybackContent({ data, mmfgid, playerRef, handleSeek }) {
   const [showMetadata, setShowMetadata] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [manifestData, setManifestData] = useState(null);
   const [zipContents, setZipContents] = useState({});
+  // Handle full-page mode toggle
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
   
   // Format timestamp to readable time
   function formatTimestampToTime(timestamp) {
@@ -235,8 +240,31 @@ function CmmcoPlaybackContent({ data, mmfgid, playerRef, handleSeek }) {
   }, [mmfgid]);
   
   return (
-    <div className="cmmco-playback">
+    <div 
+      className={`cmmco-playback ${isFullscreen ? 'fullscreen-mode' : ''}`}
+      style={isFullscreen ? {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100vh',
+        zIndex: 1000,
+        backgroundColor: '#fff',
+        overflow: 'auto',
+        padding: '20px'
+      } : {}}
+    >
       <GlobalPlaybackControls />
+      <div className="d-flex justify-content-end mb-2">
+        <button 
+          className="btn btn-sm btn-outline-primary"
+          onClick={toggleFullscreen}
+          title={isFullscreen ? 'Exit Full Page' : 'Enter Full Page'}
+        >
+          <i className={`fa ${isFullscreen ? 'fa-compress' : 'fa-expand'} me-1`}></i>
+          {isFullscreen ? 'Exit Full Page' : 'Full Page Mode'}
+        </button>
+      </div>
       <div className="d-flex justify-content-between align-items-center mb-2">
         <div>
           <p className="card-text mb-0">
@@ -274,9 +302,25 @@ function CmmcoPlaybackContent({ data, mmfgid, playerRef, handleSeek }) {
         </div>
       )}
       
-      <MmcoPanel playerRef={playerRef} mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
-      <SrdPanel mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
-      <PdPanel mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
+      {isFullscreen ? (
+        <div className="row">
+          <div className="col-md-4">
+            <MmcoPanel playerRef={playerRef} mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
+          </div>
+          <div className="col-md-4">
+            <PdPanel mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
+          </div>
+          <div className="col-md-4">
+            <SrdPanel mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
+          </div>
+        </div>
+      ) : (
+        <>
+          <MmcoPanel playerRef={playerRef} mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
+          <SrdPanel mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
+          <PdPanel mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
+        </>
+      )}
       
       {/* Display ZIP processing status */}
       {isLoading && (

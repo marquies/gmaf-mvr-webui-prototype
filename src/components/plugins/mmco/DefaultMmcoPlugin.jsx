@@ -138,6 +138,8 @@ function DefaultMmcoPlugin({ data, mmfgid, fileInfo }) {
     return videoRelativeTime >= 0 && videoRelativeTime <= duration;
   };
 
+  const videoHeight = '500px';
+
   return (
     <div className="mb-3">
       {mediaUrl && (
@@ -148,7 +150,7 @@ function DefaultMmcoPlugin({ data, mmfgid, fileInfo }) {
             playing={shouldPlay()}
             controls={false}
             width="100%"
-            height="300px"
+            height={videoHeight}
             className="rounded shadow-sm"
             onReady={handleReady}
             onDuration={handleDuration}
