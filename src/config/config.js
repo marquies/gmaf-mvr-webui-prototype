@@ -33,6 +33,20 @@ const config = {
                 'RSGPlugin': '/srd/RsgPlugin.jsx',
                 // Add more path mappings as needed
             }
+        },
+        // MMCO (Multimedia Content Object) plugins
+        mmco: {
+            default: 'DefaultMmcoPlugin',
+            contentTypes: {
+                // Add content-specific plugins as needed
+                // 'video': 'VideoPlugin',
+                // 'audio': 'AudioPlugin',
+            },
+            // Plugin paths for dynamic loading
+            paths: {
+                'DefaultMmcoPlugin': '/mmco/DefaultMmcoPlugin.jsx',
+                // Add more path mappings as needed
+            }
         }
     }
 };

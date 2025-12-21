@@ -118,8 +118,17 @@ function CmmcoPlayback({ data, mmfgid, playerRef, handleSeek }) {
       // Process other files in the ZIP based on the manifest
       for (const filename in zipContents.files) {
         if (!zipContents.files[filename].dir) {
-          // Store file content (as text for now, could be binary for other types)
-          contents[filename] = await zipContents.files[filename].async('text');
+          // Determine the file type and read accordingly
+          const fileExtension = filename.split('.').pop().toLowerCase();
+          const binaryExtensions = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'mkv', 'mp3', 'wav', 'jpg', 'jpeg', 'png', 'gif', 'pdf'];
+          
+          if (binaryExtensions.includes(fileExtension)) {
+            // Read binary files as Uint8Array
+            contents[filename] = await zipContents.files[filename].async('uint8array');
+          } else {
+            // Read text files as text
+            contents[filename] = await zipContents.files[filename].async('text');
+          }
         }
       }
       
