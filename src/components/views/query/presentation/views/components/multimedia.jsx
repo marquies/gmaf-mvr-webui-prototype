@@ -30,6 +30,10 @@ function getFileType(fileName) {
     if (['txt', 'log', 'md', 'rtf', 'json'].includes(extension)) {
         return 'text';
     }
+    // CMMCO extensions
+    if (['cmmco'].includes(extension)) {
+        return 'cmmco';
+    }
     
     return 'unknown';
 }

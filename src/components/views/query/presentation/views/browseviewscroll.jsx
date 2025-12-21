@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import Playback from './components/playback';
+import AssetCard from './components/playback';
 
 //Scroll Variante wird nicht genutzt
 function BrowseView(props){
@@ -22,7 +22,7 @@ return (
     <div className='d-flex flex-wrap flex-start gap'>
        
         {cmmcos.map((cmmco, index) => (
-            canRender(index)? <Playback key={index} cmmco={cmmco} id={cmmco.md.id} view={"browse"} deletable={props.deletable} deleteItem={props.deleteItem}/>: null
+            canRender(index)? <AssetCard key={index} cmmco={cmmco} id={cmmco.md.id} view={"browse"} deletable={props.deletable} deleteItem={props.deleteItem}/>: null
         ))}
      
     </div>

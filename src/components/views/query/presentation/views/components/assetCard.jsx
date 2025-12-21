@@ -6,7 +6,7 @@ import WsdPlayback from './wsdplayback';
 import GMAFAdapter from '../../../../../../js/GMAFAdapter';
 
 
-function Playback(props){
+function AssetCard(props){
 
 const [wsdUnfolded, setWsdUnfolded] = useState(false);
 const [pdUnfolded, setPdUnfolded] = useState(false);
@@ -33,8 +33,8 @@ const {cmmco} = props;
   };
 
 
-    // Handle mouse leave (clear timer and hide tooltip)
-    const handleMouseLeave = () => {
+  // Handle mouse leave (clear timer and hide tooltip)
+  const handleMouseLeave = () => {
        //clearTimeout(hoverTimeout.current);
        setIsTooltipVisible(false);
   };
@@ -72,7 +72,7 @@ return (
                     width: "100%", 
                     cursor: 'pointer',
                     transition: 'all 0.2s ease-in-out'
-                }} 
+                }} yy
                 onClick={props.onSelect}
                 onMouseEnter={(e) => e.currentTarget.classList.add('shadow', 'bg-light')}
                 onMouseLeave={(e) => e.currentTarget.classList.remove('shadow', 'bg-light')}
@@ -122,4 +122,4 @@ return (
 
 }
 
-export default Playback;
+export default AssetCard;

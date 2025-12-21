@@ -101,6 +101,9 @@ class GMAFAdapter {
 
         const queryIds = result;
 
+        // print all results
+        console.log("QueryIds: ", queryIds);
+
         updateStatus(0, queryIds.length);
         const queryResults = [];
         if (typeof queryIds === 'object') {

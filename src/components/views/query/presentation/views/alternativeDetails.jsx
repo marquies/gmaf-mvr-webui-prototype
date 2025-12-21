@@ -4,10 +4,12 @@ import config from "../../../../../config/config";
 
 import NodeTable from "./components/nodetable";
 import PdPlayerDummy from "./components/pdplayerdummy";
+import PlaybackSelector from "./components/playback/PlaybackSelector";
 
-function Details2({ mmfgid }) {
+function AlternativeDetails({ mmfgid }) {
   const [data, setData] = useState(null);
   const [played, setPlayed] = useState(0);
+  const [activeTab, setActiveTab] = useState("player");
   const playerRef = useRef(null);
 
   useEffect(() => {
@@ -116,11 +118,14 @@ function Details2({ mmfgid }) {
         </div>
       ) : (
         <>
-          <div className="card-header">
-            <h5 className="card-title">
-              Details for {data.generalMetadata.fileName}
-            </h5>
-            <p className="small text-muted mb-0">MMFGID: {mmfgid}</p>
+          <div className="card-header bg-primary text-white">
+            <div className="d-flex justify-content-between align-items-center">
+              <h5 className="card-title mb-0">
+                {data.generalMetadata.fileName}
+              </h5>
+              <span className="badge bg-light text-primary">Power View</span>
+            </div>
+            <p className="small text-white-50 mb-0">MMFGID: {mmfgid}</p>
           </div>
           <div
             className="card-body d-flex flex-column"
@@ -128,43 +133,75 @@ function Details2({ mmfgid }) {
           >
             {data.nodes && data.nodes.length > 0 && (
               <>
-                <div className="px-3 pt-3">
-                  <p className="card-text">
-                    {data.nodes[0].name}: {showTimeRange(data)}
-                  </p>
-                  <div className="mb-3">
-                    <ReactPlayer
-                      ref={playerRef}
-                      onSeek={(e) => console.log("onSeek", e)}
-                      controls
-                      url={`${config.baseUrl}/gmaf/preview/token1/${mmfgid}`}
-                      width="100%"
-                      height="300px"
-                    />
-                    <PdPlayerDummy mmfgid={mmfgid} />
-                  </div>
-                </div>
-                <div className="px-3 d-flex flex-column" style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
-                  <div className="d-flex align-items-center mb-3">
-                    <button
-                      className="btn btn-primary"
-                      onClick={handleSeekToStart}
+                <ul className="nav nav-tabs nav-fill">
+                  <li className="nav-item">
+                    <button 
+                      className={`nav-link ${activeTab === "player" ? "active" : ""}`}
+                      onClick={() => setActiveTab("player")}
                     >
-                      Seek to start
+                      <i className="fa fa-play-circle me-2"></i>Media Player
                     </button>
-                  </div>
-                  <div className="overflow-auto mb-3" style={{ flex: 1, minHeight: 0 }}>
-                    <NodeTable data={data} seekTo={handleSeek} />
-                  </div>
-                  <div className="overflow-auto" style={{ flex: 1, minHeight: 0 }}>
-                    <label>Raw Data:</label>
-                    <textarea
-                      className="form-control"
-                      style={{ height: "200px" }}
-                      readOnly={true}
-                      value={JSON.stringify(data, null, 2)}
-                    />
-                  </div>
+                  </li>
+                  <li className="nav-item">
+                    <button 
+                      className={`nav-link ${activeTab === "nodes" ? "active" : ""}`}
+                      onClick={() => setActiveTab("nodes")}
+                    >
+                      <i className="fa fa-sitemap me-2"></i>Node Structure
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button 
+                      className={`nav-link ${activeTab === "raw" ? "active" : ""}`}
+                      onClick={() => setActiveTab("raw")}
+                    >
+                      <i className="fa fa-code me-2"></i>Raw Data
+                    </button>
+                  </li>
+                </ul>
+                
+                <div className="tab-content p-3" style={{ flex: 1, overflow: "auto" }}>
+                  {activeTab === "player" && (
+                    <div className="tab-pane fade show active">
+                      <PlaybackSelector 
+                        data={data} 
+                        mmfgid={mmfgid} 
+                        playerRef={playerRef} 
+                        handleSeek={handleSeek} 
+                      />
+                    </div>
+                  )}
+                  
+                  {activeTab === "nodes" && (
+                    <div className="tab-pane fade show active">
+                      <div className="card">
+                        <div className="card-header bg-light">
+                          <h6 className="mb-0">Node Structure</h6>
+                        </div>
+                        <div className="card-body">
+                          <NodeTable data={data} seekTo={handleSeek} />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {activeTab === "raw" && (
+                    <div className="tab-pane fade show active">
+                      <div className="card">
+                        <div className="card-header bg-light">
+                          <h6 className="mb-0">Raw JSON Data</h6>
+                        </div>
+                        <div className="card-body">
+                          <textarea
+                            className="form-control"
+                            style={{ height: "400px", fontFamily: "monospace" }}
+                            readOnly={true}
+                            value={JSON.stringify(data, null, 2)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -175,4 +212,4 @@ function Details2({ mmfgid }) {
   );
 }
 
-export default Details2;
+export default AlternativeDetails;

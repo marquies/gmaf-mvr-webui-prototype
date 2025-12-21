@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Playback from './components/playback';
+import AssetCard from './components/assetCard';
 import Filter from '../../query/filter';
 
 function BrowseView(props) {
@@ -120,7 +120,7 @@ function BrowseView(props) {
                         </div>
                         <div className='d-flex flex-wrap flex-start gap'>
                             {filteredResults.map((cmmco) => (
-                                <Playback 
+                                <AssetCard 
                                     key={cmmco?.id} 
                                     cmmco={cmmco} 
                                     id={cmmco?.id} 

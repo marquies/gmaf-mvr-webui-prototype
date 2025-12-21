@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Query from './query/query/query';
 import Presentation from './query/presentation/presentation';
 import GMAFAdapter from '../../js/GMAFAdapter';
-import Details2 from './query/presentation/views/details';
+import DetailsSelector from './query/presentation/views/detailsSelector';
 
 
 function QueryView(props) {
@@ -73,7 +73,7 @@ function QueryView(props) {
               onSelectItem={handleSelectItem}
             />:<h2 className='ms-5'>No matching results found</h2>}
             <div className="flex-grow-1" style={{ minWidth: '400px', height: '100vh' }}>
-              <Details2 mmfgid={selectedItem}/>
+              <DetailsSelector mmfgid={selectedItem}/>
             </div>
         </div>
     );

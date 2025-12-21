@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import Playback from "./components/playback";
+import AssetCard from "./components/assetCard";
 import Carousel from "react-bootstrap/Carousel";
 
 function DetailsView(props) {
@@ -42,7 +42,7 @@ function DetailsView(props) {
           >
             {cmmcos.map((cmmco, index) => (
               <Carousel.Item key={index + "2"}>
-                <Playback
+                <AssetCard
                   key={index}
                   cmmco={cmmco}
                   id={cmmco.md.id}

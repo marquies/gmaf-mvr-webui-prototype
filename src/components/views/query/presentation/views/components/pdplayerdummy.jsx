@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function PdPlayer({ mmfgid }) {
+function PdPlayerDummy({ mmfgid }) {
     const [activeImage, setActiveImage] = useState(0);
     const images = [
         {
@@ -59,4 +59,4 @@ function PdPlayer({ mmfgid }) {
     );
 }
 
-export default PdPlayer;
+export default PdPlayerDummy;
