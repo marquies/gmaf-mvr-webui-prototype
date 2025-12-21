@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import { Line } from 'react-chartjs-2';
 
 // Register Chart.js components
@@ -19,13 +20,18 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  annotationPlugin
 );
 
 /**
  * Plugin for displaying heartrate peripheral data
  */
 function HeartratePlugin({ data, mmfgid }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const playbackIntervalRef = useRef(null);
+
   // For debugging - show raw data
   const rawDataDebug = useMemo(() => {
     if (!data || typeof data !== 'string') return null;
@@ -134,6 +140,7 @@ function HeartratePlugin({ data, mmfgid }) {
       
       return {
         rawTimestamp: rawTimestamp,
+        timestampMs: !isNaN(numericValue) ? numericValue * 1000 : null,
         timestamp: formattedDate,
         heartRate: values[heartRateIndex]
       };
@@ -158,8 +165,8 @@ function HeartratePlugin({ data, mmfgid }) {
     };
   }, [parsedData]);
   
-  // Chart options
-  const chartOptions = {
+  // Chart options with playback marker
+  const chartOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -170,6 +177,22 @@ function HeartratePlugin({ data, mmfgid }) {
         display: true,
         text: 'Heart Rate Over Time',
       },
+      annotation: {
+        annotations: parsedData && currentIndex < parsedData.length ? {
+          playbackLine: {
+            type: 'line',
+            xMin: currentIndex,
+            xMax: currentIndex,
+            borderColor: 'rgba(75, 192, 192, 0.8)',
+            borderWidth: 2,
+            label: {
+              display: true,
+              content: 'Current',
+              position: 'start'
+            }
+          }
+        } : {}
+      }
     },
     scales: {
       y: {
@@ -190,7 +213,58 @@ function HeartratePlugin({ data, mmfgid }) {
         }
       }
     }
+  }), [parsedData, currentIndex]);
+
+  // Playback control functions
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
   };
+
+  const handleReset = () => {
+    setIsPlaying(false);
+    setCurrentIndex(0);
+  };
+
+  // Playback effect with realtime timing
+  useEffect(() => {
+    if (isPlaying && parsedData) {
+      const scheduleNext = (index) => {
+        if (index >= parsedData.length - 1) {
+          setIsPlaying(false);
+          setCurrentIndex(parsedData.length - 1);
+          return;
+        }
+
+        const currentPoint = parsedData[index];
+        const nextPoint = parsedData[index + 1];
+        
+        // Calculate delay based on timestamp difference
+        let delay = 100; // Default fallback
+        if (currentPoint.timestampMs && nextPoint.timestampMs) {
+          delay = nextPoint.timestampMs - currentPoint.timestampMs;
+          // Cap the delay to reasonable bounds (min 10ms, max 5000ms)
+          delay = Math.max(10, Math.min(delay, 5000));
+        }
+
+        playbackIntervalRef.current = setTimeout(() => {
+          setCurrentIndex(index + 1);
+        }, delay);
+      };
+
+      scheduleNext(currentIndex);
+    } else {
+      if (playbackIntervalRef.current) {
+        clearTimeout(playbackIntervalRef.current);
+        playbackIntervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (playbackIntervalRef.current) {
+        clearTimeout(playbackIntervalRef.current);
+      }
+    };
+  }, [isPlaying, parsedData, currentIndex]);
 
   return (
     <div className="heartrate-plugin">
@@ -215,7 +289,31 @@ function HeartratePlugin({ data, mmfgid }) {
         <div className="mt-2">
           {/* Heart Rate Chart */}
           <div className="mb-4">
-            <h6>Heart Rate Chart</h6>
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <h6 className="mb-0">Heart Rate Chart</h6>
+              <div className="btn-group btn-group-sm">
+                <button 
+                  className={`btn ${isPlaying ? 'btn-warning' : 'btn-primary'}`}
+                  onClick={handlePlayPause}
+                  title={isPlaying ? 'Pause' : 'Play'}
+                >
+                  <i className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`}></i>
+                  {isPlaying ? ' Pause' : ' Play'}
+                </button>
+                <button 
+                  className="btn btn-secondary"
+                  onClick={handleReset}
+                  title="Reset"
+                  disabled={currentIndex === 0}
+                >
+                  <i className="fa fa-refresh"></i> Reset
+                </button>
+              </div>
+            </div>
+            <div className="small text-muted mb-2">
+              Position: {currentIndex + 1} / {parsedData.length}
+              {parsedData[currentIndex] && ` - ${parsedData[currentIndex].timestamp}`}
+            </div>
             <div style={{ height: '300px' }}>
               {chartData && <Line data={chartData} options={chartOptions} />}
             </div>
