@@ -13,7 +13,6 @@ const config = {
             // Content-specific plugins
             contentTypes: {
                 'heartrate': 'HeartratePlugin',
-                // Add more content type mappings as needed
             },
             // Plugin paths for dynamic loading
             paths: {
@@ -26,7 +25,6 @@ const config = {
         srd: {
             default: 'DefaultSrdPlugin',
             contentTypes: {
-                // Add content type mappings as needed
                 'RSG': 'RSGPlugin',
             },
             // Plugin paths for dynamic loading
