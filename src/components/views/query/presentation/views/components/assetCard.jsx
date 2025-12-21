@@ -1,8 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import Multimedia from './multimedia';
 import ToolTip from './tooltip';
-import PdPlayback from './pdplayback';
-import WsdPlayback from './wsdplayback';
+//import PdPlayback from './pdplayback';
+//import WsdPlayback from './wsdplayback';
 import GMAFAdapter from '../../../../../../js/GMAFAdapter';
 
 
@@ -72,7 +72,7 @@ return (
                     width: "100%", 
                     cursor: 'pointer',
                     transition: 'all 0.2s ease-in-out'
-                }} yy
+                }}
                 onClick={props.onSelect}
                 onMouseEnter={(e) => e.currentTarget.classList.add('shadow', 'bg-light')}
                 onMouseLeave={(e) => e.currentTarget.classList.remove('shadow', 'bg-light')}
@@ -100,7 +100,7 @@ return (
                                         <p className="text-muted small mb-0">Peripheral Data</p>
                                     </div>
                                 </div>
-                                {pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.start} timecode={timeCode}></PdPlayback> :""}
+                                {/*pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.start} timecode={timeCode}></PdPlayback> :""*/}
                             </>
                         )}
                         {cmmco.wsd && Object.keys(cmmco.wsd).length > 0 && (
@@ -111,7 +111,7 @@ return (
                                         <p className="text-muted small mb-0">World Specific Data</p>
                                     </div>
                                 </div>
-                                {wsdUnfolded ? <WsdPlayback></WsdPlayback> : ""}
+                                {/*wsdUnfolded ? <WsdPlayback></WsdPlayback> : ""*/}
                             </>
                         )}
                    </div>    

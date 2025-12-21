@@ -1,16 +1,11 @@
 import React, { useRef} from 'react';
-import MultimediaPlaybackPluginLoader from '../../../../../plugins/playback/multimedia/loader';
 import ReactPlayer from 'react-player';
 import NoPlugin from '../../../../../plugins/error/noplugin';
 
 function Multimedia(props){
 
-//Load the React Components
-const multimediaPlaybackComponents= MultimediaPlaybackPluginLoader;
 const {mmco} = props;
-var mmcofile= false;
-var type=false;
-const playerRef = useRef(null); // Create a ref using useRef
+const playerRef = useRef(null);
 
 
 function getFileType(fileName) {

@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import WsdQueryPluginLoader from '../../../plugins/query/wsd/loader';
-import NoPlugin from '../../../plugins/error/noplugin';
+//import NoPlugin from '../../../plugins/error/noplugin';
 
 function WsdQuery(){
 
@@ -22,7 +22,7 @@ return (<div>
         <div className='query-wsd-inner-container'>
             Select a location on the map
             { typeof(pluginComponents[pluginSelectedIndex]) === 'function' ? React.createElement(pluginComponents[pluginSelectedIndex],{}):
-            <NoPlugin/> }
+            <></> }
         </div>
         { typeof(pluginComponents[pluginSelectedIndex+1]) === 'function' ?   <i className="fa fa-chevron-right fsize m-1" onClick={nextPlugin}></i>:""}
     </div>
