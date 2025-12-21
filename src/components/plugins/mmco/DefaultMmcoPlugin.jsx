@@ -7,11 +7,13 @@ import { usePlayback } from '../../views/query/presentation/views/components/pla
  * Default plugin for MMCO (Multimedia Content Object) content
  */
 function DefaultMmcoPlugin({ data, mmfgid, fileInfo }) {
-  const { isPlaying, currentTime, startTime, setStartTime, seek } = usePlayback();
+  const { isPlaying, getAbsoluteTime, registerComponent, unregisterComponent } = usePlayback();
   const [mediaUrl, setMediaUrl] = useState(null);
   const [error, setError] = useState(null);
   const playerRef = useRef(null);
   const [duration, setDuration] = useState(0);
+  const [videoStartTime, setVideoStartTime] = useState(null);
+  const componentId = useRef(`video-${mmfgid}`);
   const isSeeking = useRef(false);
   
   // Create blob URL from binary data
@@ -55,41 +57,70 @@ function DefaultMmcoPlugin({ data, mmfgid, fileInfo }) {
     }
   }, [data, mmfgid, fileInfo]);
   
+  // Register component time range when video is ready
+  useEffect(() => {
+    if (duration > 0 && videoStartTime !== null) {
+      const endTimeMs = videoStartTime + (duration * 1000);
+      registerComponent(componentId.current, videoStartTime, endTimeMs);
+      
+      return () => {
+        unregisterComponent(componentId.current);
+      };
+    }
+  }, [duration, videoStartTime, registerComponent, unregisterComponent]);
+
   // Sync player with global playback state
   useEffect(() => {
-    if (playerRef.current && !isSeeking.current) {
-      const playerTime = playerRef.current.getCurrentTime();
-      const targetTime = currentTime / 1000; // Convert ms to seconds
+    if (playerRef.current && !isSeeking.current && videoStartTime !== null) {
+      const absoluteTime = getAbsoluteTime();
+      const videoRelativeTime = (absoluteTime - videoStartTime) / 1000; // Convert to seconds
       
-      // Only seek if difference is significant (more than 0.5 seconds)
-      if (Math.abs(playerTime - targetTime) > 0.5) {
-        isSeeking.current = true;
-        playerRef.current.seekTo(targetTime, 'seconds');
-        setTimeout(() => {
-          isSeeking.current = false;
-        }, 100);
+      // Only play if we're within the video's time range
+      if (videoRelativeTime >= 0 && videoRelativeTime <= duration) {
+        const playerTime = playerRef.current.getCurrentTime();
+        
+        // Only seek if difference is significant (more than 0.5 seconds)
+        if (Math.abs(playerTime - videoRelativeTime) > 0.5) {
+          isSeeking.current = true;
+          playerRef.current.seekTo(videoRelativeTime, 'seconds');
+          setTimeout(() => {
+            isSeeking.current = false;
+          }, 100);
+        }
       }
     }
-  }, [currentTime]);
+  }, [getAbsoluteTime, videoStartTime, duration]);
 
-  // Handle player progress to update global time
-  const handleProgress = (state) => {
-    if (!isSeeking.current && isPlaying) {
-      const playerTimeMs = state.playedSeconds * 1000;
-      const expectedTime = currentTime;
+  // Extract timestamp from filename (e.g., com.oculus.vrshell-20240322-105827.mp4)
+  const extractTimeFromFilename = (filename) => {
+    if (!filename) return null;
+    
+    // Match pattern: YYYYMMDD-HHMMSS
+    const match = filename.match(/(\d{8})-(\d{6})/);
+    if (match) {
+      const timeStr = match[2]; // HHMMSS
+      const hours = parseInt(timeStr.substring(0, 2), 10);
+      const minutes = parseInt(timeStr.substring(2, 4), 10);
+      const seconds = parseInt(timeStr.substring(4, 6), 10);
       
-      // If player time drifts too far from expected time, sync it
-      if (Math.abs(playerTimeMs - expectedTime) > 500) {
-        seek(playerTimeMs);
-      }
+      // Convert to milliseconds from start of day
+      return (hours * 3600 + minutes * 60 + seconds) * 1000;
     }
+    return null;
   };
 
-  // Set start time when video is ready
+  // Set video start time when video is ready
   const handleReady = () => {
-    if (!startTime && playerRef.current) {
-      const videoStartTime = Date.now();
-      setStartTime(videoStartTime);
+    if (videoStartTime === null && fileInfo?.path) {
+      const timeOfDay = extractTimeFromFilename(fileInfo.path);
+      if (timeOfDay !== null) {
+        setVideoStartTime(timeOfDay);
+      } else {
+        // Fallback: use current time of day
+        const now = new Date();
+        const timeOfDayMs = (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) * 1000;
+        setVideoStartTime(timeOfDayMs);
+      }
     }
   };
 
@@ -97,26 +128,47 @@ function DefaultMmcoPlugin({ data, mmfgid, fileInfo }) {
     setDuration(duration);
   };
 
+  // Determine if video should be playing based on time range
+  const shouldPlay = () => {
+    if (!isPlaying || videoStartTime === null || duration === 0) return false;
+    
+    const absoluteTime = getAbsoluteTime();
+    const videoRelativeTime = (absoluteTime - videoStartTime) / 1000;
+    
+    return videoRelativeTime >= 0 && videoRelativeTime <= duration;
+  };
+
   return (
     <div className="mb-3">
       {mediaUrl && (
-        <ReactPlayer
-          ref={playerRef}
-          url={mediaUrl}
-          playing={isPlaying}
-          controls={false}
-          width="100%"
-          height="300px"
-          className="rounded shadow-sm"
-          onReady={handleReady}
-          onDuration={handleDuration}
-          onProgress={handleProgress}
-          progressInterval={100}
-          onError={(e) => {
-            console.error("Player error:", e);
-            setError('Playback error occurred');
-          }}
-        />
+        <div className="position-relative">
+          <ReactPlayer
+            ref={playerRef}
+            url={mediaUrl}
+            playing={shouldPlay()}
+            controls={false}
+            width="100%"
+            height="300px"
+            className="rounded shadow-sm"
+            onReady={handleReady}
+            onDuration={handleDuration}
+            progressInterval={100}
+            onError={(e) => {
+              console.error("Player error:", e);
+              setError('Playback error occurred');
+            }}
+          />
+          {!shouldPlay() && isPlaying && (
+            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{pointerEvents: 'none'}}>
+              <span className="badge bg-secondary">Video Inactive</span>
+            </div>
+          )}
+          {shouldPlay() && isPlaying && (
+            <div className="position-absolute top-0 end-0 m-2" style={{pointerEvents: 'none'}}>
+              <span className="badge bg-success">Active</span>
+            </div>
+          )}
+        </div>
       )}
       
       {duration > 0 && (

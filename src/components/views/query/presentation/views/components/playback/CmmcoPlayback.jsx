@@ -10,7 +10,7 @@ import { PlaybackProvider, usePlayback } from './PlaybackContext';
  * Global playback controls component
  */
 function GlobalPlaybackControls() {
-  const { isPlaying, play, pause, reset, currentTime } = usePlayback();
+  const { isPlaying, play, pause, reset, currentTime, globalStartTime, globalEndTime } = usePlayback();
 
   const formatTime = (ms) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -23,6 +23,24 @@ function GlobalPlaybackControls() {
     }
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
+
+  const formatTimeOfDay = (timeOfDayMs) => {
+    if (timeOfDayMs === null || timeOfDayMs === undefined) return 'N/A';
+    
+    // Handle values over 24 hours (day wrap-around)
+    const normalizedMs = timeOfDayMs % (24 * 3600 * 1000);
+    
+    const totalSeconds = Math.floor(normalizedMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const totalDuration = globalStartTime !== null && globalEndTime !== null 
+    ? globalEndTime - globalStartTime 
+    : 0;
 
   return (
     <div className="card mb-3 bg-primary text-white">
@@ -51,9 +69,23 @@ function GlobalPlaybackControls() {
               </button>
             </div>
           </div>
-          <div className="small">
-            <i className="fa fa-clock-o me-1"></i>
-            Time: {formatTime(currentTime)}
+          <div className="d-flex align-items-center gap-3">
+            <div className="small">
+              <i className="fa fa-clock-o me-1"></i>
+              {formatTime(currentTime)} / {formatTime(totalDuration)}
+            </div>
+            {globalStartTime !== null && (
+              <div className="small">
+                <i className="fa fa-hourglass-start me-1"></i>
+                Start: {formatTimeOfDay(globalStartTime)}
+              </div>
+            )}
+            {globalEndTime !== null && (
+              <div className="small">
+                <i className="fa fa-hourglass-end me-1"></i>
+                End: {formatTimeOfDay(globalEndTime)}
+              </div>
+            )}
           </div>
         </div>
       </div>

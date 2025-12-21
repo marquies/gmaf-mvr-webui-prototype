@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useRef, useCallback } from 'react';
+import React, { createContext, useContext, useState, useRef, useCallback, useEffect } from 'react';
 
 const PlaybackContext = createContext(null);
 
@@ -13,7 +13,9 @@ export const usePlayback = () => {
 export const PlaybackProvider = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [startTime, setStartTime] = useState(null);
+  const [globalStartTime, setGlobalStartTime] = useState(null);
+  const [globalEndTime, setGlobalEndTime] = useState(null);
+  const componentRangesRef = useRef({});
   const playbackStartTimeRef = useRef(null);
   const animationFrameRef = useRef(null);
 
@@ -46,8 +48,41 @@ export const PlaybackProvider = ({ children }) => {
   const reset = useCallback(() => {
     pause();
     setCurrentTime(0);
-    setStartTime(null);
   }, [pause]);
+
+  const registerComponent = useCallback((componentId, startTimeMs, endTimeMs) => {
+    componentRangesRef.current[componentId] = { startTimeMs, endTimeMs };
+    
+    // Recalculate global start and end times
+    const ranges = Object.values(componentRangesRef.current);
+    if (ranges.length > 0) {
+      const minStart = Math.min(...ranges.map(r => r.startTimeMs));
+      const maxEnd = Math.max(...ranges.map(r => r.endTimeMs));
+      setGlobalStartTime(minStart);
+      setGlobalEndTime(maxEnd);
+    }
+  }, []);
+
+  const unregisterComponent = useCallback((componentId) => {
+    delete componentRangesRef.current[componentId];
+    
+    // Recalculate global start and end times
+    const ranges = Object.values(componentRangesRef.current);
+    if (ranges.length > 0) {
+      const minStart = Math.min(...ranges.map(r => r.startTimeMs));
+      const maxEnd = Math.max(...ranges.map(r => r.endTimeMs));
+      setGlobalStartTime(minStart);
+      setGlobalEndTime(maxEnd);
+    } else {
+      setGlobalStartTime(null);
+      setGlobalEndTime(null);
+    }
+  }, []);
+
+  const getAbsoluteTime = useCallback(() => {
+    if (globalStartTime === null) return 0;
+    return globalStartTime + currentTime;
+  }, [globalStartTime, currentTime]);
 
   const seek = useCallback((time) => {
     const wasPlaying = isPlaying;
@@ -68,15 +103,28 @@ export const PlaybackProvider = ({ children }) => {
     }
   }, [isPlaying, pause]);
 
+  // Auto-stop when reaching the end
+  useEffect(() => {
+    if (isPlaying && globalEndTime !== null && globalStartTime !== null) {
+      const absoluteTime = globalStartTime + currentTime;
+      if (absoluteTime >= globalEndTime) {
+        pause();
+      }
+    }
+  }, [currentTime, globalEndTime, globalStartTime, isPlaying, pause]);
+
   const value = {
     isPlaying,
     currentTime,
-    startTime,
-    setStartTime,
+    globalStartTime,
+    globalEndTime,
     play,
     pause,
     reset,
-    seek
+    seek,
+    registerComponent,
+    unregisterComponent,
+    getAbsoluteTime
   };
 
   return (

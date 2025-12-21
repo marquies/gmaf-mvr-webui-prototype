@@ -29,9 +29,9 @@ ChartJS.register(
  * Plugin for displaying heartrate peripheral data
  */
 function HeartratePlugin({ data, mmfgid }) {
-  const { isPlaying, currentTime, startTime, setStartTime } = usePlayback();
+  const { isPlaying, getAbsoluteTime, registerComponent, unregisterComponent } = usePlayback();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const playbackIntervalRef = useRef(null);
+  const componentId = useRef(`heartrate-${mmfgid}`);
 
   // For debugging - show raw data
   const rawDataDebug = useMemo(() => {
@@ -139,9 +139,20 @@ function HeartratePlugin({ data, mmfgid }) {
         }
       }
       
+      // Convert to time-of-day (milliseconds from start of day)
+      let timeOfDayMs = null;
+      if (!isNaN(numericValue)) {
+        const fullTimestamp = numericValue * 1000;
+        const date = new Date(fullTimestamp);
+        if (!isNaN(date.getTime())) {
+          // Extract time of day in milliseconds
+          timeOfDayMs = (date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds()) * 1000 + date.getMilliseconds();
+        }
+      }
+      
       return {
         rawTimestamp: rawTimestamp,
-        timestampMs: !isNaN(numericValue) ? numericValue * 1000 : null,
+        timestampMs: timeOfDayMs,
         timestamp: formattedDate,
         heartRate: values[heartRateIndex]
       };
@@ -217,32 +228,38 @@ function HeartratePlugin({ data, mmfgid }) {
   }), [parsedData, currentIndex]);
 
 
-  // Set start time when data is loaded
+  // Register component time range when data is loaded
   useEffect(() => {
-    if (parsedData && parsedData.length > 0 && parsedData[0].timestampMs && !startTime) {
-      setStartTime(parsedData[0].timestampMs);
-    }
-  }, [parsedData, startTime, setStartTime]);
-
-  // Update current index based on global playback time
-  useEffect(() => {
-    if (!parsedData || parsedData.length === 0 || !startTime) return;
-
-    if (!isPlaying) {
-      // When paused or reset, find the appropriate index
-      if (currentTime === 0) {
-        setCurrentIndex(0);
-        return;
+    if (parsedData && parsedData.length > 0) {
+      const validData = parsedData.filter(d => d.timestampMs !== null);
+      if (validData.length > 0) {
+        let startTimeMs = validData[0].timestampMs;
+        let endTimeMs = validData[validData.length - 1].timestampMs;
+        
+        // Handle day wrap-around: if end < start, add 24 hours to end
+        if (endTimeMs < startTimeMs) {
+          endTimeMs += 24 * 3600 * 1000;
+        }
+        
+        registerComponent(componentId.current, startTimeMs, endTimeMs);
+        
+        return () => {
+          unregisterComponent(componentId.current);
+        };
       }
     }
+  }, [parsedData, registerComponent, unregisterComponent]);
 
-    // Calculate the absolute timestamp we should be at
-    const targetTimestamp = startTime + currentTime;
+  // Update current index based on global absolute time
+  useEffect(() => {
+    if (!parsedData || parsedData.length === 0) return;
 
-    // Find the index that corresponds to this timestamp
+    const absoluteTime = getAbsoluteTime();
+
+    // Find the index that corresponds to this absolute timestamp
     let newIndex = 0;
     for (let i = 0; i < parsedData.length; i++) {
-      if (parsedData[i].timestampMs && parsedData[i].timestampMs <= targetTimestamp) {
+      if (parsedData[i].timestampMs && parsedData[i].timestampMs <= absoluteTime) {
         newIndex = i;
       } else {
         break;
@@ -250,7 +267,20 @@ function HeartratePlugin({ data, mmfgid }) {
     }
 
     setCurrentIndex(newIndex);
-  }, [currentTime, parsedData, startTime, isPlaying]);
+  }, [getAbsoluteTime, parsedData]);
+
+  // Determine if this component should be active based on time range
+  const isInRange = useMemo(() => {
+    if (!parsedData || parsedData.length === 0) return false;
+    const validData = parsedData.filter(d => d.timestampMs !== null);
+    if (validData.length === 0) return false;
+    
+    const absoluteTime = getAbsoluteTime();
+    const startTimeMs = validData[0].timestampMs;
+    const endTimeMs = validData[validData.length - 1].timestampMs;
+    
+    return absoluteTime >= startTimeMs && absoluteTime <= endTimeMs;
+  }, [parsedData, getAbsoluteTime]);
 
   return (
     <div className="heartrate-plugin">
@@ -276,7 +306,15 @@ function HeartratePlugin({ data, mmfgid }) {
           {/* Heart Rate Chart */}
           <div className="mb-4">
             <div className="d-flex justify-content-between align-items-center mb-2">
-              <h6 className="mb-0">Heart Rate Chart</h6>
+              <h6 className="mb-0">
+                Heart Rate Chart
+                {!isInRange && isPlaying && (
+                  <span className="badge bg-secondary ms-2">Inactive</span>
+                )}
+                {isInRange && isPlaying && (
+                  <span className="badge bg-success ms-2">Active</span>
+                )}
+              </h6>
               <div className="small text-muted">
                 Position: {currentIndex + 1} / {parsedData.length}
                 {parsedData[currentIndex] && ` - ${parsedData[currentIndex].timestamp}`}
