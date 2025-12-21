@@ -4,11 +4,67 @@ import config from '../../../../../../../config/config';
 import MmcoPanel from './MmcoPanel';
 import PdPanel from './PdPanel';
 import SrdPanel from './SrdPanel';
+import { PlaybackProvider, usePlayback } from './PlaybackContext';
+
+/**
+ * Global playback controls component
+ */
+function GlobalPlaybackControls() {
+  const { isPlaying, play, pause, reset, currentTime } = usePlayback();
+
+  const formatTime = (ms) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="card mb-3 bg-primary text-white">
+      <div className="card-body py-2">
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center">
+            <h6 className="mb-0 me-3">
+              <i className="fa fa-play-circle me-2"></i>
+              Global Playback Control
+            </h6>
+            <div className="btn-group btn-group-sm">
+              <button 
+                className={`btn ${isPlaying ? 'btn-warning' : 'btn-light'}`}
+                onClick={isPlaying ? pause : play}
+                title={isPlaying ? 'Pause' : 'Play'}
+              >
+                <i className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`}></i>
+                {isPlaying ? ' Pause' : ' Play'}
+              </button>
+              <button 
+                className="btn btn-light"
+                onClick={reset}
+                title="Reset"
+              >
+                <i className="fa fa-refresh"></i> Reset
+              </button>
+            </div>
+          </div>
+          <div className="small">
+            <i className="fa fa-clock-o me-1"></i>
+            Time: {formatTime(currentTime)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /**
  * Component for CMMCO (Complex Multimedia Content Object) playback
  */
-function CmmcoPlayback({ data, mmfgid, playerRef, handleSeek }) {
+function CmmcoPlaybackContent({ data, mmfgid, playerRef, handleSeek }) {
   const [showMetadata, setShowMetadata] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -148,6 +204,7 @@ function CmmcoPlayback({ data, mmfgid, playerRef, handleSeek }) {
   
   return (
     <div className="cmmco-playback">
+      <GlobalPlaybackControls />
       <div className="d-flex justify-content-between align-items-center mb-2">
         <div>
           <p className="card-text mb-0">
@@ -222,6 +279,14 @@ function CmmcoPlayback({ data, mmfgid, playerRef, handleSeek }) {
         </div>
       )}
     </div>
+  );
+}
+
+function CmmcoPlayback(props) {
+  return (
+    <PlaybackProvider>
+      <CmmcoPlaybackContent {...props} />
+    </PlaybackProvider>
   );
 }
 
