@@ -4,6 +4,7 @@ import config from '../../../../../../../config/config';
 import MmcoPanel from './MmcoPanel';
 import PdPanel from './PdPanel';
 import SrdPanel from './SrdPanel';
+import NodeTable from '../nodetable';
 import { PlaybackProvider, usePlayback } from './PlaybackContext';
 
 /**
@@ -132,6 +133,7 @@ function GlobalPlaybackControls() {
  * Component for CMMCO (Complex Multimedia Content Object) playback
  */
 function CmmcoPlaybackContent({ data, mmfgid, playerRef, handleSeek }) {
+  const { seek } = usePlayback();
   const [showMetadata, setShowMetadata] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -339,13 +341,23 @@ function CmmcoPlaybackContent({ data, mmfgid, playerRef, handleSeek }) {
       
       {isFullscreen ? (
         <div className="row">
-          <div className="col-md-4">
+          <div className="col-md-3">
+            <div className="card mb-3">
+              <div className="card-header bg-primary text-white">
+                <h6 className="mb-0">Node Structure</h6>
+              </div>
+              <div className="card-body" style={{ maxHeight: '600px', overflowY: 'auto' }}>
+                <NodeTable data={data} seekTo={seek} />
+              </div>
+            </div>
+          </div>
+          <div className="col-md-3">
             <MmcoPanel playerRef={playerRef} mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
           </div>
-          <div className="col-md-4">
+          <div className="col-md-3">
             <PdPanel mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
           </div>
-          <div className="col-md-4">
+          <div className="col-md-3">
             <SrdPanel mmfgid={mmfgid} manifestData={manifestData} zipContents={zipContents} />
           </div>
         </div>

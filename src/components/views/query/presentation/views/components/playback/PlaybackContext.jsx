@@ -85,6 +85,7 @@ export const PlaybackProvider = ({ children }) => {
   }, [globalStartTime, currentTime]);
 
   const seek = useCallback((time) => {
+    console.log("Seek to:", time);
     const wasPlaying = isPlaying;
     if (wasPlaying) {
       pause();

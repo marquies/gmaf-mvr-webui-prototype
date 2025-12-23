@@ -3,7 +3,6 @@ import ReactPlayer from "react-player";
 import config from "../../../../../config/config";
 
 import NodeTable from "./components/nodetable";
-import PdPlayerDummy from "./components/pdplayerdummy";
 import PlaybackSelector from "./components/playback/PlaybackSelector";
 
 function AlternativeDetails({ mmfgid }) {
