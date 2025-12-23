@@ -3,11 +3,12 @@ import VideoPlayback from './VideoPlayback';
 import AudioPlayback from './AudioPlayback';
 import ImagePlayback from './ImagePlayback';
 import CmmcoPlayback from './CmmcoPlayback';
+import { Playback } from './PlaybackContext';
 
 /**
  * Component that selects the appropriate playback component based on file type
  */
-function PlaybackSelector({ data, mmfgid, playerRef, handleSeek }) {
+function PlaybackSelectorContent({ data, mmfgid, playerRef, handleSeek }) {
   // Helper function to determine file type from filename or MIME type
   const getFileType = () => {
     if (!data || !data.generalMetadata || !data.generalMetadata.fileName) {
@@ -77,6 +78,14 @@ function PlaybackSelector({ data, mmfgid, playerRef, handleSeek }) {
     default:
       return <VideoPlayback data={data} mmfgid={mmfgid} playerRef={playerRef} handleSeek={handleSeek} />;
   }
+}
+
+function PlaybackSelector(props) {
+  return (
+    <Playback>
+      <PlaybackSelectorContent {...props} />
+    </Playback>
+  );
 }
 
 export default PlaybackSelector;

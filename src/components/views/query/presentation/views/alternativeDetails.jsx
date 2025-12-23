@@ -4,6 +4,7 @@ import config from "../../../../../config/config";
 
 import NodeTable from "./components/nodetable";
 import PlaybackSelector from "./components/playback/PlaybackSelector";
+import { Playback } from "./components/playback/PlaybackContext";
 
 function AlternativeDetails({ mmfgid }) {
   const [data, setData] = useState(null);
@@ -173,14 +174,16 @@ function AlternativeDetails({ mmfgid }) {
                   
                   {activeTab === "nodes" && (
                     <div className="tab-pane fade show active">
-                      <div className="card">
-                        <div className="card-header bg-light">
-                          <h6 className="mb-0">Node Structure</h6>
+                      <Playback>
+                        <div className="card">
+                          <div className="card-header bg-light">
+                            <h6 className="mb-0">Node Structure</h6>
+                          </div>
+                          <div className="card-body">
+                            <NodeTable data={data} seekTo={handleSeek} />
+                          </div>
                         </div>
-                        <div className="card-body">
-                          <NodeTable data={data} seekTo={handleSeek} />
-                        </div>
-                      </div>
+                      </Playback>
                     </div>
                   )}
                   

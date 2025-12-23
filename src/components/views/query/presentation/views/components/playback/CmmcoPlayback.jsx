@@ -5,7 +5,7 @@ import MmcoPanel from './MmcoPanel';
 import PdPanel from './PdPanel';
 import SrdPanel from './SrdPanel';
 import NodeTable from '../nodetable';
-import { PlaybackProvider, usePlayback } from './PlaybackContext';
+import { Playback, usePlayback } from './PlaybackContext';
 
 /**
  * Global playback controls component
@@ -407,9 +407,9 @@ function CmmcoPlaybackContent({ data, mmfgid, playerRef, handleSeek }) {
 
 function CmmcoPlayback(props) {
   return (
-    <PlaybackProvider>
+    <Playback>
       <CmmcoPlaybackContent {...props} />
-    </PlaybackProvider>
+    </Playback>
   );
 }
 

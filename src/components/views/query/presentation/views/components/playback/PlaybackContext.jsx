@@ -5,12 +5,12 @@ const PlaybackContext = createContext(null);
 export const usePlayback = () => {
   const context = useContext(PlaybackContext);
   if (!context) {
-    throw new Error('usePlayback must be used within a PlaybackProvider');
+    throw new Error('usePlayback must be used within a Playback');
   }
   return context;
 };
 
-export const PlaybackProvider = ({ children }) => {
+export const Playback = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [globalStartTime, setGlobalStartTime] = useState(null);
@@ -37,6 +37,7 @@ export const PlaybackProvider = ({ children }) => {
   }, [isPlaying, currentTime]);
 
   const pause = useCallback(() => {
+    console.log("Pausing playback");
     setIsPlaying(false);
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
