@@ -86,36 +86,36 @@ class GMAFAdapter {
     }
 
     async query(query = {}, updateStatus) {
-        //First get QueryIds
         const result = await this.getQueryIds(query);
         console.log("IDS Result: ", result);
         if (!result) {
             console.log("No response received from Query");
-            return { "results": [] };
+            return { "results": [], "queryIds": [], "totalResults": 0 };
         }
 
         if (result.size == 0) {
             console.log("No results received from Query");
-            return { "results": [] };
+            return { "results": [], "queryIds": [], "totalResults": 0 };
         }
 
         const queryIds = result;
-
-        // print all results
         console.log("QueryIds: ", queryIds);
 
-        updateStatus(0, queryIds.length);
-        const queryResults = [];
-        if (typeof queryIds === 'object') {
-            for (let index = 0; index < queryIds.length; index++) {
-                const cmmco = await this.getCMMCO(queryIds[index]);
-                queryResults.push(cmmco);
-                updateStatus(index + 1, queryIds.length);
+        return { 
+            "results": [], 
+            "queryIds": queryIds,
+            "totalResults": queryIds.length,
+            "fetchMinimalBatch": async (startIndex, batchSize) => {
+                const endIndex = Math.min(startIndex + batchSize, queryIds.length);
+                const batch = [];
+                for (let i = startIndex; i < endIndex; i++) {
+                    const minimalData = await this.getCMMCOMinimal(queryIds[i]);
+                    batch.push(minimalData);
+                    if (updateStatus) updateStatus(i + 1, queryIds.length);
+                }
+                return batch;
             }
-        }
-
-
-        return { "results": queryResults };
+        };
     }
 
     async getPage(page = 1, resultsPerPage = 8, updateStatus) {
@@ -181,6 +181,25 @@ class GMAFAdapter {
             const collectionElement = await this.post(`gmaf/getmmfg/${this.apiToken}/${queryId}`, "json");
             return collectionElement;
         }
+    }
+
+    async getCMMCOMinimal(queryId) {
+        if (!queryId) {
+            console.log("No queryId received from getCMMCOMinimal");
+            return null;
+        }
+
+        const fullData = await this.getCMMCO(queryId);
+        if (!fullData) return null;
+
+        return {
+            id: queryId,
+            generalMetadata: fullData.generalMetadata,
+            start: fullData.start,
+            end: fullData.end,
+            hasPd: fullData.pd && Object.keys(fullData.pd).length > 0,
+            hasWsd: fullData.wsd && Object.keys(fullData.wsd).length > 0
+        };
     }
 
 

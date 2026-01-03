@@ -10,9 +10,13 @@ function AssetCard(props){
 
 const [wsdUnfolded, setWsdUnfolded] = useState(false);
 const [pdUnfolded, setPdUnfolded] = useState(false);
-const [timeCode, setTimeCode] = useState(props.cmmco.start);
+const [timeCode, setTimeCode] = useState(props.cmmco?.start);
 const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 const {cmmco} = props;
+
+if (!cmmco) {
+  return null;
+}
 
 
   // Ref to store the timeout ID
@@ -92,7 +96,7 @@ return (
                     <div className='border-1 border rounded-3'>
                         <Multimedia view={props.view} mmco={cmmco} start={cmmco.start} end={cmmco.end} timecode={timeCode} setTimeCode={setTimeCode} />
                         {/*<Controls setTimeCode={setTimeCode} />*/}
-                        {cmmco.pd && Object.keys(cmmco.pd).length > 0 && (
+                        {cmmco.hasPd && (
                             <>
                                 <div className="d-flex align-items-center">
                                     <i className="fa fa-chevron-down fsize me-2" onClick={() => setPdUnfolded(!pdUnfolded)}></i>
@@ -103,7 +107,7 @@ return (
                                 {/*pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.start} timecode={timeCode}></PdPlayback> :""*/}
                             </>
                         )}
-                        {cmmco.wsd && Object.keys(cmmco.wsd).length > 0 && (
+                        {cmmco.hasWsd && (
                             <>
                                 <div className="d-flex align-items-center">
                                     <i className="fa fa-chevron-down fsize me-2" onClick={() => setWsdUnfolded(!wsdUnfolded)}></i>

@@ -35,12 +35,27 @@ function QueryView(props) {
     console.log("Results: ", results);
 
     setKey(Math.random());
-    //setPage(results.page);
-    //setNumberOfPages(results.numberOfPages);
-    setQueryResults([...results.results]);
     setFirstQueryMade(true);
-    setNumOfAllResults(results.numOfAllResults); 
+    setNumOfAllResults(results.totalResults); 
 
+    const batchSize = 20;
+    const initialBatch = await results.fetchMinimalBatch(0, batchSize);
+    setQueryResults([...initialBatch]);
+
+    if (results.totalResults > batchSize) {
+      loadRemainingResults(results, batchSize);
+    }
+  }
+
+  async function loadRemainingResults(results, startIndex) {
+    const batchSize = 20;
+    const totalResults = results.totalResults;
+    
+    for (let i = startIndex; i < totalResults; i += batchSize) {
+      const batch = await results.fetchMinimalBatch(i, batchSize);
+      setQueryResults(prev => [...prev, ...batch]);
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
   }
   const handleSelectItem = (item) => {
     setSelectedItem(item);

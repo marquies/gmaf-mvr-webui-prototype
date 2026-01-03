@@ -3,16 +3,16 @@ import { createPluginWithFallback } from '../../../../../../../components/plugin
 import { initializePlugins, loadPluginByClassName } from '../../../../../../../components/plugins/registry/pluginLoader';
 import { getAllPluginsForType, registerPlugin } from '../../../../../../../components/plugins/registry/pluginRegistry';
 import DefaultPdPlugin from '../../../../../../../components/plugins/pd/DefaultPdPlugin';
+import config from '../../../../../../../config/config';
 
 /**
  * Component for Peripheral Data Panel
  */
 function PdPanel({ mmfgid, manifestData, zipContents }) {
-  const [pluginContent, setPluginContent] = useState(null);
-  const [pdEntry, setPdEntry] = useState(null);
-  const [availablePlugins, setAvailablePlugins] = useState(['default']);
-  const [activePlugin, setActivePlugin] = useState('default');
+  const [pdEntries, setPdEntries] = useState([]);
+  const [activeFileTab, setActiveFileTab] = useState(0);
   const [pluginsInitialized, setPluginsInitialized] = useState(false);
+  const [loadedPluginTypes, setLoadedPluginTypes] = useState({});
   const pluginsLoaded = useRef(false);
   
   // Initialize plugins on first render
@@ -27,113 +27,132 @@ function PdPanel({ mmfgid, manifestData, zipContents }) {
       // Initialize all configured plugins
       initializePlugins();
       
-      // Use the plugin registry and loader instead of static imports
-      // The plugins should be loaded by the application initialization code
-      
-      setTimeout(() => {
-        // Get all available PD plugins after loading
-        const pdPlugins = getAllPluginsForType('PD');
-        const pluginTypes = Object.keys(pdPlugins);
-        
-        if (pluginTypes.length > 0) {
-          setAvailablePlugins(['default', ...pluginTypes.filter(type => type !== 'default')]);
-        } else {
-          setAvailablePlugins(['default']);
-        }
-        
-        setPluginsInitialized(true);
-      }, 100); // Small delay to ensure plugins are registered
+      setPluginsInitialized(true);
     }
   }, []);
   
   useEffect(() => {
-    if (manifestData && Array.isArray(manifestData.files)) {
-      // Find PD entry in manifest
-      const entry = manifestData.files.find(entry => entry.type === 'PD');
-      
-      if (entry) {
-        console.log('PD Panel can show:', entry);
-        console.log('PD file path:', entry.path);
-        console.log('PD mimetype:', entry.mimetype);
-        console.log('PD content type:', entry.content);
-        
-        setPdEntry(entry);
-        
-        // If we have the content in zipContents, load the appropriate plugin
-        if (zipContents && zipContents[entry.path]) {
-          console.log('PD content available in zipContents');
-          setPluginContent(zipContents[entry.path]);
-          
-          // Try to dynamically load a plugin based on the content type
-          if (entry.content) {
-            // Convert content type to potential class name (e.g., 'heartrate' -> 'HeartratePlugin')
-            const className = entry.content.charAt(0).toUpperCase() + entry.content.slice(1) + 'Plugin';
-            
-            // Set the active plugin to match the content type
-            setActivePlugin(entry.content.toLowerCase());
-            
-            // Attempt to load the plugin dynamically and update available plugins
-            loadPluginByClassName('PD', className)
-              .then(() => {
-                // Update available plugins after successful loading
-                const pdPlugins = getAllPluginsForType('PD');
-                const pluginTypes = Object.keys(pdPlugins);
-                
-                if (pluginTypes.length > 0) {
-                  setAvailablePlugins(['default', ...pluginTypes.filter(type => type !== 'default')]);
-                }
-              })
-              .catch(err => {
-                console.warn(`Could not load plugin ${className}, using default:`, err);
-              });
-          }
-        }
-      } else {
-        console.log('No PD entry found in manifest');
+    if (!manifestData || !Array.isArray(manifestData.files)) {
+      if (manifestData) {
+        console.log('PD Panel: manifestData is not an array:', manifestData);
       }
-    } else if (manifestData) {
-      console.log('PD Panel: manifestData is not an array:', manifestData);
+      return;
     }
-  }, [manifestData, zipContents]);
+    
+    const entries = manifestData.files.filter(entry => entry.type === 'PD');
+    
+    if (entries.length === 0) {
+      console.log('No PD entries found in manifest');
+      setPdEntries([]);
+      return;
+    }
+    
+    console.log(`PD Panel found ${entries.length} PD file(s)`);
+    
+    const enrichedEntries = entries.map((entry, index) => {
+      const content = zipContents && zipContents[entry.path] ? zipContents[entry.path] : null;
+      
+      console.log('PD file:', entry.path, 'content type:', entry.contenttype, 'has content:', !!content);
+      
+      const defaultPluginType = 'default';
+      
+      // Load plugin based on content type, even if content isn't loaded yet
+      if (entry.contenttype && !loadedPluginTypes[entry.path]) {
+        const contentTypeLower = entry.contenttype.toLowerCase();
+        
+        // Get the plugin class name from config mapping
+        const className = config.plugins?.pd?.contentTypes?.[contentTypeLower] || 
+                         (entry.contenttype.charAt(0).toUpperCase() + entry.contenttype.slice(1) + 'Plugin');
+        
+        console.log(`Looking up plugin for content type "${contentTypeLower}": ${className}`);
+        
+        loadPluginByClassName('PD', className)
+          .then((loadedPlugin) => {
+            if (loadedPlugin) {
+              console.log(`Successfully loaded plugin ${className} for content type ${entry.contenttype}`);
+              
+              // Register the plugin with the content type for easy lookup
+              registerPlugin('PD', contentTypeLower, loadedPlugin);
+              
+              setLoadedPluginTypes(prev => ({
+                ...prev,
+                [entry.path]: contentTypeLower
+              }));
+            } else {
+              setLoadedPluginTypes(prev => ({
+                ...prev,
+                [entry.path]: 'default'
+              }));
+            }
+          })
+          .catch(err => {
+            console.warn(`Could not load plugin ${className} for ${entry.contenttype}, will use default plugin:`, err);
+            setLoadedPluginTypes(prev => ({
+              ...prev,
+              [entry.path]: 'default'
+            }));
+          });
+      }
+      
+      const pluginType = loadedPluginTypes[entry.path] || defaultPluginType;
+      console.log(`Creating entry for ${entry.path}: pluginType=${pluginType}, loadedPluginTypes[${entry.path}]=${loadedPluginTypes[entry.path]}`);
+      
+      return {
+        ...entry,
+        content: content,
+        pluginType: pluginType
+      };
+    });
+    
+    setPdEntries(enrichedEntries);
+  }, [manifestData, zipContents, loadedPluginTypes]);
+  
+  const currentEntry = pdEntries[activeFileTab];
+  const currentPluginType = currentEntry?.pluginType || 'default';
+  
+  console.log('PdPanel render - currentEntry:', currentEntry?.path, 'pluginType:', currentPluginType, 'loadedPluginTypes:', loadedPluginTypes);
   
   return (
     <div className="card mt-3">
-      <div className="card-header bg-light d-flex justify-content-between align-items-center">
+      <div className="card-header bg-light">
         <h6 className="mb-0">Peripheral Data</h6>
         
-        {pdEntry && availablePlugins.length > 1 && (
-          <div className="btn-group btn-group-sm" role="group">
-            {availablePlugins.map(plugin => (
-              <button 
-                key={plugin} 
-                type="button" 
-                className={`btn ${activePlugin === plugin ? 'btn-primary' : 'btn-outline-secondary'}`}
-                onClick={() => setActivePlugin(plugin)}
-              >
-                {plugin.charAt(0).toUpperCase() + plugin.slice(1)}
-              </button>
+        {pdEntries.length > 1 && (
+          <ul className="nav nav-tabs card-header-tabs mt-2">
+            {pdEntries.map((entry, index) => (
+              <li className="nav-item" key={index}>
+                <button 
+                  className={`nav-link ${activeFileTab === index ? 'active' : ''}`}
+                  onClick={() => setActiveFileTab(index)}
+                >
+                  <div className="d-flex flex-column align-items-start">
+                    <span>{entry.contenttype || 'Unknown'}</span>
+                    <small className="text-muted">{entry.mimetype}</small>
+                  </div>
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
       
       <div className="card-body">
-        {pdEntry && (
+        {currentEntry && (
           <div className="tab-content">
-            {activePlugin === 'default' ? (
+            {currentPluginType === 'default' ? (
               <DefaultPdPlugin 
-                data={pluginContent} 
+                data={currentEntry.content} 
                 mmfgid={mmfgid} 
-                fileInfo={pdEntry} 
+                fileInfo={currentEntry} 
               />
             ) : (
               createPluginWithFallback(
                 'PD', 
-                activePlugin, 
+                currentPluginType, 
                 { 
-                  data: pluginContent, 
+                  data: currentEntry.content, 
                   mmfgid, 
-                  fileInfo: pdEntry 
+                  fileInfo: currentEntry 
                 },
                 DefaultPdPlugin
               )
@@ -141,7 +160,7 @@ function PdPanel({ mmfgid, manifestData, zipContents }) {
           </div>
         )}
         
-        {!pdEntry && (
+        {pdEntries.length === 0 && (
           <div className="alert alert-secondary">
             <i className="fa fa-info-circle me-2"></i>
             No peripheral data available

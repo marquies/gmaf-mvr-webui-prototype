@@ -57,7 +57,7 @@ function SrdPanel({ mmfgid, manifestData, zipContents }) {
         console.log('SRD Panel can show:', srdEntry);
         console.log('SRD file path:', srdEntry.path);
         console.log('SRD mimetype:', srdEntry.mimetype);
-        console.log('SRD content type:', srdEntry.content);
+        console.log('SRD content type:', srdEntry.contenttype);
         
         setSrdEntry(srdEntry);
 
@@ -67,13 +67,13 @@ function SrdPanel({ mmfgid, manifestData, zipContents }) {
           setPluginContent(zipContents[srdEntry.path]);
           
           // Try to dynamically load a plugin based on the content type
-          if (srdEntry.content) {
+          if (srdEntry.contenttype) {
             // Convert content type to potential class name (e.g., 'rsg' -> 'RsgPlugin')
-            const className = srdEntry.content.charAt(0).toUpperCase() + srdEntry.content.slice(1) + 'Plugin';
+            const className = srdEntry.contenttype.charAt(0).toUpperCase() + srdEntry.contenttype.slice(1) + 'Plugin';
             console.log('SRD Panel: Attempting to load plugin:', className);
             
             // Set the active plugin to match the content type
-            setActivePlugin(srdEntry.content.toLowerCase());
+            setActivePlugin(srdEntry.contenttype.toLowerCase());
             
             // Attempt to load the plugin dynamically and update available plugins
             loadPluginByClassName('SRD', className)

@@ -16,7 +16,7 @@ function DefaultPdPlugin({ data, mmfgid, fileInfo }) {
           <small>
             <strong>File:</strong> {fileInfo.path}<br />
             <strong>Type:</strong> {fileInfo.mimetype}<br />
-            <strong>Content Type:</strong> {fileInfo.content || 'Unknown'}
+            <strong>Content Type:</strong> {fileInfo.contenttype || 'Unknown'}
           </small>
         </div>
       )}
