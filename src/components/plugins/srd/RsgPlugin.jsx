@@ -7,6 +7,7 @@ import { usePlayback } from '../../views/query/presentation/views/components/pla
 function RsgDataViewer({ data, mmfgid }) {
   const { isPlaying, getAbsoluteTime, registerComponent, unregisterComponent } = usePlayback();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [manualSelection, setManualSelection] = useState(false);
   const componentId = useRef(`rsg-${mmfgid}`);
   const parseRsgData = (rawData) => {
     const text = typeof rawData === 'string' ? rawData : JSON.stringify(rawData, null, 2);
@@ -87,6 +88,7 @@ function RsgDataViewer({ data, mmfgid }) {
   // Update selected scene graph based on global absolute time
   useEffect(() => {
     if (!sceneGraphs || sceneGraphs.length === 0) return;
+    if (manualSelection) return;
 
     const absoluteTime = getAbsoluteTime();
 
@@ -101,7 +103,7 @@ function RsgDataViewer({ data, mmfgid }) {
     }
 
     setSelectedIndex(newIndex);
-  }, [getAbsoluteTime, sceneGraphs]);
+  }, [getAbsoluteTime, sceneGraphs, manualSelection]);
 
   // Determine if this component should be active based on time range
   const isInRange = useMemo(() => {
@@ -138,7 +140,10 @@ function RsgDataViewer({ data, mmfgid }) {
                 <button
                   key={index}
                   className={`btn btn-sm ${selectedIndex === index ? 'btn-primary' : 'btn-outline-primary'}`}
-                  onClick={() => setSelectedIndex(index)}
+                  onClick={() => {
+                    setSelectedIndex(index);
+                    setManualSelection(true);
+                  }}
                   title={sceneGraph.timestamp ? `Timestamp: ${sceneGraph.timestamp}` : 'No timestamp'}
                 >
                   <div className="d-flex flex-column align-items-center">

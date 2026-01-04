@@ -25,7 +25,7 @@ const config = {
         srd: {
             default: 'DefaultSrdPlugin',
             contentTypes: {
-                'RSG': 'RSGPlugin',
+                'scenegraph': 'RSGPlugin',
             },
             // Plugin paths for dynamic loading
             paths: {

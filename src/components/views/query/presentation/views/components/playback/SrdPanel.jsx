@@ -3,6 +3,7 @@ import { createPluginWithFallback } from '../../../../../../../components/plugin
 import { initializePlugins, loadPluginByClassName } from '../../../../../../../components/plugins/registry/pluginLoader';
 import { getAllPluginsForType, registerPlugin } from '../../../../../../../components/plugins/registry/pluginRegistry';
 import DefaultSrdPlugin from '../../../../../../../components/plugins/srd/DefaultSrdPlugin';
+import config from '../../../../../../../config/config';
 
 /**
  * Component for Structured Related Data Panel
@@ -69,7 +70,9 @@ function SrdPanel({ mmfgid, manifestData, zipContents }) {
           // Try to dynamically load a plugin based on the content type
           if (srdEntry.contenttype) {
             // Convert content type to potential class name (e.g., 'rsg' -> 'RsgPlugin')
-            const className = srdEntry.contenttype.charAt(0).toUpperCase() + srdEntry.contenttype.slice(1) + 'Plugin';
+            //const className = srdEntry.contenttype.charAt(0).toUpperCase() + srdEntry.contenttype.slice(1) + 'Plugin';
+            const className = config.plugins?.srd?.contentTypes?.[srdEntry.contenttype.toLowerCase()]; 
+            //srdEntry.contenttype.charAt(0).toUpperCase() + srdEntry.contenttype.slice(1) + 'Plugin';
             console.log('SRD Panel: Attempting to load plugin:', className);
             
             // Set the active plugin to match the content type
