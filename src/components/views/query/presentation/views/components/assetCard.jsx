@@ -118,7 +118,19 @@ return (
                                 {/*wsdUnfolded ? <WsdPlayback></WsdPlayback> : ""*/}
                             </>
                         )}
-                   </div>    
+                   </div>
+                   <div className="card-footer">
+                       {cmmco?.tempSimilarity && (
+                           <div className="mt-1">
+                               <small className="text-muted">
+                                   Sim: {cmmco.tempSimilarity.map((val, idx) => 
+                                       <span key={idx}>{val.toFixed(1)}{idx < cmmco.tempSimilarity.length - 1 ? ', ' : ''}</span>
+                                   )}
+                               </small>
+                           </div>
+                       )}
+                   </div>
+                       
                 </div>
             </div>    
         </div> 

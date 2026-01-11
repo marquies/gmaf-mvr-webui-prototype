@@ -195,6 +195,7 @@ class GMAFAdapter {
         return {
             id: queryId,
             generalMetadata: fullData.generalMetadata,
+            tempSimilarity: fullData.tempSimilarity,
             start: fullData.start,
             end: fullData.end,
             hasPd: fullData.pd && Object.keys(fullData.pd).length > 0,

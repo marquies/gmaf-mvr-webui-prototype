@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Filter from "./filter";
+//import Filter from "./filter";
 import WsdQuery from "./wsdquery";
 import { WithContext as ReactTags } from "react-tag-input";
 import "./ReactTags.css";
 import { useQueryHandler } from './QueryHandler';
-import { keyboard } from "@testing-library/user-event/dist/keyboard";
+//import { keyboard } from "@testing-library/user-event/dist/keyboard";
 
 const KeyCodes = {
   comma: 188,
