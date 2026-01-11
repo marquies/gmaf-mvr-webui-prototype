@@ -7,11 +7,11 @@ function Presentation(props) {
     function getView(){
         switch(props.presentationView) {
             case "browse":
-              return <BrowseView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable} onSelectItem={props.onSelectItem} numOfAllResults={props.numOfAllResults}/>;
+              return <BrowseView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable} onSelectItem={props.onSelectItem} numOfAllResults={props.numOfAllResults} onAddQueryExample={props.onAddQueryExample}/>;
             case "details":
-              return <DetailsView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable}/>;
+              return <DetailsView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable} onAddQueryExample={props.onAddQueryExample}/>;
             default:
-              return <BrowseView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable} onSelectItem={props.onSelectItem} numOfAllResults={props.numOfAllResults}/>;
+              return <BrowseView updateStatus={props.updateStatus} page={props.page} numberOfPages={props.numberOfPages} cmmcos={props.cmmcos} deletable={props.deletable} onSelectItem={props.onSelectItem} numOfAllResults={props.numOfAllResults} onAddQueryExample={props.onAddQueryExample}/>;
           }
     }
 

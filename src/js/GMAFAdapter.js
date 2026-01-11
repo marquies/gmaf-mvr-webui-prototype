@@ -85,20 +85,58 @@ class GMAFAdapter {
         return this.post("gmaf/query/" + this.apiToken + "/" + keywords, "json");
     }
 
+    async getSim(id = "") {
+        return this.post("gmaf/getSim/" + this.apiToken + "/" + id, "json");
+    }
+
     async query(query = {}, updateStatus) {
         const result = await this.getQueryIds(query);
         console.log("IDS Result: ", result);
         if (!result) {
             console.log("No response received from Query");
-            return { "results": [], "queryIds": [], "totalResults": 0 };
+            return { "results": [], "queryIds": [], "totalResults": 0, "fetchMinimalBatch": async () => [] };
         }
 
-        if (result.size == 0) {
+        if (result.length == 0) {
             console.log("No results received from Query");
-            return { "results": [], "queryIds": [], "totalResults": 0 };
+            return { "results": [], "queryIds": [], "totalResults": 0, "fetchMinimalBatch": async () => [] };
         }
 
         const queryIds = result;
+        console.log("QueryIds: ", queryIds);
+
+        return { 
+            "results": [], 
+            "queryIds": queryIds,
+            "totalResults": queryIds.length,
+            "fetchMinimalBatch": async (startIndex, batchSize) => {
+                const endIndex = Math.min(startIndex + batchSize, queryIds.length);
+                const batch = [];
+                for (let i = startIndex; i < endIndex; i++) {
+                    const minimalData = await this.getCMMCOMinimal(queryIds[i]);
+                    batch.push(minimalData);
+                    if (updateStatus) updateStatus(i + 1, queryIds.length);
+                }
+                return batch;
+            }
+        };
+    }
+
+    async similarity(id = "", updateStatus) {
+        const result = await this.getSim(id);
+        console.log("Similarity Result: ", result);
+        if (!result) {
+            console.log("No response received from Similarity");
+            return { "results": [], "queryIds": [], "totalResults": 0, "fetchMinimalBatch": async () => [] };
+        }
+
+        if (result.length == 0) {
+            console.log("No results received from Similarity");
+            return { "results": [], "queryIds": [], "totalResults": 0, "fetchMinimalBatch": async () => [] };
+        }
+
+        // Extract IDs from result objects (getSim returns objects with id and similarity score)
+        const queryIds = result.map(item => typeof item === 'object' && item.id ? item.id : item);
         console.log("QueryIds: ", queryIds);
 
         return { 

@@ -12,36 +12,55 @@ const [wsdUnfolded, setWsdUnfolded] = useState(false);
 const [pdUnfolded, setPdUnfolded] = useState(false);
 const [timeCode, setTimeCode] = useState(props.cmmco?.start);
 const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
 const {cmmco} = props;
-
-if (!cmmco) {
-  return null;
-}
-
 
   // Ref to store the timeout ID
   //const hoverTimeout = useRef(null);
 
   const handleRightClick = (event) => {
    event.preventDefault(); // Prevent the default context menu
-   setIsTooltipVisible(true);
+   setContextMenu({
+     visible: true,
+     x: event.clientX,
+     y: event.clientY
+   });
  };
 
   // For Hover by time! 
   const handleMouseEnter = () => {
-    /*
-    hoverTimeout.current = setTimeout(() => {
-      setIsTooltipVisible(true);
-    }, 2000); // 2000 ms = 2 seconds
-    */
+    setIsTooltipVisible(true);
   };
 
 
   // Handle mouse leave (clear timer and hide tooltip)
   const handleMouseLeave = () => {
-       //clearTimeout(hoverTimeout.current);
        setIsTooltipVisible(false);
   };
+
+  const handleUseAsQueryExample = () => {
+    if (props.onUseAsQueryExample) {
+      props.onUseAsQueryExample(cmmco);
+    }
+    setContextMenu({ visible: false, x: 0, y: 0 });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu({ visible: false, x: 0, y: 0 });
+  };
+
+  // Close context menu when clicking outside
+  useEffect(() => {
+    if (contextMenu.visible) {
+      const handleClick = () => handleCloseContextMenu();
+      document.addEventListener('click', handleClick);
+      return () => document.removeEventListener('click', handleClick);
+    }
+  }, [contextMenu.visible]);
+
+if (!cmmco) {
+  return null;
+}
 
   async function deleteitem(){
 
@@ -65,7 +84,8 @@ if (!cmmco) {
 
 
 return (
-        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} /*onContextMenu={handleRightClick}*/ className={props.view === "details" ? "playback-big" : "playback-small"}>
+        <>
+        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onContextMenu={handleRightClick} className={props.view === "details" ? "playback-big" : "playback-small"}>
             <div className='tooltip-container'>
               {isTooltipVisible? <ToolTip md={props.cmmco.md} start={props.cmmco.start} end={props.cmmco.end} />:""}
               </div>
@@ -133,7 +153,33 @@ return (
                        
                 </div>
             </div>    
-        </div> 
+        </div>
+        
+        {contextMenu.visible && (
+          <div 
+            className="context-menu card shadow-lg"
+            style={{
+              position: 'fixed',
+              top: `${contextMenu.y}px`,
+              left: `${contextMenu.x}px`,
+              zIndex: 9999,
+              minWidth: '200px'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ul className="list-group list-group-flush">
+              <li 
+                className="list-group-item list-group-item-action" 
+                style={{ cursor: 'pointer' }}
+                onClick={handleUseAsQueryExample}
+              >
+                <i className="fa fa-search me-2"></i>
+                Use as Query Example
+              </li>
+            </ul>
+          </div>
+        )}
+        </>
     );
 
 }

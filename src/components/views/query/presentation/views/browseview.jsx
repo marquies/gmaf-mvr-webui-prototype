@@ -127,6 +127,7 @@ function BrowseView(props) {
                                     view={"browse"} 
                                     isSelected={selectedId === cmmco?.id}
                                     onSelect={() => handleSelect(cmmco.id)}
+                                    onUseAsQueryExample={props.onAddQueryExample}
                                 />
                             ))}
                         </div>

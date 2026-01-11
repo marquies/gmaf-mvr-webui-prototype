@@ -16,6 +16,7 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter];
 function Query(props) {
   const [text, setText] = useState("");
   const [isValidKeywords, setIsValidKeywords] = useState(true);
+  const [showMixedModeWarning, setShowMixedModeWarning] = useState(false);
   const [tags, setTags] = useState([]);
   const [image, setImage] = useState(null);
   const [imageurl, setImageurl] = useState("");
@@ -196,34 +197,51 @@ function Query(props) {
   }
 
   async function createMmcoQuery() {
-    var imageObj = image ? await fileInputToMmmcoObject(image) : null;
-
-    var audiObj = audio ? await fileInputToMmmcoObject(audio) : null;
-    var images = imageObj ? [imageObj] : [];
-    var audios = audiObj ? [audiObj] : [];
-
-    if (text != "") {
-      if (!isValidCommaSeparatedKeywords(text)) {
-        alert("Please enter a comma separated list of keywords");
-        return false;
+    // Check if we're doing query by example
+    const hasQueryExamples = props.queryExamples && props.queryExamples.length > 0;
+    
+    if (hasQueryExamples) {
+      // Query by example mode - use similarity search with the first example's ID
+      const firstExampleId = props.queryExamples[0].id;
+      
+      // Call similarity function directly instead of going through standard query flow
+      if (props.similarity) {
+        props.similarity(firstExampleId);
       }
+      
+      // Return null to prevent standard query flow
+      return null;
+    } else {
+      // Standard keyword/file-based query mode
+      var imageObj = image ? await fileInputToMmmcoObject(image) : null;
+
+      var audiObj = audio ? await fileInputToMmmcoObject(audio) : null;
+      var images = imageObj ? [imageObj] : [];
+      var audios = audiObj ? [audiObj] : [];
+
+      if (text != "") {
+        if (!isValidCommaSeparatedKeywords(text)) {
+          alert("Please enter a comma separated list of keywords");
+          return false;
+        }
+      }
+      // Strip spaces from keywords
+      const keywords = text.split(",").map((keyword) => keyword.trim());
+
+      const mmco = {
+        images: images,
+        audios: audios,
+      };
+      const cmmcoQuery = {
+        srd: {},
+        pd: {},
+        mmco: mmco,
+        md: { keywords: text },
+        wsd: {},
+      };
+
+      return cmmcoQuery;
     }
-    // Strip spaces from keywords
-    const keywords = text.split(",").map((keyword) => keyword.trim());
-
-    const mmco = {
-      images: images,
-      audios: audios,
-    };
-    const cmmcoQuery = {
-      srd: {},
-      pd: {},
-      mmco: mmco,
-      md: { keywords: text },
-      wsd: {},
-    };
-
-    return cmmcoQuery;
   }
 
   function isValidCommaSeparatedKeywords(str) {
@@ -276,10 +294,24 @@ function Query(props) {
     setText(newText);
   }
 
-  const handleQueryClicked = () => {
+  const handleQueryClicked = async () => {
+    // Check if both keywords and examples are provided
+    const hasKeywords = text.trim() !== "" || tags.length > 0;
+    const hasExamples = props.queryExamples && props.queryExamples.length > 0;
+    
+    if (hasKeywords && hasExamples) {
+      setShowMixedModeWarning(true);
+      return;
+    }
+    
+    setShowMixedModeWarning(false);
+    
     // Create a promise that will resolve with the query
-    const queryPromise = createMmcoQuery();
-    props.setCmmcoQuery(queryPromise);
+    const queryResult = await createMmcoQuery();
+    // Only set query if result is not null (similarity search returns null and handles itself)
+    if (queryResult !== null) {
+      props.setCmmcoQuery(Promise.resolve(queryResult));
+    }
   };
 
   return (
@@ -327,6 +359,30 @@ function Query(props) {
               Upload image or audio files as examples to find similar content in
               the database
             </p>
+            
+            {props.queryExamples && props.queryExamples.length > 0 && (
+              <div className="mb-3">
+                <h6 className="mb-2">Selected Examples</h6>
+                <div className="d-flex flex-wrap gap-2">
+                  {props.queryExamples.map((example) => (
+                    <span 
+                      key={example.id} 
+                      className="badge bg-primary d-flex align-items-center gap-2"
+                      style={{ fontSize: '0.9rem', padding: '0.5rem 0.75rem' }}
+                    >
+                      <i className="fa fa-file"></i>
+                      <span>{example.generalMetadata?.fileName || 'Unknown'}</span>
+                      <i 
+                        className="fa fa-times" 
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => props.onRemoveExample(example.id)}
+                      ></i>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <div className="d-flex align-items-center gap-3 mb-3">
               <div>
                 <h6 className="mb-2">Upload</h6>
@@ -450,6 +506,14 @@ function Query(props) {
               {wsdUnfolded ? <WsdQuery key={wsdKey}></WsdQuery> : ""}
             </div>
           </div>
+
+          {showMixedModeWarning && (
+            <div className="alert alert-warning mt-3" role="alert">
+              <i className="fa fa-exclamation-triangle me-2"></i>
+              <strong>Warning:</strong> Please use either keywords OR query examples, not both. 
+              Clear one to proceed with the other.
+            </div>
+          )}
 
           <button
             className={`w-25 btn btn-primary mt-2 float-end ${isLoading ? 'disabled' : ''}`}
