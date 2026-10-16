@@ -2,8 +2,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-if (process.argv.length !== 4) {
-  console.error('Usage: node scripts/compare-jest-reports.cjs cra.json standalone.json');
+if (process.argv.length < 4 || process.argv.length > 5) {
+  console.error('Usage: node scripts/compare-jest-reports.cjs cra.json standalone.json [original-baseline.json]');
   process.exit(2);
 }
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -26,3 +26,14 @@ if (reports.some(report => !report.success || report.numPendingTests || report.n
   process.exit(1);
 }
 console.log('All suite and case identities match; no failures or skips.');
+if (reports[2]) {
+  const baselineSuites = suites(reports[2]);
+  const baselineCases = cases(reports[2]);
+  if (baselineSuites.size !== 17 || baselineCases.size !== 60 ||
+      [...baselineSuites].some(value => !leftSuites.has(value)) ||
+      [...baselineCases].some(value => !leftCases.has(value))) {
+    console.error('Original 17 suites/60 cases were not all preserved.');
+    process.exit(1);
+  }
+  console.log('Original 17 suites and 60 cases preserved.');
+}

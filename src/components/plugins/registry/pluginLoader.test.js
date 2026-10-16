@@ -3,7 +3,7 @@ import registry from './pluginRegistry';
 
 jest.mock('../../../config/config', () => ({ plugins: {
   pd: { contentTypes: { pulse: 'TestPulse' } },
-  srd: { contentTypes: { scene: 'TestScene' } },
+  srd: { contentTypes: { scene: 'TestScene' }, paths: { RSGPlugin: '/srd/RsgPlugin.jsx' } },
 } }));
 
 beforeEach(() => {
@@ -26,6 +26,19 @@ test('loads a local plugin dynamically, caches it and registers its lowercase cl
   expect(typeof plugin).toBe('function');
   expect(registry.getPlugin('PD', 'defaultpdplugin')).toBe(plugin);
   expect(await loadPluginByClassName('PD', 'DefaultPdPlugin')).toBe(plugin);
+});
+
+test('loads each configured plugin path, including case-sensitive RSG mapping', async () => {
+  const expected = [
+    ['PD', 'DefaultPdPlugin'], ['PD', 'HeartratePlugin'],
+    ['SRD', 'DefaultSrdPlugin'], ['SRD', 'RSGPlugin'],
+    ['MMCO', 'DefaultMmcoPlugin']
+  ];
+  for (const [type, className] of expected) {
+    const plugin = await loadPluginByClassName(type, className);
+    expect(plugin).toBeTruthy();
+    expect(registry.getPlugin(type, className.toLowerCase())).toBe(plugin);
+  }
 });
 
 test('returns null and reports an error if no plugin module can be loaded', async () => {
