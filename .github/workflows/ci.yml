@@ -23,9 +23,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
-      - run: npm test -- --watchAll=false
+      - run: npm test -- --watchAll=false --runInBand --json --outputFile="$RUNNER_TEMP/cra-tests.json"
         env:
           CI: 'true'
+      - run: npm run test:standalone -- --json --outputFile="$RUNNER_TEMP/standalone-tests.json"
+      - run: node scripts/compare-jest-reports.cjs "$RUNNER_TEMP/cra-tests.json" "$RUNNER_TEMP/standalone-tests.json"
       - run: npm run build
         env:
           # GitHub defaults CI=true; retain existing CRA warnings without failing the build.
