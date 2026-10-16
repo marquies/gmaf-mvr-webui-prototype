@@ -32,7 +32,8 @@
     "build": "react-scripts build",
     "lint": "eslint src --ext .js,.jsx",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:standalone": "jest --config jest.config.cjs --ci --runInBand"
   },
   "eslintConfig": {
     "extends": [
@@ -53,14 +54,20 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "7.28.5",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/preset-env": "7.28.5",
+    "@babel/preset-react": "7.28.5",
     "@types/bootstrap": "^5.2.10",
     "@types/jquery": "^3.5.30",
     "@types/react": "^18.3.3",
     "@types/react-bootstrap": "^0.32.36",
     "@types/react-dom": "^18.3.0",
     "@types/react-router-dom": "^5.3.3",
+    "babel-jest": "29.7.0",
     "bootstrap": "^5.3.3",
+    "jest": "29.7.0",
+    "jest-environment-jsdom": "29.7.0",
     "react-bootstrap": "^2.10.5"
   }
 }
