@@ -32,3 +32,4 @@ jobs:
         env:
           # GitHub defaults CI=true; retain existing CRA warnings without failing the build.
           CI: 'false'
+      - run: npm run build:vite

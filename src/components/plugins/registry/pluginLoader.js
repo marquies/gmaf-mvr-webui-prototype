@@ -1,6 +1,16 @@
 import pluginRegistryInstance from './pluginRegistry';
 import config from '../../../config/config';
 
+// Literal imports make every supported plugin a discoverable lazy chunk in Vite.
+// Keys are canonical configured paths, without a leading slash or .jsx suffix.
+const pluginImports = {
+  'pd/DefaultPdPlugin': () => import('../pd/DefaultPdPlugin.jsx'),
+  'pd/HeartratePlugin': () => import('../pd/HeartratePlugin.jsx'),
+  'srd/DefaultSrdPlugin': () => import('../srd/DefaultSrdPlugin.jsx'),
+  'srd/RsgPlugin': () => import('../srd/RsgPlugin.jsx'),
+  'mmco/DefaultMmcoPlugin': () => import('../mmco/DefaultMmcoPlugin.jsx')
+};
+
 class PluginLoader {
   constructor(registry) {
     this.registry = registry;
@@ -66,15 +76,16 @@ class PluginLoader {
       }
       
       const pluginPath = this._resolvePluginPath(type, className);
-      
+      const canonicalPath = pluginPath.replace(/^\/+/, '').replace(/\.jsx$/, '');
+      const importPlugin = pluginImports[canonicalPath];
+
       console.log(`Attempting to load plugin from path: ${pluginPath}`);
-      try {
-        const module = await import(`../${pluginPath}`);
-        return this._handleModuleImport(module, type, className);
-      } catch (innerError) {
-        console.warn(`Failed to load plugin from relative path: ${pluginPath}`, innerError);
-        return await this._tryAbsolutePath(type, className, pluginPath);
+      if (!importPlugin) {
+        console.warn(`Unknown plugin path: ${pluginPath}`);
+        throw new Error(`Could not load plugin ${className} from any path`);
       }
+      const module = await importPlugin();
+      return this._handleModuleImport(module, type, className);
       
     } catch (error) {
       console.error(`Failed to load plugin ${className}:`, error);
@@ -101,26 +112,6 @@ class PluginLoader {
     }
     
     return `${typeKey}/${className}`;
-  }
-
-  /**
-   * Try loading plugin from absolute path
-   * @param {string} type - The plugin type
-   * @param {string} className - The class name
-   * @param {string} pluginPath - The plugin path
-   * @returns {Promise<React.Component|null>} - The plugin component or null
-   * @private
-   */
-  async _tryAbsolutePath(type, className, pluginPath) {
-    try {
-      const absolutePath = `../../../components/plugins/${pluginPath}`;
-      console.log(`Trying absolute path: ${absolutePath}`);
-      const module = await import(absolutePath);
-      return this._handleModuleImport(module, type, className);
-    } catch (absoluteError) {
-      console.error(`Failed to load plugin from absolute path as well:`, absoluteError);
-      throw new Error(`Could not load plugin ${className} from any path`);
-    }
   }
 
   /**
