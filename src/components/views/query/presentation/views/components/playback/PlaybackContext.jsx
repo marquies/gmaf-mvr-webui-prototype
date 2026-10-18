@@ -37,7 +37,6 @@ export const Playback = ({ children }) => {
   }, [isPlaying, currentTime]);
 
   const pause = useCallback(() => {
-    console.log("Pausing playback");
     setIsPlaying(false);
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -86,7 +85,6 @@ export const Playback = ({ children }) => {
   }, [globalStartTime, currentTime]);
 
   const seek = useCallback((time) => {
-    console.log("Seek to:", time);
     const wasPlaying = isPlaying;
     if (wasPlaying) {
       pause();

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import ReactPlayer from 'react-player';
 import config from '../../../../../../../config/config';
 import { usePlayback } from './PlaybackContext';
+import { getShotTimeRange } from '../../../../../../../js/time';
 
 /**
  * Component for audio playback
@@ -17,33 +18,13 @@ function AudioPlayback({ data, mmfgid, playerRef, handleSeek }) {
 
   // Register this component's time range with the playback context
   useEffect(() => {
-    if (data && data.nodes && data.nodes.length > 0) {
-      // Find the time range from the data
-      let startTime = null;
-      let endTime = null;
-
-      // Look for shot0 or use first node
-      for (const node of data.nodes) {
-        if (node.name === "shot0" && node.timerange) {
-          startTime = node.timerange.begin;
-          endTime = node.timerange.end;
-          break;
-        }
-      }
-
-      // Fallback to first node
-      if (!startTime && data.nodes[0].timerange) {
-        startTime = data.nodes[0].timerange.begin;
-        endTime = data.nodes[0].timerange.end;
-      }
-
-      if (startTime !== null && endTime !== null) {
-        registerComponent(componentId.current, startTime, endTime);
-      }
+    const id = componentId.current;
+    const [startTime, endTime] = getShotTimeRange(data);
+    if (startTime !== null && endTime !== null) {
+      registerComponent(id, startTime, endTime);
     }
-
     return () => {
-      unregisterComponent(componentId.current);
+      unregisterComponent(id);
     };
   }, [data, registerComponent, unregisterComponent]);
 
@@ -59,16 +40,6 @@ function AudioPlayback({ data, mmfgid, playerRef, handleSeek }) {
     }
   }, [currentTime, globalStartTime, activePlayerRef]);
 
-  const handlePlay = () => {
-    console.log("Audio play triggered");
-    play();
-  };
-
-  const handlePause = () => {
-    console.log("Audio pause triggered");
-    pause();
-  };
-
   return (
     <div className="audio-playback">
       <div className="audio-container p-4 bg-light rounded shadow-sm">
@@ -79,9 +50,8 @@ function AudioPlayback({ data, mmfgid, playerRef, handleSeek }) {
         <ReactPlayer
           ref={activePlayerRef}
           playing={isPlaying}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onSeek={(e) => console.log("onSeek", e)}
+          onPlay={play}
+          onPause={pause}
           controls
           height="50px"
           width="100%"

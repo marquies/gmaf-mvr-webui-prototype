@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 /* global JSZip */
 import config from '../../../../../../../config/config';
 import MmcoPanel from './MmcoPanel';
@@ -6,13 +6,13 @@ import PdPanel from './PdPanel';
 import SrdPanel from './SrdPanel';
 import NodeTable from '../nodetable';
 import { Playback, usePlayback } from './PlaybackContext';
+import { formatClockTime, getBeginEnd } from '../../../../../../../js/time';
 
 /**
  * Global playback controls component
  */
 function GlobalPlaybackControls() {
   const { isPlaying, play, pause, reset, seek, currentTime, globalStartTime, globalEndTime } = usePlayback();
-  const [isDragging, setIsDragging] = useState(false);
 
   const formatTime = (ms) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -47,14 +47,6 @@ function GlobalPlaybackControls() {
   const handleSliderChange = (e) => {
     const newTime = parseInt(e.target.value, 10);
     seek(newTime);
-  };
-
-  const handleSliderMouseDown = () => {
-    setIsDragging(true);
-  };
-
-  const handleSliderMouseUp = () => {
-    setIsDragging(false);
   };
 
   return (
@@ -111,10 +103,6 @@ function GlobalPlaybackControls() {
                 max={totalDuration}
                 value={currentTime}
                 onChange={handleSliderChange}
-                onMouseDown={handleSliderMouseDown}
-                onMouseUp={handleSliderMouseUp}
-                onTouchStart={handleSliderMouseDown}
-                onTouchEnd={handleSliderMouseUp}
                 style={{
                   cursor: 'pointer',
                   accentColor: '#0d6efd'
@@ -145,134 +133,89 @@ function CmmcoPlaybackContent({ data, mmfgid, playerRef, handleSeek }) {
     setIsFullscreen(!isFullscreen);
   };
   
-  // Format timestamp to readable time
-  function formatTimestampToTime(timestamp) {
-    const date = new Date(timestamp);
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    let seconds = date.getSeconds();
-
-    // Padding single digits with leading zero
-    hours = hours < 10 ? "0" + hours : hours;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-    return hours + ":" + minutes + ":" + seconds;
-  }
-
-  // Get time range information
   function getTimeRange() {
     if (!data || !data.nodes || data.nodes.length === 0) return "Unknown";
+    const [begin, end] = getBeginEnd(data);
+    return `${formatClockTime(begin)} - ${formatClockTime(end)}`;
+  }
 
-    let begin = "?";
-    let end = "?";
-
-    if (data.nodes.length > 1) {
+  // Download the CMMCO ZIP and read its manifest and files
+  useEffect(() => {
+    const downloadAndProcessZip = async () => {
+      if (!mmfgid) return;
+    
+      setIsLoading(true);
+      setError(null);
+    
       try {
-        for (const node of data.nodes) {
-          if (node.name === "shot0") {
-            begin = node.timerange.begin;
+        // Construct the URL for downloading the ZIP file
+        const zipUrl = `${config.baseUrl}/gmaf/download/token1/${mmfgid}`;
+      
+        // Fetch the ZIP file
+        const response = await fetch(zipUrl);
+      
+        if (!response.ok) {
+          throw new Error(`Failed to download ZIP file: ${response.statusText}`);
+        }
+      
+        // Get the ZIP file as an ArrayBuffer
+        const zipData = await response.arrayBuffer();
+      
+        // Use the globally available JSZip library
+        const zip = new JSZip();
+      
+        // Load the ZIP file
+        const zipContents = await zip.loadAsync(zipData);
+      
+        const contents = {};
+      
+        // Find and read the manifest file
+        let manifestFile = null;
+      
+        // Look for manifest.json or similar files
+        for (const filename in zipContents.files) {
+          if (filename.toLowerCase().includes('manifest') && filename.toLowerCase().endsWith('.json')) {
+            manifestFile = filename;
             break;
           }
         }
-        end = data.nodes[data.nodes.length - 1].timerange.end;
-      } catch (error) {
-        console.error("Error processing time range:", error);
-      }
-    } else if (data.nodes[0].timerange) {
-      begin = data.nodes[0].timerange.begin;
-      end = data.nodes[0].timerange.end;
-    }
-
-    return `${formatTimestampToTime(begin)} - ${formatTimestampToTime(end)}`;
-  }
-
-  // Function to download and process the ZIP file
-  const downloadAndProcessZip = async () => {
-    if (!mmfgid) return;
-    
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Construct the URL for downloading the ZIP file
-      const zipUrl = `${config.baseUrl}/gmaf/download/token1/${mmfgid}`;
       
-      // Fetch the ZIP file
-      const response = await fetch(zipUrl);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to download ZIP file: ${response.statusText}`);
-      }
-      
-      // Get the ZIP file as an ArrayBuffer
-      const zipData = await response.arrayBuffer();
-      
-      // Use the globally available JSZip library
-      const zip = new JSZip();
-      
-      // Load the ZIP file
-      const zipContents = await zip.loadAsync(zipData);
-      
-      // Store all ZIP contents for potential later use
-      const contents = {};
-      
-      // Find and read the manifest file
-      let manifestFile = null;
-      
-      // Look for manifest.json or similar files
-      for (const filename in zipContents.files) {
-        if (filename.toLowerCase().includes('manifest') && filename.toLowerCase().endsWith('.json')) {
-          manifestFile = filename;
-          break;
+        if (!manifestFile) {
+          throw new Error('Manifest file not found in the ZIP archive');
         }
-      }
       
-      if (!manifestFile) {
-        throw new Error('Manifest file not found in the ZIP archive');
-      } else {
-        console.log('Manifest file found:', manifestFile);
-      }
+        // Read the manifest file
+        const manifestContent = await zipContents.file(manifestFile).async('text');
       
-      // Read the manifest file
-      const manifestContent = await zipContents.file(manifestFile).async('text');
+        // Parse the manifest JSON
+        setManifestData(JSON.parse(manifestContent));
       
-      // Parse the manifest JSON
-      const manifest = JSON.parse(manifestContent);
-      console.log('Parsed manifest:', manifest);
-      
-      // Ensure manifest is treated as an array
-      //const manifestArray = Array.isArray(manifest) ? manifest : [manifest];
-      setManifestData(manifest);
-      
-      // Process other files in the ZIP based on the manifest
-      for (const filename in zipContents.files) {
-        if (!zipContents.files[filename].dir) {
-          // Determine the file type and read accordingly
-          const fileExtension = filename.split('.').pop().toLowerCase();
-          const binaryExtensions = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'mkv', 'mp3', 'wav', 'jpg', 'jpeg', 'png', 'gif', 'pdf'];
+        // Process other files in the ZIP based on the manifest
+        for (const filename in zipContents.files) {
+          if (!zipContents.files[filename].dir) {
+            // Determine the file type and read accordingly
+            const fileExtension = filename.split('.').pop().toLowerCase();
+            const binaryExtensions = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'mkv', 'mp3', 'wav', 'jpg', 'jpeg', 'png', 'gif', 'pdf'];
           
-          if (binaryExtensions.includes(fileExtension)) {
-            // Read binary files as Uint8Array
-            contents[filename] = await zipContents.files[filename].async('uint8array');
-          } else {
-            // Read text files as text
-            contents[filename] = await zipContents.files[filename].async('text');
+            if (binaryExtensions.includes(fileExtension)) {
+              // Read binary files as Uint8Array
+              contents[filename] = await zipContents.files[filename].async('uint8array');
+            } else {
+              // Read text files as text
+              contents[filename] = await zipContents.files[filename].async('text');
+            }
           }
         }
-      }
       
-      setZipContents(contents);
-    } catch (err) {
-      console.error('Error processing ZIP file:', err);
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  // Download and process ZIP when component mounts
-  useEffect(() => {
+        setZipContents(contents);
+      } catch (err) {
+        console.error('Error processing ZIP file:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     downloadAndProcessZip();
   }, [mmfgid]);
   

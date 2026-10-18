@@ -61,10 +61,8 @@ function PlaybackSelectorContent({ data, mmfgid, playerRef, handleSeek }) {
     return 'video';
   };
 
-  // Get the file type
   const fileType = getFileType();
-  console.log("File Type: ", fileType);
-  
+
   // Render the appropriate component based on file type
   switch (fileType) {
     case 'cmmco':
