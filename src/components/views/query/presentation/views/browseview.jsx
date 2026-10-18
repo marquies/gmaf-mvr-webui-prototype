@@ -36,7 +36,7 @@ function BrowseView(props) {
         }
         
         let filtered = [...props.cmmcos];
-        
+
         if (newFilter.name) {
             filtered = filtered.filter(result => 
                 result.generalMetadata?.fileName?.toLowerCase().includes(newFilter.name.toLowerCase())
@@ -60,7 +60,6 @@ function BrowseView(props) {
         if (newFilter.type) {
             filtered = filtered.filter(result => {
                 const fileName = result.generalMetadata?.fileName?.toLowerCase() || '';
-                console.log(fileName + " + " + newFilter.type);
                 switch(newFilter.type?.toLowerCase()) {
                     case 'image':
                         return fileName.endsWith('.jpeg') || fileName.endsWith('.png');

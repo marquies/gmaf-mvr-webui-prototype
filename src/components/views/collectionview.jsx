@@ -5,16 +5,12 @@ import GMAFAdapter from '../../js/GMAFAdapter';
 function CollectionView(props) {
 
   const [queryResults, setQueryResults] = useState(false);
-  //const [showResults, setShowResults] = useState(false);
   const [key, setKey] = useState(false); 
   const [page, setPage] = useState(1); 
   const [numberOfPages, setNumberOfPages] = useState(1);
   const isInitialized = useRef(false);
 
   useEffect(() => {
-
-
-    //getCollection();
     if (!isInitialized.current) {
       getCollection();
       isInitialized.current = true;
@@ -47,9 +43,7 @@ function CollectionView(props) {
 
   function deleteItem(id){
 
-    console.log("IN CALLBACK");
     var deletedItems= queryResults.filter((item) => item.md.id !== id);
-    console.log("Deleted Items")
     setQueryResults(deletedItems);
     setKey(Math.random());
   }
@@ -60,13 +54,12 @@ function CollectionView(props) {
     const file = e.target.files[0];
 
     reader.onload = async function (e) {
-      console.log(e);
       const base64String = e.target.result.split(',')[1];
       var filename= file.name;
       var gmaf= await GMAFAdapter.getInstance();
       var result= await gmaf.addItemToCollection(filename, base64String, true);
      
-      if(result == "true"){
+      if(result === "true"){
         getCollection();
         alert("Item added successfully!")
       
@@ -84,8 +77,7 @@ function CollectionView(props) {
        <button className="btn btn-secondary m-1" type="button" onClick={addItem}>Add Item</button>
        <input type="file" onChange={(e)=>fileUploaded(e)} hidden id="file-input-collection" accept=".png,.jpg,.jpeg"></input>  
     <div className='d-flex query-view flex-start'>
-    {/*<Presentation cmmcos={showResults} presentationView={"Browse View"} deletable={true} deleteItem={deleteItem}/> */}
-    {queryResults.length>0 || !isInitialized.current?<Presentation updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={"Browse View"} deleteItem={deleteItem} deletable={true} se/>:<h2 className='ms-5'>No Collection Elements found results found</h2>}
+    {queryResults.length>0 || !isInitialized.current?<Presentation updateStatus={props.updateStatus} page={page} numberOfPages={numberOfPages} key={key} cmmcos={queryResults} presentationView={"Browse View"} deleteItem={deleteItem} deletable={true}/>:<h2 className='ms-5'>No Collection Elements found</h2>}
   </div>
   </div>
   );

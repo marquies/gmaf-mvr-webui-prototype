@@ -10,7 +10,6 @@ function Filter(props) {
 
     const handleNameChange = (event) => {
         const newName = event.target.value;
-        console.log(newName);
         setName(newName);
         props.setFilter({
             name: newName,

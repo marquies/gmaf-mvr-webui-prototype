@@ -3,7 +3,6 @@ import React from 'react';
 function ToolTip(props){
 
 function canRender(){
-    console.log(props);
     return props.md && (props.md.id || props.md.name || props.md.Date);
 }
 

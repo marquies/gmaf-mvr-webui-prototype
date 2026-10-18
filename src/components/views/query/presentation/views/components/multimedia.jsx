@@ -1,6 +1,7 @@
 import React, { useRef} from 'react';
 import ReactPlayer from 'react-player';
 import NoPlugin from '../../../../../plugins/error/noplugin';
+import config from '../../../../../../config/config';
 
 function Multimedia(props){
 
@@ -43,8 +44,8 @@ function renderContent() {
         return <NoPlugin />;
     }
 
-    const previewUrl = "http://localhost:8242/gmaf/gmafApi/gmaf/preview/s/" + mmco.id;
-    const fileUrl = "http://localhost:8242/gmaf/gmafApi/gmaf/file/" + mmco.id;
+    const previewUrl = `${config.baseUrl}/gmaf/preview/s/${mmco.id}`;
+    const fileUrl = `${config.baseUrl}/gmaf/file/${mmco.id}`;
     const fileType = getFileType(mmco.generalMetadata.fileName);
 
     if (fileType === 'image') {
