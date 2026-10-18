@@ -1,8 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import Multimedia from './multimedia';
 import ToolTip from './tooltip';
-//import PdPlayback from './pdplayback';
-//import WsdPlayback from './wsdplayback';
 import GMAFAdapter from '../../../../../../js/GMAFAdapter';
 
 
@@ -14,9 +12,6 @@ const [timeCode, setTimeCode] = useState(props.cmmco?.start);
 const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
 const {cmmco} = props;
-
-  // Ref to store the timeout ID
-  //const hoverTimeout = useRef(null);
 
   const handleRightClick = (event) => {
    event.preventDefault(); // Prevent the default context menu
@@ -65,7 +60,6 @@ if (!cmmco) {
   async function deleteitem(){
 
     var gmaf= await GMAFAdapter.getInstance();
-    console.log("ID To Delete: ",props.id);
     var result= await gmaf.deleteItemFromCollection(props.id);
   
     if(result === "true"){
@@ -115,7 +109,6 @@ return (
                 <div className="card-body">
                     <div className='border-1 border rounded-3'>
                         <Multimedia view={props.view} mmco={cmmco} start={cmmco.start} end={cmmco.end} timecode={timeCode} setTimeCode={setTimeCode} />
-                        {/*<Controls setTimeCode={setTimeCode} />*/}
                         {cmmco.hasPd && (
                             <>
                                 <div className="d-flex align-items-center">
@@ -124,7 +117,6 @@ return (
                                         <p className="text-muted small mb-0">Peripheral Data</p>
                                     </div>
                                 </div>
-                                {/*pdUnfolded ? <PdPlayback pd={cmmco.pd} start={cmmco.start} timecode={timeCode}></PdPlayback> :""*/}
                             </>
                         )}
                         {cmmco.hasWsd && (
@@ -135,7 +127,6 @@ return (
                                         <p className="text-muted small mb-0">World Specific Data</p>
                                     </div>
                                 </div>
-                                {/*wsdUnfolded ? <WsdPlayback></WsdPlayback> : ""*/}
                             </>
                         )}
                    </div>
