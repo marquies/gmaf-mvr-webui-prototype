@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createPluginWithFallback } from '../../../../../../../components/plugins/registry/pluginFactory';
-import { initializePlugins, loadPluginByClassName } from '../../../../../../../components/plugins/registry/pluginLoader';
-import { getAllPluginsForType, registerPlugin } from '../../../../../../../components/plugins/registry/pluginRegistry';
-import DefaultPdPlugin from '../../../../../../../components/plugins/pd/DefaultPdPlugin';
+import { createPluginWithFallback } from '../../../../../../plugins/registry/pluginFactory';
+import { initializePlugins, loadPluginByClassName } from '../../../../../../plugins/registry/pluginLoader';
+import { registerPlugin } from '../../../../../../plugins/registry/pluginRegistry';
+import DefaultPdPlugin from '../../../../../../plugins/pd/DefaultPdPlugin';
 import config from '../../../../../../../config/config';
 
 /**
@@ -11,107 +11,64 @@ import config from '../../../../../../../config/config';
 function PdPanel({ mmfgid, manifestData, zipContents }) {
   const [pdEntries, setPdEntries] = useState([]);
   const [activeFileTab, setActiveFileTab] = useState(0);
-  const [pluginsInitialized, setPluginsInitialized] = useState(false);
   const [loadedPluginTypes, setLoadedPluginTypes] = useState({});
   const pluginsLoaded = useRef(false);
-  
-  // Initialize plugins on first render
+
+  // Register the default plugin and the configured ones once
   useEffect(() => {
-    // Only run initialization once
     if (!pluginsLoaded.current) {
       pluginsLoaded.current = true;
-      
-      // Register default plugin first
       registerPlugin('PD', 'default', DefaultPdPlugin);
-      
-      // Initialize all configured plugins
       initializePlugins();
-      
-      setPluginsInitialized(true);
     }
   }, []);
-  
+
   useEffect(() => {
-    if (!manifestData || !Array.isArray(manifestData.files)) {
-      if (manifestData) {
-        console.log('PD Panel: manifestData is not an array:', manifestData);
-      }
-      return;
-    }
-    
+    if (!manifestData || !Array.isArray(manifestData.files)) return;
+
     const entries = manifestData.files.filter(entry => entry.type === 'PD');
-    
-    if (entries.length === 0) {
-      console.log('No PD entries found in manifest');
-      setPdEntries([]);
-      return;
-    }
-    
-    console.log(`PD Panel found ${entries.length} PD file(s)`);
-    
-    const enrichedEntries = entries.map((entry, index) => {
-      const content = zipContents && zipContents[entry.path] ? zipContents[entry.path] : null;
-      
-      console.log('PD file:', entry.path, 'content type:', entry.contenttype, 'has content:', !!content);
-      
-      const defaultPluginType = 'default';
-      
+
+    const enrichedEntries = entries.map(entry => {
       // Load plugin based on content type, even if content isn't loaded yet
       if (entry.contenttype && !loadedPluginTypes[entry.path]) {
         const contentTypeLower = entry.contenttype.toLowerCase();
-        
-        // Get the plugin class name from config mapping
-        const className = config.plugins?.pd?.contentTypes?.[contentTypeLower] || 
+
+        // Plugin class name from the config mapping, else derived ('gps' -> 'GpsPlugin')
+        const className = config.plugins?.pd?.contentTypes?.[contentTypeLower] ||
                          (entry.contenttype.charAt(0).toUpperCase() + entry.contenttype.slice(1) + 'Plugin');
-        
-        console.log(`Looking up plugin for content type "${contentTypeLower}": ${className}`);
-        
+
+        const setPluginType = (pluginType) =>
+          setLoadedPluginTypes(prev => ({ ...prev, [entry.path]: pluginType }));
+
         loadPluginByClassName('PD', className)
           .then((loadedPlugin) => {
             if (loadedPlugin) {
-              console.log(`Successfully loaded plugin ${className} for content type ${entry.contenttype}`);
-              
               // Register the plugin with the content type for easy lookup
               registerPlugin('PD', contentTypeLower, loadedPlugin);
-              
-              setLoadedPluginTypes(prev => ({
-                ...prev,
-                [entry.path]: contentTypeLower
-              }));
+              setPluginType(contentTypeLower);
             } else {
-              setLoadedPluginTypes(prev => ({
-                ...prev,
-                [entry.path]: 'default'
-              }));
+              setPluginType('default');
             }
           })
           .catch(err => {
             console.warn(`Could not load plugin ${className} for ${entry.contenttype}, will use default plugin:`, err);
-            setLoadedPluginTypes(prev => ({
-              ...prev,
-              [entry.path]: 'default'
-            }));
+            setPluginType('default');
           });
       }
-      
-      const pluginType = loadedPluginTypes[entry.path] || defaultPluginType;
-      console.log(`Creating entry for ${entry.path}: pluginType=${pluginType}, loadedPluginTypes[${entry.path}]=${loadedPluginTypes[entry.path]}`);
-      
+
       return {
         ...entry,
-        content: content,
-        pluginType: pluginType
+        content: zipContents && zipContents[entry.path] ? zipContents[entry.path] : null,
+        pluginType: loadedPluginTypes[entry.path] || 'default'
       };
     });
-    
+
     setPdEntries(enrichedEntries);
   }, [manifestData, zipContents, loadedPluginTypes]);
-  
+
   const currentEntry = pdEntries[activeFileTab];
   const currentPluginType = currentEntry?.pluginType || 'default';
-  
-  console.log('PdPanel render - currentEntry:', currentEntry?.path, 'pluginType:', currentPluginType, 'loadedPluginTypes:', loadedPluginTypes);
-  
+
   return (
     <div className="card mt-3">
       <div className="card-header bg-light">

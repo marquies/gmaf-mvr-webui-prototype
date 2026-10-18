@@ -44,7 +44,6 @@ function HeartratePlugin({ data, mmfgid }) {
     if (!data || typeof data !== 'string') return null;
     
     // Debug raw data
-    console.log('Raw data sample:', data.substring(0, 100));
     
     // Split the CSV into rows
     const rows = data.trim().split('\n');
@@ -230,6 +229,7 @@ function HeartratePlugin({ data, mmfgid }) {
 
   // Register component time range when data is loaded
   useEffect(() => {
+    const id = componentId.current;
     if (parsedData && parsedData.length > 0) {
       const validData = parsedData.filter(d => d.timestampMs !== null);
       if (validData.length > 0) {
@@ -241,10 +241,10 @@ function HeartratePlugin({ data, mmfgid }) {
           endTimeMs += 24 * 3600 * 1000;
         }
         
-        registerComponent(componentId.current, startTimeMs, endTimeMs);
+        registerComponent(id, startTimeMs, endTimeMs);
         
         return () => {
-          unregisterComponent(componentId.current);
+          unregisterComponent(id);
         };
       }
     }
