@@ -27,7 +27,7 @@ test('submits a real query form, renders fetched results, and selects details', 
   userEvent.click(screen.getByRole('button', { name: 'Query' }));
   userEvent.click(await screen.findByRole('button', { name: 'Select a' }));
   expect(screen.getByText('Details: a')).toBeInTheDocument();
-  expect(query).toHaveBeenCalledWith(expect.objectContaining({ cmmcoQuery: expect.objectContaining({ md: { keywords: 'sea' } }), filter: false }), updateStatus);
+  expect(query).toHaveBeenCalledWith(expect.objectContaining({ cmmcoQuery: expect.objectContaining({ md: { keywords: 'sea' } }) }), updateStatus);
   expect(fetchMinimalBatch).toHaveBeenCalledWith(0, 20);
 });
 

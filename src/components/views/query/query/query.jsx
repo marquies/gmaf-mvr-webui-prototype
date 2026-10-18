@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-//import Filter from "./filter";
 import WsdQuery from "./wsdquery";
 import { WithContext as ReactTags } from "react-tag-input";
 import "./ReactTags.css";
-import { useQueryHandler } from './QueryHandler';
-//import { keyboard } from "@testing-library/user-event/dist/keyboard";
 
 const KeyCodes = {
   comma: 188,
@@ -15,7 +12,6 @@ const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 function Query(props) {
   const [text, setText] = useState("");
-  const [isValidKeywords, setIsValidKeywords] = useState(true);
   const [showMixedModeWarning, setShowMixedModeWarning] = useState(false);
   const [tags, setTags] = useState([]);
   const [image, setImage] = useState(null);
@@ -23,125 +19,14 @@ function Query(props) {
   const [audio, setAudio] = useState(null);
   const [audiourl, setAudiourl] = useState("");
   const [wsdKey, setWsdKey] = useState(Math.random());
-  const [wsd, setWsd] = useState(null);
   const [wsdUnfolded, setWsdUnfolded] = useState(null);
-  const [filterUnfolded, setFilterUnfolded] = useState(true); //Show by default
-  const [pluginSelected, setPluginSelected] = useState(0);
-  const [filter, setFilter] = useState({});
-  const [allResults, setAllResults] = useState([]);
-  const [filteredResults, setFilteredResults] = useState([]);
 
-  const { isLoading, fetchIds } = useQueryHandler(props.setCmmcoQuery);
-
-  useEffect(() => {
-    if (allResults.length > 0) {
-      applyClientFilter();
-    }
-  }, [filter, allResults]);
-
-  const applyClientFilter = () => {
-    let results = [...allResults];
-    
-    if (filter.name) {
-      results = results.filter(result => 
-        result.generalMetadata?.fileName?.toLowerCase().includes(filter.name.toLowerCase())
-      );
-    }
-
-    if (filter.fromDate) {
-      results = results.filter(result => {
-        const resultDate = new Date(result.generalMetadata?.creationDate);
-        return resultDate >= filter.fromDate;
-      });
-    }
-
-    if (filter.toDate) {
-      results = results.filter(result => {
-        const resultDate = new Date(result.generalMetadata?.creationDate);
-        return resultDate <= filter.toDate;
-      });
-    }
-
-    if (filter.type) {
-      results = results.filter(result => 
-        result.generalMetadata?.type === filter.type
-      );
-    }
-
-    setFilteredResults(results);
-    props.onResultsChange(results);
-  };
-
-  const handleSearch = async () => {
-    try {
-      // Fetch all results without filtering
-      const results = await fetchIds({
-        query: text,
-        wsd: wsd,
-        plugin: pluginSelected,
-        filter: {} // Empty filter since we're doing client-side filtering
-      });
-      setAllResults(results);
-      props.setCmmcoQuery(results); // Update the results immediately
-      // Initial filtering will be applied through useEffect
-    } catch (error) {
-      console.error('Error performing search:', error);
-    }
-  };
-
-  const handleFilterChange = (newFilter) => {
-    setFilter(newFilter);
-    if (allResults.length > 0) {
-      let filtered = [...allResults];
-      
-      if (newFilter.name) {
-        filtered = filtered.filter(result => 
-          result.generalMetadata?.fileName?.toLowerCase().includes(newFilter.name.toLowerCase())
-        );
-      }
-
-      if (newFilter.fromDate) {
-        filtered = filtered.filter(result => {
-          const resultDate = new Date(result.generalMetadata?.creationDate);
-          return resultDate >= newFilter.fromDate;
-        });
-      }
-
-      if (newFilter.toDate) {
-        filtered = filtered.filter(result => {
-          const resultDate = new Date(result.generalMetadata?.creationDate);
-          return resultDate <= newFilter.toDate;
-        });
-      }
-
-      if (newFilter.type) {
-        filtered = filtered.filter(result => 
-          result.generalMetadata?.type === newFilter.type
-        );
-      }
-
-      props.setCmmcoQuery(filtered); // Update the filtered results
-    }
-  };
-
-  function textChange(event) {
-    const newText = event.target.value;
-    setText(newText);
-    // Check if text is not empty and doesn't contain commas
-    if (newText.trim() !== "" && !newText.includes(",")) {
-      setIsValidKeywords(false);
-    } else {
-      setIsValidKeywords(true);
-    }
-  }
-
+  // The styled buttons forward clicks to the hidden file inputs
   function imageInput() {
-    //for styled buttons trigger hiddenfield here
     document.getElementById("image-input").click();
   }
 
   function audioInput() {
-    //for styled buttons trigger hiddenfield here
     document.getElementById("audio-input").click();
   }
 
@@ -197,77 +82,45 @@ function Query(props) {
   }
 
   async function createMmcoQuery() {
-    // Check if we're doing query by example
-    const hasQueryExamples = props.queryExamples && props.queryExamples.length > 0;
-    
-    if (hasQueryExamples) {
-      // Query by example mode - use similarity search with the first example's ID
-      const firstExampleId = props.queryExamples[0].id;
-      
-      // Call similarity function directly instead of going through standard query flow
+    // Query by example: run a similarity search on the first example instead of a keyword query
+    if (props.queryExamples && props.queryExamples.length > 0) {
       if (props.similarity) {
-        props.similarity(firstExampleId);
+        props.similarity(props.queryExamples[0].id);
       }
-      
-      // Return null to prevent standard query flow
       return null;
-    } else {
-      // Standard keyword/file-based query mode
-      var imageObj = image ? await fileInputToMmmcoObject(image) : null;
-
-      var audiObj = audio ? await fileInputToMmmcoObject(audio) : null;
-      var images = imageObj ? [imageObj] : [];
-      var audios = audiObj ? [audiObj] : [];
-
-      if (text != "") {
-        if (!isValidCommaSeparatedKeywords(text)) {
-          alert("Please enter a comma separated list of keywords");
-          return false;
-        }
-      }
-      // Strip spaces from keywords
-      const keywords = text.split(",").map((keyword) => keyword.trim());
-
-      const mmco = {
-        images: images,
-        audios: audios,
-      };
-      const cmmcoQuery = {
-        srd: {},
-        pd: {},
-        mmco: mmco,
-        md: { keywords: text },
-        wsd: {},
-      };
-
-      return cmmcoQuery;
     }
-  }
 
-  function isValidCommaSeparatedKeywords(str) {
-    //Here further methods can be added
-    return true;
+    const imageObj = image ? await fileInputToMmmcoObject(image) : null;
+    const audioObj = audio ? await fileInputToMmmcoObject(audio) : null;
+
+    return {
+      srd: {},
+      pd: {},
+      mmco: {
+        images: imageObj ? [imageObj] : [],
+        audios: audioObj ? [audioObj] : [],
+      },
+      md: { keywords: text },
+      wsd: {},
+    };
   }
 
   function fileInputToMmmcoObject(file) {
     return new Promise((resolve) => {
-      // Read the file as an ArrayBuffer
       const reader = new FileReader();
       reader.onload = (e) => {
         const base64String = e.target.result.split(",")[1];
 
-        var mmcoObj = {
+        resolve({
           filename: file.name,
           filesize: file.size,
           filetype: file.type,
           lastmodiied: file.lastModifiedDate,
           file: base64String,
-        };
-
-        resolve(mmcoObj);
+        });
       };
 
-      reader.readAsDataURL(file); // Read file as ArrayBuffer
+      reader.readAsDataURL(file);
     });
   }
 
@@ -306,9 +159,8 @@ function Query(props) {
     
     setShowMixedModeWarning(false);
     
-    // Create a promise that will resolve with the query
     const queryResult = await createMmcoQuery();
-    // Only set query if result is not null (similarity search returns null and handles itself)
+    // null means a similarity search was started instead
     if (queryResult !== null) {
       props.setCmmcoQuery(Promise.resolve(queryResult));
     }
@@ -347,11 +199,6 @@ function Query(props) {
                     remove: "ReactTags__remove",
                   }}
                 />
-                {!isValidKeywords && (
-                  <div className="invalid-feedback d-block mt-2">
-                    Please use commas to separate multiple keywords (e.g., "nature, mountains")
-                  </div>
-                )}
               </div>
             </div>
             <h5>Examples</h5>
@@ -432,7 +279,7 @@ function Query(props) {
                     className="btn btn-outline-secondary dropdown-toggle"
                     type="button"
                     data-bs-toggle="dropdown"
-                    aria-expanded="null"
+                    aria-expanded="false"
                   >
                     Clear Examples
                   </button>
@@ -516,18 +363,10 @@ function Query(props) {
           )}
 
           <button
-            className={`w-25 btn btn-primary mt-2 float-end ${isLoading ? 'disabled' : ''}`}
+            className="w-25 btn btn-primary mt-2 float-end"
             onClick={handleQueryClicked}
-            disabled={isLoading}
           >
-            {isLoading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Querying...
-              </>
-            ) : (
-              'Query'
-            )}
+            Query
           </button>
         </div>
       </div>
