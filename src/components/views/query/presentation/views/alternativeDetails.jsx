@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ReactPlayer from "react-player";
 import config from "../../../../../config/config";
 
 import NodeTable from "./components/nodetable";
@@ -8,101 +7,33 @@ import { Playback } from "./components/playback/PlaybackContext";
 
 function AlternativeDetails({ mmfgid }) {
   const [data, setData] = useState(null);
-  const [played, setPlayed] = useState(0);
   const [activeTab, setActiveTab] = useState("player");
   const playerRef = useRef(null);
 
   useEffect(() => {
-    if (mmfgid) {
-      fetchDetails();
-    } else {
+    if (!mmfgid) {
       setData(null);
+      return;
     }
+    const fetchDetails = async () => {
+      try {
+        const response = await fetch(`${config.baseUrl}/gmaf/getmmfg/token1/${mmfgid}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        setData(await response.json());
+      } catch (error) {
+        console.error("Error fetching details for ID:", mmfgid, error);
+        setData(null);
+      }
+    };
+    fetchDetails();
   }, [mmfgid]);
 
-  const fetchDetails = async () => {
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    try {
-      const response = await fetch(
-        `${config.baseUrl}/gmaf/getmmfg/token1/${mmfgid}`,
-        options
-      );
-      const detailData = await response.json();
-      setData(detailData);
-    } catch (error) {
-      console.error("Error fetching details for ID:", mmfgid, error);
-      setData(null);
-    }
-  };
-
-  function formatTimestampToTime(timestamp) {
-    const date = new Date(timestamp);
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    let seconds = date.getSeconds();
-
-    // Padding single digits with leading zero
-    hours = hours < 10 ? "0" + hours : hours;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-    return hours + ":" + minutes + ":" + seconds;
-  }
-
-  function getBeginEnde(data) {
-    if (!data || !data.nodes || data.nodes.length === 0) return ["?", "?"];
-
-    let begin = "?";
-    let end = "?";
-
-    if (data.nodes.length > 1) {
-      try {
-        for (const node of data.nodes) {
-          if (node.name === "shot0") {
-            begin = node.timerange.begin;
-            break;
-          }
-        }
-        end = data.nodes[data.nodes.length - 1].timerange.end;
-      } catch (error) {
-        console.error("Error processing time range:", error);
-      }
-    } else if (data.nodes[0].timerange) {
-      begin = data.nodes[0].timerange.begin;
-      end = data.nodes[0].timerange.end;
-    }
-
-    return [begin, end];
-  }
-
-  function showTimeRange(data) {
-    const [begin, end] = getBeginEnde(data);
-    return `${formatTimestampToTime(begin)} - ${formatTimestampToTime(end)}`;
-  }
-
   const handleSeek = (second) => {
-    console.log("Log to" + second);
     if (playerRef.current) {
       playerRef.current.seekTo(second, "seconds");
     }
-  };
-
-  const handleSeekToStart = () => {
-    if (!data || !data.nodes || data.nodes.length === 0) return;
-
-    const [begin] = getBeginEnde(data);
-    const date = new Date(begin);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-    const theFinalSecond = hours * 60 * 60 + minutes * 60 + seconds;
-
-    handleSeek(theFinalSecond);
   };
 
   return (
