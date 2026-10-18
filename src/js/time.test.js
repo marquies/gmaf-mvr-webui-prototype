@@ -29,6 +29,10 @@ test('uses the shot0 range, falling back to the first node', () => {
     { name: 'shot0', timerange: { begin: 10, end: 20 } },
   ] })).toEqual([10, 20]);
   expect(getShotTimeRange({ nodes: [{ name: 'root', timerange: { begin: 1, end: 2 } }] })).toEqual([1, 2]);
+  expect(getShotTimeRange({ nodes: [
+    { name: 'root', timerange: { begin: 1, end: 2 } },
+    { name: 'shot0', timerange: { begin: null, end: 20 } },
+  ] })).toEqual([1, 2]);
   expect(getShotTimeRange({ nodes: [{ name: 'root' }] })).toEqual([null, null]);
   expect(getShotTimeRange(undefined)).toEqual([null, null]);
 });

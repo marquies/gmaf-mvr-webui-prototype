@@ -51,7 +51,7 @@ export function getShotTimeRange(data) {
   if (!data || !data.nodes || data.nodes.length === 0) return [null, null];
 
   const shot = data.nodes.find(node => node.name === "shot0" && node.timerange);
-  if (shot) {
+  if (shot && shot.timerange.begin) {
     return [shot.timerange.begin, shot.timerange.end];
   }
   if (data.nodes[0].timerange) {

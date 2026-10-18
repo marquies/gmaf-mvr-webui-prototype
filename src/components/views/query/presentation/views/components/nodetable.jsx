@@ -33,7 +33,7 @@ function NodeTable({ data, seekTo }) {
             <React.Fragment key={i}>
               <tr>
                 <td>{node.name}</td>
-                {node.timerange === undefined ? (
+                {node.timerange == null ? (
                   <>
                     <td></td>
                     <td></td>
@@ -51,7 +51,7 @@ function NodeTable({ data, seekTo }) {
                 .map((subnode, j) => (
                   <tr key={j}>
                     <td>-{subnode.name}</td>
-                    {subnode.timerange === undefined ? (
+                    {subnode.timerange == null ? (
                       <>
                         <td></td>
                         <td></td>
