@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createPluginWithFallback } from '../../../../../../../components/plugins/registry/pluginFactory';
-import { initializePlugins, loadPluginByClassName } from '../../../../../../../components/plugins/registry/pluginLoader';
-import { getAllPluginsForType, registerPlugin } from '../../../../../../../components/plugins/registry/pluginRegistry';
-import DefaultMmcoPlugin from '../../../../../../../components/plugins/mmco/DefaultMmcoPlugin';
+import { createPluginWithFallback } from '../../../../../../plugins/registry/pluginFactory';
+import { initializePlugins, loadPluginByClassName } from '../../../../../../plugins/registry/pluginLoader';
+import { getAllPluginsForType, registerPlugin } from '../../../../../../plugins/registry/pluginRegistry';
+import DefaultMmcoPlugin from '../../../../../../plugins/mmco/DefaultMmcoPlugin';
 
 /**
  * Component for MMCO (Multimedia Content Object) playback panel
@@ -12,91 +12,49 @@ function MmcoPanel({ playerRef, mmfgid, manifestData, zipContents }) {
   const [mmcoEntry, setMmcoEntry] = useState(null);
   const [availablePlugins, setAvailablePlugins] = useState(['default']);
   const [activePlugin, setActivePlugin] = useState('default');
-  const [pluginsInitialized, setPluginsInitialized] = useState(false);
   const pluginsLoaded = useRef(false);
-  
-  // Initialize plugins on first render
+
+  const refreshAvailablePlugins = () => {
+    const pluginTypes = Object.keys(getAllPluginsForType('MMCO'));
+    setAvailablePlugins(['default', ...pluginTypes.filter(type => type !== 'default')]);
+  };
+
+  // Register the default plugin and the configured ones once
   useEffect(() => {
-    // Only run initialization once
     if (!pluginsLoaded.current) {
       pluginsLoaded.current = true;
-      
-      // Register default plugin first
       registerPlugin('MMCO', 'default', DefaultMmcoPlugin);
-      
-      // Initialize all configured plugins
       initializePlugins();
-      
-      setTimeout(() => {
-        // Get all available MMCO plugins after loading
-        const mmcoPlugins = getAllPluginsForType('MMCO');
-        const pluginTypes = Object.keys(mmcoPlugins);
-        
-        if (pluginTypes.length > 0) {
-          setAvailablePlugins(['default', ...pluginTypes.filter(type => type !== 'default')]);
-        } else {
-          setAvailablePlugins(['default']);
-        }
-        
-        setPluginsInitialized(true);
-      }, 100); // Small delay to ensure plugins are registered
+      // Small delay to ensure plugins are registered
+      setTimeout(refreshAvailablePlugins, 100);
     }
   }, []);
-  
+
   useEffect(() => {
-    if (manifestData && Array.isArray(manifestData.files)) {
-      // Find MMCO entry in manifest
-      const entry = manifestData.files.find(entry => entry.type === 'MMCO');
-      
-      if (entry) {
-        console.log('MMCO Panel can show:', entry);
-        console.log('MMCO file path:', entry.path);
-        console.log('MMCO mimetype:', entry.mimetype);
-        console.log('MMCO content type:', entry.content);
-        
-        setMmcoEntry(entry);
-        
-        // If we have the content in zipContents, load the appropriate plugin
-        if (zipContents && zipContents[entry.path]) {
-          console.log('MMCO content available in zipContents');
-          console.log('MMCO content type:', typeof zipContents[entry.path]);
-          console.log('MMCO content instanceof ArrayBuffer:', zipContents[entry.path] instanceof ArrayBuffer);
-          console.log('MMCO content instanceof Uint8Array:', zipContents[entry.path] instanceof Uint8Array);
-          
-          // Store the content for the plugin
-          setPluginContent(zipContents[entry.path]);
-          
-          // Try to dynamically load a plugin based on the content type
-          if (entry.content) {
-            // Convert content type to potential class name (e.g., 'video' -> 'VideoPlugin')
-            const className = entry.content.charAt(0).toUpperCase() + entry.content.slice(1) + 'Plugin';
-            
-            // Set the active plugin to match the content type
-            setActivePlugin(entry.content.toLowerCase());
-            
-            // Attempt to load the plugin dynamically and update available plugins
-            loadPluginByClassName('MMCO', className)
-              .then(() => {
-                // Update available plugins after successful loading
-                const mmcoPlugins = getAllPluginsForType('MMCO');
-                const pluginTypes = Object.keys(mmcoPlugins);
-                
-                if (pluginTypes.length > 0) {
-                  setAvailablePlugins(['default', ...pluginTypes.filter(type => type !== 'default')]);
-                }
-              })
-              .catch(err => {
-                console.warn(`Could not load plugin ${className}, using default:`, err);
-              });
-          }
-        }
-      } else {
-        console.log('No MMCO entry found in manifest');
+    if (!manifestData || !Array.isArray(manifestData.files)) return;
+
+    const entry = manifestData.files.find(entry => entry.type === 'MMCO');
+    if (!entry) return;
+
+    setMmcoEntry(entry);
+
+    if (zipContents && zipContents[entry.path]) {
+      setPluginContent(zipContents[entry.path]);
+
+      if (entry.content) {
+        // e.g. 'video' -> 'VideoPlugin'
+        const className = entry.content.charAt(0).toUpperCase() + entry.content.slice(1) + 'Plugin';
+        setActivePlugin(entry.content.toLowerCase());
+
+        loadPluginByClassName('MMCO', className)
+          .then(refreshAvailablePlugins)
+          .catch(err => {
+            console.warn(`Could not load plugin ${className}, using default:`, err);
+          });
       }
-    } else if (manifestData) {
-      console.log('MMCO Panel: manifestData is not an array:', manifestData);
     }
   }, [manifestData, zipContents]);
+
   return (
     <div className="card mt-3">
       <div className="card-header bg-light d-flex justify-content-between align-items-center">

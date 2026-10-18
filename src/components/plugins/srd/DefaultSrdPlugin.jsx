@@ -82,6 +82,7 @@ function DefaultSrdPlugin({ data, mmfgid, fileInfo }) {
 
   // Register component time range
   useEffect(() => {
+    const id = componentId.current;
     if (parsedLogs && parsedLogs.length > 0) {
       const validLogs = parsedLogs.filter(log => log.timeOfDayMs !== null);
       if (validLogs.length > 0) {
@@ -93,10 +94,10 @@ function DefaultSrdPlugin({ data, mmfgid, fileInfo }) {
           endTimeMs += 24 * 3600 * 1000;
         }
         
-        registerComponent(componentId.current, startTimeMs, endTimeMs);
+        registerComponent(id, startTimeMs, endTimeMs);
         
         return () => {
-          unregisterComponent(componentId.current);
+          unregisterComponent(id);
         };
       }
     }

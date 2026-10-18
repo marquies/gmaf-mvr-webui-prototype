@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { usePlayback } from '../../views/query/presentation/views/components/playback/PlaybackContext';
 
 /**
- * Extracts Unity lines and Scene Graph content from RSG data
+ * Extracts the Scene Graph blocks from RSG data
  */
 function RsgDataViewer({ data, mmfgid }) {
   const { isPlaying, getAbsoluteTime, registerComponent, unregisterComponent } = usePlayback();
@@ -13,17 +13,12 @@ function RsgDataViewer({ data, mmfgid }) {
     const text = typeof rawData === 'string' ? rawData : JSON.stringify(rawData, null, 2);
     const lines = text.split('\n');
     
-    const unityLines = [];
     const sceneGraphs = [];
     let inSceneGraph = false;
     let currentSceneGraph = [];
     let currentTimestamp = null;
     
     for (const line of lines) {
-      if (line.includes('Unity')) {
-        unityLines.push(line);
-      }
-      
       const lowerLine = line.toLowerCase();
       if (lowerLine.includes('start scene graph')) {
         inSceneGraph = true;
@@ -63,23 +58,24 @@ function RsgDataViewer({ data, mmfgid }) {
       }
     }
     
-    return { unityLines, sceneGraphs };
+    return { sceneGraphs };
   };
   
-  const { unityLines, sceneGraphs } = parseRsgData(data);
+  const { sceneGraphs } = parseRsgData(data);
   
   // Register component time range when scene graphs are loaded
   useEffect(() => {
+    const id = componentId.current;
     if (sceneGraphs && sceneGraphs.length > 0) {
       const validGraphs = sceneGraphs.filter(sg => sg.timestamp !== null);
       if (validGraphs.length > 0) {
         const startTimeMs = validGraphs[0].timestamp;
         const endTimeMs = validGraphs[validGraphs.length - 1].timestamp;
         
-        registerComponent(componentId.current, startTimeMs, endTimeMs);
+        registerComponent(id, startTimeMs, endTimeMs);
         
         return () => {
-          unregisterComponent(componentId.current);
+          unregisterComponent(id);
         };
       }
     }
@@ -187,7 +183,7 @@ function RsgDataViewer({ data, mmfgid }) {
 }
 
 /**
- * Default plugin for peripheral data when no specific plugin is available
+ * SRD plugin for RSG logs containing scene graphs
  */
 function RSGPlugin({ data, mmfgid, fileInfo }) {
   return (

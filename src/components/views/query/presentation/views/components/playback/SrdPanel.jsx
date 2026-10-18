@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createPluginWithFallback } from '../../../../../../../components/plugins/registry/pluginFactory';
-import { initializePlugins, loadPluginByClassName } from '../../../../../../../components/plugins/registry/pluginLoader';
-import { getAllPluginsForType, registerPlugin } from '../../../../../../../components/plugins/registry/pluginRegistry';
-import DefaultSrdPlugin from '../../../../../../../components/plugins/srd/DefaultSrdPlugin';
+import { createPluginWithFallback } from '../../../../../../plugins/registry/pluginFactory';
+import { initializePlugins, loadPluginByClassName } from '../../../../../../plugins/registry/pluginLoader';
+import { getAllPluginsForType, registerPlugin } from '../../../../../../plugins/registry/pluginRegistry';
+import DefaultSrdPlugin from '../../../../../../plugins/srd/DefaultSrdPlugin';
 import config from '../../../../../../../config/config';
 
 /**
@@ -13,95 +13,49 @@ function SrdPanel({ mmfgid, manifestData, zipContents }) {
   const [srdEntry, setSrdEntry] = useState(null);
   const [availablePlugins, setAvailablePlugins] = useState(['default']);
   const [activePlugin, setActivePlugin] = useState('default');
-  const [pluginsInitialized, setPluginsInitialized] = useState(false);
   const pluginsLoaded = useRef(false);
-  
-  // Initialize plugins on first render
+
+  const refreshAvailablePlugins = () => {
+    const pluginTypes = Object.keys(getAllPluginsForType('SRD'));
+    setAvailablePlugins(['default', ...pluginTypes.filter(type => type !== 'default')]);
+  };
+
+  // Register the default plugin and the configured ones once
   useEffect(() => {
-    // Only run initialization once
     if (!pluginsLoaded.current) {
       pluginsLoaded.current = true;
-      console.log('SRD Panel: Initializing plugins');
-      
-      // Register default plugin first
       registerPlugin('SRD', 'default', DefaultSrdPlugin);
-      
-      // Initialize all configured plugins
       initializePlugins();
-      
-      // Use the plugin registry and loader instead of static imports
-      // The plugins should be loaded by the application initialization code
-      
-      setTimeout(() => {
-        // Get all available SRD plugins after loading
-        const srdPlugins = getAllPluginsForType('SRD');
-        const pluginTypes = Object.keys(srdPlugins);
-        
-        if (pluginTypes.length > 0) {
-          setAvailablePlugins(['default', ...pluginTypes.filter(type => type !== 'default')]);
-        } else {
-          setAvailablePlugins(['default']);
-        }
-        
-        setPluginsInitialized(true);
-        console.log('SRD Panel: Plugins initialized');
-      }, 100); // Small delay to ensure plugins are registered
+      // Small delay to ensure plugins are registered
+      setTimeout(refreshAvailablePlugins, 100);
     }
   }, []);
-  
-  useEffect(() => {
-    if (manifestData && Array.isArray(manifestData.files)) {
-      // Find SRD entry in manifest
-      const srdEntry = manifestData.files.find(entry => entry.type === 'SRD');
-      
-      if (srdEntry) {
-        console.log('SRD Panel can show:', srdEntry);
-        console.log('SRD file path:', srdEntry.path);
-        console.log('SRD mimetype:', srdEntry.mimetype);
-        console.log('SRD content type:', srdEntry.contenttype);
-        
-        setSrdEntry(srdEntry);
 
-        // If we have the content in zipContents, we could use it directly
-        if (zipContents && zipContents[srdEntry.path]) {
-          console.log('SRD content available in zipContents');
-          setPluginContent(zipContents[srdEntry.path]);
-          
-          // Try to dynamically load a plugin based on the content type
-          if (srdEntry.contenttype) {
-            // Convert content type to potential class name (e.g., 'rsg' -> 'RsgPlugin')
-            //const className = srdEntry.contenttype.charAt(0).toUpperCase() + srdEntry.contenttype.slice(1) + 'Plugin';
-            const className = config.plugins?.srd?.contentTypes?.[srdEntry.contenttype.toLowerCase()]; 
-            //srdEntry.contenttype.charAt(0).toUpperCase() + srdEntry.contenttype.slice(1) + 'Plugin';
-            console.log('SRD Panel: Attempting to load plugin:', className);
-            
-            // Set the active plugin to match the content type
-            setActivePlugin(srdEntry.contenttype.toLowerCase());
-            
-            // Attempt to load the plugin dynamically and update available plugins
-            loadPluginByClassName('SRD', className)
-              .then(() => {
-                // Update available plugins after successful loading
-                const srdPlugins = getAllPluginsForType('SRD');
-                const pluginTypes = Object.keys(srdPlugins);
-                
-                if (pluginTypes.length > 0) {
-                  setAvailablePlugins(['default', ...pluginTypes.filter(type => type !== 'default')]);
-                }
-                console.log('SRD Panel: Plugin loaded successfully:', className);
-              })
-              .catch(err => {
-                console.warn(`Could not load plugin ${className}, using default:`, err);
-              });
-          }
-        }
-      } else {
-        console.log('No SRD entry found in manifest');
+  useEffect(() => {
+    if (!manifestData || !Array.isArray(manifestData.files)) return;
+
+    const entry = manifestData.files.find(entry => entry.type === 'SRD');
+    if (!entry) return;
+
+    setSrdEntry(entry);
+
+    if (zipContents && zipContents[entry.path]) {
+      setPluginContent(zipContents[entry.path]);
+
+      if (entry.contenttype) {
+        // Plugin class name comes from the config mapping
+        const className = config.plugins?.srd?.contentTypes?.[entry.contenttype.toLowerCase()];
+        setActivePlugin(entry.contenttype.toLowerCase());
+
+        loadPluginByClassName('SRD', className)
+          .then(refreshAvailablePlugins)
+          .catch(err => {
+            console.warn(`Could not load plugin ${className}, using default:`, err);
+          });
       }
-    } else if (manifestData) {
-      console.log('SRD Panel: manifestData is not an array:', manifestData);
     }
   }, [manifestData, zipContents]);
+
   return (
     <div className="card mt-3">
       <div className="card-header bg-light d-flex justify-content-between align-items-center">

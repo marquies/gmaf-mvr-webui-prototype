@@ -29,17 +29,9 @@ function DefaultMmcoPlugin({ data, mmfgid, fileInfo }) {
   useEffect(() => {
     if (data && data instanceof Uint8Array) {
       try {
-        console.log('Creating blob from Uint8Array data:', {
-          length: data.length,
-          mimeType: fileInfo?.mimetype || 'video/mp4'
-        });
-        
         // Create blob from Uint8Array
         const blob = new Blob([data], { type: fileInfo?.mimetype || 'video/mp4' });
-        const url = URL.createObjectURL(blob);
-        
-        console.log('Created blob URL:', url, 'Blob size:', blob.size);
-        setMediaUrl(url);
+        setMediaUrl(URL.createObjectURL(blob));
         setError(null);
       } catch (err) {
         console.error('Error creating blob URL:', err);
@@ -52,19 +44,19 @@ function DefaultMmcoPlugin({ data, mmfgid, fileInfo }) {
       setError('Invalid data format');
       setMediaUrl(`${config.baseUrl}/gmaf/preview/token1/${mmfgid}`);
     } else {
-      console.log('No data provided, using remote URL');
       setMediaUrl(`${config.baseUrl}/gmaf/preview/token1/${mmfgid}`);
     }
   }, [data, mmfgid, fileInfo]);
   
   // Register component time range when video is ready
   useEffect(() => {
+    const id = componentId.current;
     if (duration > 0 && videoStartTime !== null) {
       const endTimeMs = videoStartTime + (duration * 1000);
-      registerComponent(componentId.current, videoStartTime, endTimeMs);
+      registerComponent(id, videoStartTime, endTimeMs);
       
       return () => {
-        unregisterComponent(componentId.current);
+        unregisterComponent(id);
       };
     }
   }, [duration, videoStartTime, registerComponent, unregisterComponent]);
