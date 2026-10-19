@@ -4,7 +4,7 @@ import userEvent from '../../../../../../test-utils/userEvent';
 import AssetCard from './assetCard';
 
 jest.mock('./multimedia', () => () => <div>Media preview</div>);
-jest.mock('./tooltip', () => () => <div>Asset metadata</div>);
+jest.mock('./tooltip', () => ({ cmmco }) => <div>Tooltip for {cmmco.id}</div>);
 const asset = { id: 'a', generalMetadata: { fileName: 'Sea.png' }, hasPd: true, hasWsd: true, tempSimilarity: [0.95, 0.44] };
 
 test('renders asset metadata, rounded similarity and optional data indicators', () => {
@@ -34,4 +34,13 @@ test('closes the context menu on outside click and renders nothing without an as
   expect(screen.queryByText('Use as Query Example')).not.toBeInTheDocument();
   rerender(<AssetCard cmmco={null} />);
   expect(screen.queryByText('Sea.png')).not.toBeInTheDocument();
+});
+
+test('shows the tooltip with the card data on hover', () => {
+  render(<AssetCard cmmco={asset} />);
+  expect(screen.queryByText('Tooltip for a')).not.toBeInTheDocument();
+  fireEvent.mouseEnter(screen.getByText('Sea.png'));
+  expect(screen.getByText('Tooltip for a')).toBeInTheDocument();
+  fireEvent.mouseLeave(screen.getByText('Sea.png'));
+  expect(screen.queryByText('Tooltip for a')).not.toBeInTheDocument();
 });

@@ -87,7 +87,7 @@ return (
         <>
         <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onContextMenu={handleRightClick} className={props.view === "details" ? "playback-big" : "playback-small"}>
             <div className='tooltip-container'>
-              {isTooltipVisible? <ToolTip md={props.cmmco.md} start={props.cmmco.start} end={props.cmmco.end} />:""}
+              {isTooltipVisible? <ToolTip cmmco={cmmco} />:""}
               </div>
               {props.deletable?<i className="fa fa-sm fa-trash" onClick={()=>deleteitem()} type="button"></i>:""}
             <div 
