@@ -36,3 +36,12 @@ test('clears loaded data when selection is removed', async () => {
   expect(screen.getByText('Select an item to view details')).toBeInTheDocument();
   expect(screen.queryByText('clip.mp4')).not.toBeInTheDocument();
 });
+
+test('shows the player for assets without nodes, e.g. unprocessed images', async () => {
+  fetch.mockResolvedValue({ json: jest.fn().mockResolvedValue({ generalMetadata: { fileName: 'photo.jpg' }, nodes: [] }) });
+  render(<AlternativeDetails mmfgid="image-1" />);
+  expect(await screen.findByRole('heading', { name: 'photo.jpg' })).toBeInTheDocument();
+  expect(screen.getByText('Player image-1')).toBeInTheDocument();
+  userEvent.click(screen.getByRole('button', { name: 'Node Structure' }));
+  expect(screen.getByText('No node structure available for this asset.')).toBeInTheDocument();
+});

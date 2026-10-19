@@ -131,8 +131,7 @@ function AlternativeDetails({ mmfgid }) {
             className="card-body d-flex flex-column"
             style={{ height: "calc(100% - 48px)", padding: 0, overflow: "hidden" }}
           >
-            {data.nodes && data.nodes.length > 0 && (
-              <>
+            <>
                 <ul className="nav nav-tabs nav-fill">
                   <li className="nav-item">
                     <button 
@@ -180,7 +179,11 @@ function AlternativeDetails({ mmfgid }) {
                             <h6 className="mb-0">Node Structure</h6>
                           </div>
                           <div className="card-body">
-                            <NodeTable data={data} seekTo={handleSeek} />
+                            {data.nodes && data.nodes.length > 0 ? (
+                              <NodeTable data={data} seekTo={handleSeek} />
+                            ) : (
+                              <p className="text-muted mb-0">No node structure available for this asset.</p>
+                            )}
                           </div>
                         </div>
                       </Playback>
@@ -205,8 +208,7 @@ function AlternativeDetails({ mmfgid }) {
                     </div>
                   )}
                 </div>
-              </>
-            )}
+            </>
           </div>
         </>
       )}
